@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IPACE - Instituto Pangea de Ação Cultural e Esportiva</title>
+    <link rel="apple-touch-icon" sizes="180x180" href="favicon_ico/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon_ico/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="favicon_ico/favicon-16x16.png">
+    <link rel="icon" href="favicon_ico/favicon.ico">
+    <link rel="manifest" href="favicon_ico/site.webmanifest">
+    <meta name="theme-color" content="#2cc3f3">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="styles.css">
+    <script src="script.js"></script>
+</head>
+<body class="antialiased">
+    <nav class="fixed w-full z-50 bg-white/95 backdrop-blur-sm border-b border-ipace-blue/20 transition-all duration-300" id="navbar">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <div class="flex-shrink-0 flex items-center">
+                    <a href="#" class="inline-flex items-center" aria-label="IPACE">
+                        <img src="logos/logotipo_horizontal_ong_ipace.png" alt="IPACE" class="h-10 w-auto">
+                    </a>
+                </div>
+                <div class="hidden md:flex space-x-8 items-center">
+                    <a href="#sobre" class="text-sm uppercase tracking-widest font-bold text-ipace-title hover:text-ipace-pink transition-colors">Quem Somos</a>
+                    <a href="#projetos" class="text-sm uppercase tracking-widest font-bold text-ipace-title hover:text-ipace-pink transition-colors">Projetos</a>
+                    <a href="#midia" class="text-sm uppercase tracking-widest font-bold text-ipace-title hover:text-ipace-pink transition-colors">Galeria</a>
+                    <a href="#contato" class="bg-ipace-pink text-white px-6 py-3 text-sm font-bold uppercase tracking-widest hover:bg-ipace-blue transition-colors">
+                        Blog
+                    </a>
+                </div>
+                <div class="md:hidden flex items-center">
+                    <button id="mobile-menu-btn" class="text-ipace-blue hover:text-ipace-pink focus:outline-none">
+                        <i data-lucide="menu" class="w-8 h-8"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div id="mobile-menu" class="fixed inset-0 bg-white z-40 transform translate-x-full transition-transform duration-300 md:hidden flex flex-col justify-center items-center space-y-8 top-0 left-0 w-full h-screen">
+            <button id="close-menu-btn" class="absolute top-6 right-6 text-ipace-pink focus:outline-none">
+                <i data-lucide="x" class="w-8 h-8"></i>
+            </button>
+            <a href="#sobre" class="mobile-link text-2xl font-black uppercase tracking-tight text-ipace-title hover:text-ipace-blue">Quem Somos</a>
+            <a href="#projetos" class="mobile-link text-2xl font-black uppercase tracking-tight text-ipace-title hover:text-ipace-blue">Projetos</a>
+            <a href="#midia" class="mobile-link text-2xl font-black uppercase tracking-tight text-ipace-title hover:text-ipace-blue">Galeria</a>
+            <a href="#contato" class="mobile-link text-2xl font-black text-ipace-pink uppercase tracking-tight">Blog</a>
+        </div>
+    </nav>
+
+    <header class="relative h-screen flex items-center justify-center overflow-hidden">
+        <div class="absolute inset-0 z-0">
+            <picture>
+                <source media="(max-width: 768px)" srcset="imagens/hero_backgound_ipace_mobile.png">
+                <img src="imagens/hero_backgound_ipace.png" alt="Hero IPACE" class="w-full h-full object-cover">
+            </picture>
+        </div>
+        <div class="absolute z-10 bottom-8 md:bottom-16 left-4 right-4">
+            <div class="flex flex-col gap-3 sm:gap-4 md:gap-4 md:flex-row md:justify-start max-w-7xl mx-auto">
+                <a href="#contato" class="bg-ipace-orange text-white px-6 sm:px-8 py-3 sm:py-4 font-bold uppercase tracking-widest hover:bg-white hover:text-ipace-orange transition-colors w-full md:w-auto shadow-lg text-sm sm:text-base">
+                    Apoie a Causa
+                </a>
+                <a href="#projetos" class="bg-white text-ipace-blue px-6 sm:px-8 py-3 sm:py-4 font-bold uppercase tracking-widest hover:bg-ipace-blue hover:text-white transition-colors w-full md:w-auto flex items-center justify-center gap-2 shadow-lg text-sm sm:text-base">
+                    Nossos Projetos
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <section class="bg-ipace-blue text-white py-12 md:py-16">
+        <div class="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 text-center divide-y md:divide-y-0 md:divide-x divide-white/20">
+            <div class="py-6 md:py-4">
+                <span class="block text-4xl sm:text-5xl font-black text-white mb-2 counter" data-target="1000">0</span>
+                <span class="text-xs sm:text-sm uppercase tracking-widest text-white/80 font-bold">Famílias Atendidas</span>
+            </div>
+            <div class="py-6 md:py-4">
+                <span class="block text-4xl sm:text-5xl font-black text-white mb-2 counter" data-target="12">0</span>
+                <span class="text-xs sm:text-sm uppercase tracking-widest text-white/80 font-bold">Projetos Ativos</span>
+            </div>
+            <div class="py-6 md:py-4">
+                <span class="block text-4xl sm:text-5xl font-black text-white mb-2 counter" data-target="20">0</span>
+                <span class="text-xs sm:text-sm uppercase tracking-widest text-white/80 font-bold">Anos de História</span>
+            </div>
+        </div>
+    </section>
+
+    <section id="sobre" class="py-12 md:py-20 lg:py-32 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col lg:flex-row gap-8 md:gap-12 lg:gap-20 items-center">
+                <div class="w-full lg:w-1/2 relative h-[300px] sm:h-[400px] md:h-[500px] group">
+                    <img src="imagens/capa_ipace_img.png" alt="Equipe IPACE" class="img-cover-contain filter sepia-[.20] group-hover:sepia-0 transition-all duration-700">
+                    <div class="absolute -bottom-6 -right-6 w-32 h-32 bg-ipace-green hidden md:block z-[-1]"></div>
+                    <div class="absolute -top-6 -left-6 w-32 h-32 border-4 border-ipace-pink hidden md:block z-[-1]"></div>
+                </div>
+                <div class="w-full lg:w-1/2">
+                    <span class="text-ipace-pink font-bold uppercase tracking-widest mb-2 block text-xs sm:text-sm">Quem Somos</span>
+                    <h2 class="text-3xl sm:text-4xl md:text-5xl font-black text-ipace-blue mb-4 md:mb-6 leading-tight">
+                        NÃO ESPERAMOS A MUDANÇA. <br><span class="text-ipace-orange">NÓS A CRIAMOS.</span>
+                    </h2>
+                    <p class="text-base sm:text-lg text-ipace-text mb-4 md:mb-6 leading-relaxed">
+                        Desde sua fundação em maio de 2005, esta ONG tem sido um catalisador de mudanças, inicialmente apoiando o voluntariado em várias regiões de São Paulo.
+                    </p>
+                    <p class="text-base sm:text-lg text-ipace-text mb-6 md:mb-8 leading-relaxed">
+                        Com o respaldo da comunidade, evoluiu para realizar eventos culturais e esportivos, arrecadando donativos cruciais para sustentar e ampliar seus impactantes projetos sociais.
+                    </p>
+                    <a href="#" class="inline-flex items-center gap-2 text-ipace-pink font-bold uppercase tracking-widest border-b-2 border-ipace-pink hover:text-ipace-blue hover:border-ipace-blue transition-colors pb-1">
+                        Leia Nossa História <i data-lucide="arrow-right" class="w-5 h-5"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="projetos" class="bg-gray-50 py-12 md:py-20 lg:py-32">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="mb-10 md:mb-16 md:flex justify-between items-end">
+                <div class="mb-6 md:mb-0">
+                    <span class="text-ipace-green font-bold uppercase tracking-widest mb-2 block text-xs sm:text-sm">O Que Fazemos</span>
+                    <h2 class="text-3xl sm:text-4xl md:text-4xl font-black text-ipace-title">NOSSOS PROJETOS</h2>
+                </div>
+                <a href="#" class="hidden md:block text-sm font-bold uppercase tracking-widest border-2 border-ipace-blue text-ipace-blue px-6 py-3 hover:bg-ipace-blue hover:text-white transition-colors">Ver todos os projetos</a>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <a href="mexasesp/index.html" class="bg-white group project-card cursor-pointer h-full flex flex-col shadow-sm hover:shadow-xl transition-shadow">
+                    <div class="overflow-hidden h-64 md:h-80 relative">
+                        <img src="imagens/Banner-Interno_Mexa-se-São-Paulo-ipace.jpg" alt="Mexa-se SP" class="img-cover">
+                        <div class="absolute top-0 right-0 bg-ipace-blue text-white p-3">
+                            <i data-lucide="activity" class="w-6 h-6"></i>
+                        </div>
+                    </div>
+                    <div class="p-8 flex-1 flex flex-col justify-between border-b-4 border-transparent group-hover:border-ipace-blue transition-all">
+                        <div>
+                            <h3 class="text-2xl font-bold mb-3 text-ipace-title group-hover:text-ipace-blue transition-colors">Mexa-se SP</h3>
+                            <p class="text-ipace-text mb-6">Esporte e movimento para comunidades de São Paulo, promovendo saúde, disciplina e inclusão.</p>
+                        </div>
+                        <span class="text-sm font-bold uppercase tracking-widest flex items-center gap-2 mt-auto text-ipace-pink">
+                            Saiba Mais <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                        </span>
+                    </div>
+                </a>
+                <a href="ce_nautico_guarapiranga_2026/index.html" class="bg-white group project-card cursor-pointer h-full flex flex-col shadow-sm hover:shadow-xl transition-shadow">
+                    <div class="overflow-hidden h-64 md:h-80 relative">
+                        <img src="imagens/vela-ce-náutico-guarapiranga-ipace.jpeg" alt="Vela no Clube Náutico Guarapiranga" class="img-cover">
+                        <div class="absolute top-0 right-0 bg-ipace-green text-white p-3">
+                            <i data-lucide="anchor" class="w-6 h-6"></i>
+                        </div>
+                    </div>
+                    <div class="p-8 flex-1 flex flex-col justify-between border-b-4 border-transparent group-hover:border-ipace-green transition-all">
+                        <div>
+                            <h3 class="text-2xl font-bold mb-3 text-ipace-title group-hover:text-ipace-green transition-colors">Clube Náutico Guarapiranga</h3>
+                            <p class="text-ipace-text mb-6">Atividades náuticas e socioeducativas no Guarapiranga, conectando juventude à natureza e novas oportunidades.</p>
+                        </div>
+                        <span class="text-sm font-bold uppercase tracking-widest flex items-center gap-2 mt-auto text-ipace-pink">
+                            Saiba Mais <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                        </span>
+                    </div>
+                </a>
+            </div>
+            <div class="mt-8 md:hidden">
+                 <a href="#" class="block text-center w-full text-sm font-bold uppercase tracking-widest border-2 border-ipace-blue text-ipace-blue px-6 py-4 hover:bg-ipace-blue hover:text-white transition-colors">Ver todos os projetos</a>
+            </div>
+        </div>
+    </section>
+
+    <section id="leis" class="bg-white py-16 border-b border-gray-100">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="mb-12 text-center">
+                <h2 class="text-3xl md:text-4xl font-black text-ipace-title">Leis de Incentivo</h2>
+                <p class="text-ipace-text mt-4 max-w-3xl mx-auto leading-relaxed">Captações via Leis de Incentivo potencializam nossos projetos culturais, esportivos e sociais, garantindo transparência e impacto mensurável.</p>
+            </div>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8 items-center justify-items-center">
+                <div class="flex items-center justify-center h-24 md:h-32">
+                    <img src="leis_de_incentivo/lei_de_incentivo_a_cultura_original_ipace.png" alt="Lei de Incentivo à Cultura" class="max-w-full max-h-full object-contain">
+                </div>
+                <div class="flex items-center justify-center h-24 md:h-32">
+                    <img src="leis_de_incentivo/Proac_novo_logo_654_ipace.jpg" alt="ProAC" class="max-w-full max-h-full object-contain">
+                </div>
+                <div class="flex items-center justify-center h-24 md:h-32">
+                    <img src="leis_de_incentivo/lei_de_incentivo_ao_esporte_original_ipace.png" alt="Lei de Incentivo ao Esporte" class="max-w-full max-h-full object-contain">
+                </div>
+                <div class="flex items-center justify-center h-24 md:h-32">
+                    <img src="leis_de_incentivo/CMDCA-PNG_ipace.png" alt="CMDCA" class="max-w-full max-h-full object-contain">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="patrocinadores" class="bg-gray-50 py-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="mb-10 text-center">
+                <h2 class="text-3xl md:text-4xl font-black text-ipace-title">Patrocinadores</h2>
+                <p class="text-ipace-text mt-4 max-w-2xl mx-auto">Empresas que impulsionam nossos projetos e ampliam o alcance das ações.</p>
+            </div>
+            <div class="relative overflow-hidden">
+                <div class="carousel-container flex gap-6 md:gap-8 items-center">
+                    <!-- Prioridade: empresas mais fortes -->
+                    <div class="carousel-item flex-shrink-0 w-1/2 md:w-1/4 h-20 sm:h-24 md:h-28 lg:h-32 flex items-center justify-center">
+                        <img src="patrocinadores/Yoki_logo.svg-ipace.png" alt="Yoki" class="max-w-full max-h-full object-contain">
+                    </div>
+                    <div class="carousel-item flex-shrink-0 w-1/2 md:w-1/4 h-20 sm:h-24 md:h-28 lg:h-32 flex items-center justify-center">
+                        <img src="patrocinadores/cutraleLogo-ipace.png" alt="Cutrale" class="max-w-full max-h-full object-contain">
+                    </div>
+                    <div class="carousel-item flex-shrink-0 w-1/2 md:w-1/4 h-20 sm:h-24 md:h-28 lg:h-32 flex items-center justify-center">
+                        <img src="patrocinadores/multi-ipace-logo.png" alt="Multi" class="max-w-full max-h-full object-contain">
+                    </div>
+                    <div class="carousel-item flex-shrink-0 w-1/2 md:w-1/4 h-20 sm:h-24 md:h-28 lg:h-32 flex items-center justify-center">
+                        <img src="patrocinadores/Logotipo_da_Comgás.svg-ipace.png" alt="Comgás" class="max-w-full max-h-full object-contain">
+                    </div>
+
+                    <!-- Demais logos na ordem atual -->
+                    <div class="carousel-item flex-shrink-0 w-1/2 md:w-1/4 h-20 sm:h-24 md:h-28 lg:h-32 flex items-center justify-center">
+                        <img src="patrocinadores/atlas-componentes-eletronicos-logo-ipace.jpg" alt="Atlas Componentes Eletrônicos" class="max-w-full max-h-full object-contain">
+                    </div>
+                    <div class="carousel-item flex-shrink-0 w-1/2 md:w-1/4 h-20 sm:h-24 md:h-28 lg:h-32 flex items-center justify-center">
+                        <img src="patrocinadores/ci&t-business-agility-ipace.png" alt="CI&T" class="max-w-full max-h-full object-contain">
+                    </div>
+                    <div class="carousel-item flex-shrink-0 w-1/2 md:w-1/4 h-20 sm:h-24 md:h-28 lg:h-32 flex items-center justify-center">
+                        <img src="patrocinadores/companhia-das-letras-logo-oficial-ipace.png" alt="Companhia das Letras" class="max-w-full max-h-full object-contain">
+                    </div>
+                    <div class="carousel-item flex-shrink-0 w-1/2 md:w-1/4 h-20 sm:h-24 md:h-28 lg:h-32 flex items-center justify-center">
+                        <img src="patrocinadores/dimep-sistemas-ipace.png" alt="Dimep Sistemas" class="max-w-full max-h-full object-contain">
+                    </div>
+                    <div class="carousel-item flex-shrink-0 w-1/2 md:w-1/4 h-20 sm:h-24 md:h-28 lg:h-32 flex items-center justify-center">
+                        <img src="patrocinadores/fag-ipace.png" alt="FAG" class="max-w-full max-h-full object-contain">
+                    </div>
+                    <div class="carousel-item flex-shrink-0 w-1/2 md:w-1/4 h-20 sm:h-24 md:h-28 lg:h-32 flex items-center justify-center">
+                        <img src="patrocinadores/logo-eletropaulo-ipace.png" alt="Eletropaulo" class="max-w-full max-h-full object-contain">
+                    </div>
+                    <div class="carousel-item flex-shrink-0 w-1/2 md:w-1/4 h-20 sm:h-24 md:h-28 lg:h-32 flex items-center justify-center">
+                        <img src="patrocinadores/logo-salton-2023-ipace.png" alt="Salton" class="max-w-full max-h-full object-contain">
+                    </div>
+                    <div class="carousel-item flex-shrink-0 w-1/2 md:w-1/4 h-20 sm:h-24 md:h-28 lg:h-32 flex items-center justify-center">
+                        <img src="patrocinadores/Logo-Trisolo-fundo-1024x297 - ipace.png" alt="Trisolo" class="max-w-full max-h-full object-contain">
+                    </div>
+                    <div class="carousel-item flex-shrink-0 w-1/2 md:w-1/4 h-20 sm:h-24 md:h-28 lg:h-32 flex items-center justify-center">
+                        <img src="patrocinadores/Logo_of_LyondellBasell_(2023).svg-ipace.png" alt="LyondellBasell" class="max-w-full max-h-full object-contain">
+                    </div>
+                    <div class="carousel-item flex-shrink-0 w-1/2 md:w-1/4 h-20 sm:h-24 md:h-28 lg:h-32 flex items-center justify-center">
+                        <img src="patrocinadores/logo_supermercado-lavapes_821G2s-ipace.png" alt="Lavapés" class="max-w-full max-h-full object-contain">
+                    </div>
+                    <div class="carousel-item flex-shrink-0 w-1/2 md:w-1/4 h-20 sm:h-24 md:h-28 lg:h-32 flex items-center justify-center">
+                        <img src="patrocinadores/nIepLDCi_400x400-ipace.png" alt="nIepLDCi" class="max-w-full max-h-full object-contain">
+                    </div>
+                    <div class="carousel-item flex-shrink-0 w-1/2 md:w-1/4 h-20 sm:h-24 md:h-28 lg:h-32 flex items-center justify-center">
+                        <img src="patrocinadores/oki-printing-solutions-logo-png_seeklogo-245493-ipace.png" alt="OKI" class="max-w-full max-h-full object-contain">
+                    </div>
+                    <div class="carousel-item flex-shrink-0 w-1/2 md:w-1/4 h-20 sm:h-24 md:h-28 lg:h-32 flex items-center justify-center">
+                        <img src="patrocinadores/pandin-logo-imagen-ipace.png" alt="Pandin" class="max-w-full max-h-full object-contain">
+                    </div>
+                    <div class="carousel-item flex-shrink-0 w-1/2 md:w-1/4 h-20 sm:h-24 md:h-28 lg:h-32 flex items-center justify-center">
+                        <img src="patrocinadores/socopa-ipace.jpg" alt="Socopa" class="max-w-full max-h-full object-contain">
+                    </div>
+                    <div class="carousel-item flex-shrink-0 w-1/2 md:w-1/4 h-20 sm:h-24 md:h-28 lg:h-32 flex items-center justify-center">
+                        <img src="patrocinadores/te-connectivity-7x4-ipace.jpg" alt="TE Connectivity" class="max-w-full max-h-full object-contain">
+                    </div>
+
+                    <!-- Clones para loop infinito (espelham os primeiros itens) -->
+                    <div class="carousel-item flex-shrink-0 w-1/2 md:w-1/4 h-20 sm:h-24 md:h-28 lg:h-32 flex items-center justify-center">
+                        <img src="patrocinadores/Yoki_logo.svg-ipace.png" alt="Yoki" class="max-w-full max-h-full object-contain">
+                    </div>
+                    <div class="carousel-item flex-shrink-0 w-1/2 md:w-1/4 h-20 sm:h-24 md:h-28 lg:h-32 flex items-center justify-center">
+                        <img src="patrocinadores/cutraleLogo-ipace.png" alt="Cutrale" class="max-w-full max-h-full object-contain">
+                    </div>
+                    <div class="carousel-item flex-shrink-0 w-1/2 md:w-1/4 h-20 sm:h-24 md:h-28 lg:h-32 flex items-center justify-center">
+                        <img src="patrocinadores/multi-ipace-logo.png" alt="Multi" class="max-w-full max-h-full object-contain">
+                    </div>
+                    <div class="carousel-item flex-shrink-0 w-1/2 md:w-1/4 h-20 sm:h-24 md:h-28 lg:h-32 flex items-center justify-center">
+                        <img src="patrocinadores/Logotipo_da_Comgás.svg-ipace.png" alt="Comgás" class="max-w-full max-h-full object-contain">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    
+
+    
+
+    <section id="contato" class="bg-ipace-orange text-white py-20 relative overflow-hidden">
+        <div class="absolute top-0 right-0 w-64 h-64 border-l-4 border-b-4 border-white/20"></div>
+        <div class="max-w-4xl mx-auto px-4 text-center relative z-10">
+            <h2 class="text-4xl md:text-6xl font-black mb-6 uppercase tracking-tighter">Junte-se ao Movimento</h2>
+            <p class="text-xl mb-10 font-medium text-white/90">Cadastre-se para receber atualizações, relatórios de impacto e convites para eventos.</p>
+            <form class="flex flex-col md:flex-row gap-4 w-full max-w-lg mx-auto">
+                <input type="email" placeholder="Seu melhor e-mail" class="w-full px-6 py-4 bg-white text-ipace-title placeholder-gray-400 font-bold outline-none focus:ring-4 focus:ring-white/40">
+                <button type="submit" class="bg-ipace-blue text-white px-8 py-4 font-bold uppercase tracking-widest hover:bg-ipace-title transition-colors w-full md:w-auto whitespace-nowrap shadow-lg">
+                    Inscrever
+                </button>
+            </form>
+            <div class="mt-16 pt-16 border-t border-white/30 grid grid-cols-1 md:grid-cols-3 gap-8 text-left">
+                <div>
+                    <h4 class="font-black text-xl mb-4 uppercase">Contato</h4>
+                    <p>contato@ipace.org.br</p>
+                    <p><a href="tel:+551123059751" class="hover:underline">(11) 2305-9751</a></p>
+                    <p><a href="https://wa.me/551123059751" target="_blank" rel="noopener noreferrer" class="hover:underline">WhatsApp: (11) 2305-9751</a></p>
+                </div>
+                <div>
+                    <h4 class="font-black text-xl mb-4 uppercase">Endereço</h4>
+                    <p>Doutor Ferreira Lopes, 58</p>
+                    <p>Vila Sofia, São Paulo - SP</p>
+                </div>
+                <div>
+                    <h4 class="font-black text-xl mb-4 uppercase">Social</h4>
+                    <div class="flex gap-4">
+                        <a href="https://www.instagram.com/ipaceoficial/" class="hover:text-ipace-title transition-colors" target="_blank" rel="noopener noreferrer"><i data-lucide="instagram"></i></a>
+                        <a href="https://www.facebook.com/ipace.org/" class="hover:text-ipace-title transition-colors" target="_blank" rel="noopener noreferrer"><i data-lucide="facebook"></i></a>
+                        <a href="https://www.youtube.com/@ipaceinstituto" class="hover:text-ipace-title transition-colors" target="_blank" rel="noopener noreferrer"><i data-lucide="youtube"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="bg-white py-8 border-t border-gray-200">
+        <div class="max-w-7xl mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="flex items-center">
+                <a href="#" aria-label="IPACE">
+                    <img src="logos/logotipo_horizontal_ong_ipace.png" alt="IPACE" class="h-10 w-auto">
+                </a>
+            </div>
+            <p class="text-gray-400 text-sm font-medium text-center md:text-right">
+                © 2026 IPACE. Todos os direitos reservados.
+            </p>
+        </div>
+    </footer>
+</body>
+</html>

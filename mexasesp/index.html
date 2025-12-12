@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mexa-se SP - IPACE</title>
+    <link rel="apple-touch-icon" sizes="180x180" href="../favicon_ico/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="../favicon_ico/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../favicon_ico/favicon-16x16.png">
+    <link rel="icon" href="../favicon_ico/favicon.ico">
+    <link rel="manifest" href="../favicon_ico/site.webmanifest">
+    <meta name="theme-color" content="#2cc3f3">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="../styles.css">
+    <script src="../script.js"></script>
+    <script src="../colaborador-handler.js"></script>
+</head>
+<body class="antialiased">
+    <nav class="fixed w-full z-50 bg-white/95 backdrop-blur-sm border-b border-ipace-blue/20 transition-all duration-300" id="navbar">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <div class="flex-shrink-0 flex items-center">
+                    <a href="../index.html" class="inline-flex items-center" aria-label="IPACE">
+                        <img src="../logos/logotipo_horizontal_ong_ipace.png" alt="IPACE" class="h-10 w-auto">
+                    </a>
+                </div>
+                <div class="hidden md:flex space-x-8 items-center">
+                    <a href="../index.html#sobre" class="text-sm uppercase tracking-widest font-bold text-ipace-title hover:text-ipace-pink transition-colors">Quem Somos</a>
+                    <a href="../index.html#projetos" class="text-sm uppercase tracking-widest font-bold text-ipace-title hover:text-ipace-pink transition-colors">Projetos</a>
+                    <a href="../index.html#midia" class="text-sm uppercase tracking-widest font-bold text-ipace-title hover:text-ipace-pink transition-colors">Galeria</a>
+                    <a href="../index.html#contato" class="bg-ipace-pink text-white px-6 py-3 text-sm font-bold uppercase tracking-widest hover:bg-ipace-blue transition-colors">
+                        Blog
+                    </a>
+                </div>
+                <div class="md:hidden flex items-center">
+                    <button id="mobile-menu-btn" class="text-ipace-blue hover:text-ipace-pink focus:outline-none">
+                        <i data-lucide="menu" class="w-8 h-8"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div id="mobile-menu" class="fixed inset-0 bg-white z-[100] transform translate-x-full transition-transform duration-300 md:hidden flex flex-col justify-center items-center space-y-8 top-0 left-0 w-full h-screen">
+            <button id="close-menu-btn" class="absolute top-6 right-6 text-ipace-pink focus:outline-none">
+                <i data-lucide="x" class="w-8 h-8"></i>
+            </button>
+            <a href="../index.html#sobre" class="mobile-link text-2xl font-black uppercase tracking-tight text-ipace-title hover:text-ipace-blue">Quem Somos</a>
+            <a href="../index.html#projetos" class="mobile-link text-2xl font-black uppercase tracking-tight text-ipace-title hover:text-ipace-blue">Projetos</a>
+            <a href="../index.html#midia" class="mobile-link text-2xl font-black uppercase tracking-tight text-ipace-title hover:text-ipace-blue">Galeria</a>
+            <a href="../index.html#contato" class="mobile-link text-2xl font-black text-ipace-pink uppercase tracking-tight">Blog</a>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="relative h-[60vh] md:h-[70vh] flex items-end md:items-center justify-center overflow-hidden pt-20">
+        <div class="absolute inset-0 z-0">
+            <img src="../imagens/banner-mexasesp-capa.png" alt="Mexa-se São Paulo" class="w-full h-full object-cover">
+            <div class="absolute inset-0 bg-ipace-blue opacity-30 mix-blend-multiply"></div>
+            <div class="absolute inset-0 bg-gradient-to-t from-ipace-title/80 to-transparent"></div>
+        </div>
+        <div class="relative z-10 max-w-7xl mx-auto px-4 pb-8 md:pb-16 text-white">
+            <span class="inline-block bg-ipace-blue text-white px-4 py-2 text-xs font-bold uppercase tracking-widest mb-4">Projeto Social</span>
+            <h1 class="text-3xl sm:text-4xl md:text-6xl font-black uppercase leading-tight mb-4">
+                Mexa-se&nbsp;SP
+            </h1>
+            <p class="text-lg md:text-xl font-medium max-w-2xl text-white/90">
+                Esporte e movimento promovendo saúde, disciplina e inclusão em São Paulo.
+            </p>
+        </div>
+    </header>
+
+    <!-- Conheça o Projeto -->
+    <section class="py-12 md:py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="mb-8 md:mb-12">
+                <span class="text-ipace-green font-bold uppercase tracking-widest mb-2 block text-xs sm:text-sm">Sobre o Projeto</span>
+                <h2 class="text-3xl sm:text-4xl md:text-5xl font-black text-ipace-blue mb-6 leading-tight">
+                    Conheça o Projeto
+                </h2>
+            </div>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12 items-center">
+                <div>
+                    <p class="text-base sm:text-lg text-ipace-text mb-4 leading-relaxed">
+                        A cidade de São Paulo, por meio da Secretaria Municipal de Esportes e Lazer (SEME), em colaboração com o Instituto Pangea (IPACE), está dando continuidade ao empolgante Programa Mexa-se São Paulo, integrante do abrangente Plano de Metas 2021-2025. Este programa inovador tem como propósito oferecer atividades esportivas e de lazer aos paulistanos de todas as regiões, incentivando a ocupação e aproveitamento dos espaços públicos.
+                    </p>
+                </div>
+                <div>
+                    <p class="text-base sm:text-lg text-ipace-text mb-4 leading-relaxed">
+                        O Mexa-se percorrerá diversos Parques, Praças e Centros Esportivos, escolhendo diferentes localidades a cada semana, sempre aos sábados e domingos, das 10h às 17h. Com o intuito de enriquecer a experiência de lazer, o programa disponibiliza gratuitamente à população a prática de esportes, lazer e recreação, tornando os finais de semana mais agradáveis para crianças, adolescentes, adultos e idosos.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Faixa com Imagem -->
+            <div class="my-12 md:my-16 w-full overflow-hidden rounded-lg">
+                <img src="../imagens/Banner-Interno_Mexa-se-São-Paulo-ipace.jpg" alt="Mexa-se São Paulo" class="w-full h-auto object-cover">
+            </div>
+
+            <!-- Bloco Final -->
+            <div class="grid grid-cols-1 items-center">
+                <div>
+                    <p class="text-base sm:text-lg text-ipace-text mb-4 leading-relaxed">
+                        Este projeto diversificado abrange uma ampla gama de atividades, incluindo patinação, street ball, street tênis, slackline, tênis de mesa, cama elástica, piscina de bolinhas, dança de ritmos, board game e recreações. Cada uma dessas atividades é conduzida por profissionais qualificados, assegurando um ambiente seguro e propício para aprendizado, proporcionando uma experiência enriquecedora para todos os participantes.
+                    </p>
+                </div>
+        </div>
+    </section>
+
+    <!-- Impacto -->
+    <section class="bg-ipace-blue text-white py-12 md:py-16">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <h3 class="text-2xl sm:text-3xl md:text-4xl font-black mb-4 uppercase">Impacto Social</h3>
+            <p class="text-base sm:text-lg mb-8 max-w-3xl mx-auto text-white/90 leading-relaxed">
+                Saúde, disciplina e inclusão através do esporte e do convívio em equipe.
+            </p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 max-w-4xl mx-auto">
+                <div class="bg-white/10 backdrop-blur-sm p-6 md:p-8">
+                    <span class="block text-4xl sm:text-5xl font-black text-white mb-2">+30.000</span>
+                    <span class="text-xs sm:text-sm uppercase tracking-widest text-white/80 font-bold">Atendimentos anuais</span>
+                </div>
+                <div class="bg-white/10 backdrop-blur-sm p-6 md:p-8">
+                    <span class="block text-4xl sm:text-5xl font-black text-white mb-2">Várias</span>
+                    <span class="text-xs sm:text-sm uppercase tracking-widest text-white/80 font-bold">Modalidades esportivas</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Contato -->
+    <section class="py-16 md:py-24 bg-ipace-orange text-white relative overflow-hidden">
+        <div class="absolute top-0 right-0 w-64 h-64 border-l-4 border-b-4 border-white/20"></div>
+        <div class="max-w-4xl mx-auto px-4 text-center relative z-10">
+            <h2 class="text-3xl sm:text-4xl md:text-6xl font-black mb-6 uppercase tracking-tighter">Participe</h2>
+            <p class="text-lg sm:text-xl mb-10 font-medium text-white/90 max-w-2xl mx-auto">
+                Quer levar o Mexa-se SP para sua comunidade ou saber mais?
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                <a href="../index.html#contato" class="bg-white text-ipace-orange px-8 py-4 font-bold uppercase tracking-widest hover:bg-ipace-blue hover:text-white transition-colors w-full sm:w-auto shadow-lg text-sm sm:text-base">
+                    Fale Conosco
+                </a>
+                <a href="https://wa.me/5511917766265?text=Ol%C3%A1%2C%20quero%20saber%20mais%20sobre%20o%20projeto%20Mexa-se%20SP" target="_blank" rel="noopener noreferrer" class="border-2 border-white text-white px-8 py-4 font-bold uppercase tracking-widest hover:bg-white hover:text-ipace-orange transition-colors w-full sm:w-auto text-sm sm:text-base">
+                    WhatsApp
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <footer class="bg-white py-8 border-t border-gray-200">
+        <div class="max-w-7xl mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="flex items-center">
+                <a href="../index.html" aria-label="IPACE">
+                    <img src="../logos/logotipo_horizontal_ong_ipace.png" alt="IPACE" class="h-10 w-auto">
+                </a>
+            </div>
+            <p class="text-gray-400 text-sm font-medium text-center md:text-right">
+                © 2026 IPACE. Todos os direitos reservados.
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        // Carrossel simples compartilhando o mesmo comportamento do ce_nautico
+        document.addEventListener('DOMContentLoaded', () => {
+            const container = document.querySelector('.carousel-galeria');
+            if (!container) return;
+            const images = Array.from(container.querySelectorAll('.carousel-img')).filter(img => !img.hasAttribute('data-placeholder'));
+            const dotsContainer = document.querySelector('[data-carousel-dots]');
+            const prevBtn = document.querySelector('[data-carousel-prev]');
+            const nextBtn = document.querySelector('[data-carousel-next]');
+            if (!images.length || !dotsContainer) return;
+            let currentIndex = 0;
+            let timer;
+            function buildDots(){
+                dotsContainer.innerHTML = '';
+                images.forEach((_, i) => {
+                    const dot = document.createElement('button');
+                    dot.className = 'carousel-dot w-2 h-2 rounded-full bg-white opacity-50 transition-opacity';
+                    dot.dataset.index = String(i);
+                    dotsContainer.appendChild(dot);
+                });
+            }
+            function showImage(index){
+                images.forEach((img, i) => {
+                    img.classList.toggle('opacity-100', i === index);
+                    img.classList.toggle('opacity-0', i !== index);
+                });
+                const dots = dotsContainer.querySelectorAll('.carousel-dot');
+                dots.forEach((dot, i) => {
+                    dot.classList.toggle('opacity-100', i === index);
+                    dot.classList.toggle('opacity-50', i !== index);
+                });
+            }
+            function nextImage(){ currentIndex = (currentIndex + 1) % images.length; showImage(currentIndex); }
+            function prevImage(){ currentIndex = (currentIndex - 1 + images.length) % images.length; showImage(currentIndex); }
+            function resetTimer(){ if (timer) clearInterval(timer); timer = setInterval(nextImage, 5000); }
+            buildDots();
+            showImage(currentIndex);
+            resetTimer();
+            dotsContainer.addEventListener('click', (e) => {
+                const t = e.target;
+                if (t instanceof HTMLElement && t.classList.contains('carousel-dot')){
+                    currentIndex = Number(t.dataset.index || 0);
+                    showImage(currentIndex);
+                    resetTimer();
+                }
+            });
+            prevBtn?.addEventListener('click', () => { prevImage(); resetTimer(); });
+            nextBtn?.addEventListener('click', () => { nextImage(); resetTimer(); });
+        });
+    </script>
+</body>
+</html>
