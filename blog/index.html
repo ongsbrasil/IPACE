@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog IPACE</title>
+    <link rel="apple-touch-icon" sizes="180x180" href="../favicon_ico/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="../favicon_ico/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../favicon_ico/favicon-16x16.png">
+    <link rel="icon" href="../favicon_ico/favicon.ico">
+    <link rel="manifest" href="../favicon_ico/site.webmanifest">
+    <meta name="theme-color" content="#2cc3f3">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="../styles.css">
+</head>
+<body class="antialiased bg-gray-50 text-ipace-title">
+    <header class="bg-white border-b border-gray-200">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex items-center justify-between">
+            <a href="../index.html" class="flex items-center gap-3">
+                <img src="../logos/logotipo_horizontal_ong_ipace.png" alt="IPACE" class="h-10 w-auto">
+                <span class="font-black uppercase tracking-widest text-sm text-ipace-blue">Blog</span>
+            </a>
+            <nav class="hidden sm:flex items-center gap-6 text-sm font-bold uppercase tracking-widest text-ipace-title">
+                <a href="../index.html#projetos" class="hover:text-ipace-pink">Projetos</a>
+                <a href="../index.html#contato" class="hover:text-ipace-pink">Contato</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+        <div class="mb-8 sm:mb-10">
+            <span class="text-ipace-green font-bold uppercase tracking-widest mb-2 block text-xs sm:text-sm">Últimas do Blog</span>
+            <h1 class="text-3xl sm:text-4xl md:text-5xl font-black text-ipace-blue leading-tight">Novidades, histórias e impacto</h1>
+            <p class="text-ipace-text mt-3 max-w-3xl">Conteúdos publicados via Supabase. Configure suas credenciais para carregar os posts.</p>
+        </div>
+
+        <section id="posts" class="grid gap-6 md:grid-cols-2">
+            <!-- Cards serão preenchidos via Supabase -->
+        </section>
+    </main>
+
+    <template id="post-card-template">
+        <article class="bg-white shadow-sm hover:shadow-md transition-shadow border border-gray-100 overflow-hidden flex flex-col h-full">
+            <div class="h-48 bg-gray-100 overflow-hidden">
+                <img data-field="image_url" alt="Imagem do post" class="w-full h-full object-cover hidden">
+            </div>
+            <div class="p-5 flex-1 flex flex-col gap-3">
+                <div class="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-ipace-pink">
+                    <span data-field="date"></span>
+                    <span class="text-gray-300">•</span>
+                    <span data-field="author"></span>
+                </div>
+                <h2 class="text-xl font-black text-ipace-blue leading-tight" data-field="title"></h2>
+                <p class="text-sm text-ipace-text" data-field="description"></p>
+                <p class="text-sm text-gray-500 mt-auto" data-field="header"></p>
+            </div>
+            <div class="px-5 pb-5">
+                <button class="inline-flex items-center gap-2 text-ipace-blue font-bold uppercase tracking-widest text-sm hover:text-ipace-pink" data-field="read-btn">Ler artigo</button>
+            </div>
+        </article>
+    </template>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        // Config Supabase (substitua pelos reais)
+        const SUPABASE_URL = 'https://ofvwqwkucgrgczpngmaq.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9mdndxd2t1Y2dyZ2N6cG5nbWFxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU1NTkxNTksImV4cCI6MjA4MTEzNTE1OX0.xFHzAlxJF_n_27PQn9eZE-In8p0D2AIgmVFbUZx6tjE';
+        const TABLE_NAME = 'posts';
+
+        function renderPosts(posts) {
+            const container = document.getElementById('posts');
+            const template = document.getElementById('post-card-template');
+            if (!container || !template) return;
+            container.innerHTML = '';
+
+            if (!posts.length) {
+                container.innerHTML = '<div class="col-span-2 text-sm text-gray-500">Nenhum post encontrado. Verifique as credenciais do Supabase e a tabela "posts".</div>';
+                return;
+            }
+
+            posts.forEach(post => {
+                const clone = template.content.cloneNode(true);
+                const set = (sel, text) => {
+                    const el = clone.querySelector(`[data-field="${sel}"]`);
+                    if (el) el.textContent = text || '';
+                };
+                set('title', post.title);
+                set('header', post.header);
+                set('description', post.description);
+                set('date', post.date);
+                set('author', post.author);
+
+                const img = clone.querySelector('[data-field="image_url"]');
+                const imgUrl = post.image_url || post.image;
+                if (img && imgUrl) {
+                    img.src = imgUrl;
+                    img.classList.remove('hidden');
+                }
+
+                const btn = clone.querySelector('[data-field="read-btn"]');
+                if (btn) {
+                    btn.addEventListener('click', () => {
+                        const slug = post.slug || '';
+                        if (slug) {
+                            // Navega para página de detalhe (iremos criar em seguida)
+                            window.location.href = `post.html?slug=${encodeURIComponent(slug)}`;
+                        } else {
+                            alert(post.article || 'Artigo não fornecido.');
+                        }
+                    });
+                }
+
+                container.appendChild(clone);
+            });
+        }
+
+        async function fetchSupabasePosts() {
+            if (!SUPABASE_URL || SUPABASE_URL.includes('YOUR-PROJECT')) {
+                renderPosts([]);
+                console.warn('Configure SUPABASE_URL e SUPABASE_ANON_KEY');
+                return;
+            }
+            const { createClient } = window.supabase;
+            const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+            const { data, error } = await supabase
+                .from(TABLE_NAME)
+                .select('id,title,header,description,date,author,article,image_url,slug')
+                .order('date', { ascending: false })
+                .limit(12);
+            if (error) {
+                console.error('Erro ao buscar posts', error);
+                renderPosts([]);
+                return;
+            }
+            renderPosts(data || []);
+        }
+
+        document.addEventListener('DOMContentLoaded', fetchSupabasePosts);
+    </script>
+</body>
+</html>

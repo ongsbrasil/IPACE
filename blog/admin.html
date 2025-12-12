@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Blog - IPACE</title>
+    <link rel="apple-touch-icon" sizes="180x180" href="../favicon_ico/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="../favicon_ico/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../favicon_ico/favicon-16x16.png">
+    <link rel="icon" href="../favicon_ico/favicon.ico">
+    <link rel="manifest" href="../favicon_ico/site.webmanifest">
+    <meta name="theme-color" content="#2cc3f3">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="../styles.css">
+</head>
+<body class="antialiased bg-gray-50 text-ipace-title">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+        <header class="flex items-center justify-between mb-8">
+            <a href="../index.html" class="flex items-center gap-3">
+                <img src="../logos/logotipo_horizontal_ong_ipace.png" alt="IPACE" class="h-10 w-auto">
+                <span class="font-black uppercase tracking-widest text-sm text-ipace-blue">Painel Blog</span>
+            </a>
+            <button id="logout-btn" class="hidden text-sm font-bold uppercase tracking-widest text-black hover:text-ipace-pink">Sair</button>
+        </header>
+
+        <section id="login-section" class="bg-white shadow-sm border border-gray-200 p-6 max-w-md mx-auto">
+            <h1 class="text-2xl font-black text-ipace-blue mb-4">Login</h1>
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-bold uppercase tracking-widest mb-1">Email</label>
+                    <input id="login-email" type="email" class="w-full border border-gray-300 px-3 py-2" placeholder="admin@ipace.org">
+                </div>
+                <div>
+                    <label class="block text-sm font-bold uppercase tracking-widest mb-1">Senha</label>
+                    <input id="login-password" type="password" class="w-full border border-gray-300 px-3 py-2" placeholder="Senha">
+                </div>
+                <button id="login-btn" class="w-full bg-ipace-blue text-black py-3 font-bold uppercase tracking-widest hover:bg-ipace-title border border-ipace-blue">Entrar</button>
+                <p id="login-error" class="text-sm text-ipace-pink"></p>
+            </div>
+        </section>
+
+        <section id="admin-section" class="hidden space-y-8">
+            <div class="bg-white shadow-sm border border-gray-200 p-6">
+                <h2 class="text-xl font-black text-ipace-blue mb-4">Novo Post</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-bold uppercase tracking-widest mb-1">Título</label>
+                        <input id="post-title" type="text" class="w-full border border-gray-300 px-3 py-2">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold uppercase tracking-widest mb-1">Cabeçalho</label>
+                        <input id="post-header" type="text" class="w-full border border-gray-300 px-3 py-2">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold uppercase tracking-widest mb-1">Descrição</label>
+                        <input id="post-description" type="text" class="w-full border border-gray-300 px-3 py-2">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold uppercase tracking-widest mb-1">Data</label>
+                        <input id="post-date" type="date" class="w-full border border-gray-300 px-3 py-2">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold uppercase tracking-widest mb-1">Autor</label>
+                        <input id="post-author" type="text" class="w-full border border-gray-300 px-3 py-2">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold uppercase tracking-widest mb-1">Slug (url)</label>
+                        <input id="post-slug" type="text" class="w-full border border-gray-300 px-3 py-2" placeholder="meu-artigo">
+                    </div>
+                    <div class="md:col-span-2 space-y-2">
+                        <label class="block text-sm font-bold uppercase tracking-widest mb-1">Imagem (upload) — até 5MB</label>
+                        <input id="post-image-file" type="file" accept="image/*" class="w-full border border-gray-300 px-3 py-2">
+                        <input id="post-image-url" type="hidden">
+                        <p id="post-image-preview" class="text-xs text-gray-600 break-all"></p>
+                    </div>
+                    <div class="md:col-span-2 space-y-2">
+                        <label class="block text-sm font-bold uppercase tracking-widest mb-1">Galeria (upload múltiplo) — até 5MB cada</label>
+                        <input id="post-gallery-files" type="file" accept="image/*" multiple class="w-full border border-gray-300 px-3 py-2">
+                        <input id="post-gallery-urls" type="hidden">
+                        <p id="post-gallery-preview" class="text-xs text-gray-600 break-all"></p>
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="block text-sm font-bold uppercase tracking-widest mb-1">Artigo</label>
+                        <textarea id="post-article" rows="6" class="w-full border border-gray-300 px-3 py-2"></textarea>
+                    </div>
+                </div>
+                <div class="mt-4 flex flex-wrap gap-3">
+                    <button id="save-post" class="bg-ipace-green text-black px-6 py-3 font-bold uppercase tracking-widest hover:bg-ipace-title/10 border border-ipace-green">Salvar</button>
+                    <button id="clear-form" class="border border-gray-300 px-6 py-3 font-bold uppercase tracking-widest text-black hover:bg-gray-50">Limpar</button>
+                </div>
+            </div>
+
+            <div class="bg-white shadow-sm border border-gray-200 p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-xl font-black text-ipace-blue">Posts</h2>
+                    <button id="export-posts" class="text-sm font-bold uppercase tracking-widest text-black hover:text-ipace-blue">Exportar JSON</button>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full text-sm">
+                        <thead>
+                            <tr class="text-left border-b">
+                                <th class="py-2 pr-4">Título</th>
+                                <th class="py-2 pr-4">Data</th>
+                                <th class="py-2 pr-4">Autor</th>
+                                <th class="py-2 pr-4">Slug</th>
+                                <th class="py-2 pr-4">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="posts-table" class="align-top"></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        const LS_KEY_POSTS = 'blog_posts';
+        const LS_KEY_AUTH = 'blog_auth';
+        // Supabase config (substitua pelos reais)
+        const SUPABASE_URL = 'https://ofvwqwkucgrgczpngmaq.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9mdndxd2t1Y2dyZ2N6cG5nbWFxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU1NTkxNTksImV4cCI6MjA4MTEzNTE1OX0.xFHzAlxJF_n_27PQn9eZE-In8p0D2AIgmVFbUZx6tjE';
+        const TABLE_NAME = 'posts';
+        const SUPABASE_BUCKET = 'blog-images'; // crie este bucket público no Storage
+        const DEMO_EMAIL = 'admin@ipace.org';
+        const DEMO_PASS = 'senha123';
+
+        const loginSection = document.getElementById('login-section');
+        const adminSection = document.getElementById('admin-section');
+        const logoutBtn = document.getElementById('logout-btn');
+        const loginBtn = document.getElementById('login-btn');
+        const loginError = document.getElementById('login-error');
+
+        const fields = {
+            title: document.getElementById('post-title'),
+            header: document.getElementById('post-header'),
+            description: document.getElementById('post-description'),
+            date: document.getElementById('post-date'),
+            author: document.getElementById('post-author'),
+            slug: document.getElementById('post-slug'),
+            imageUrlHidden: document.getElementById('post-image-url'),
+            imageFile: document.getElementById('post-image-file'),
+            imagePreview: document.getElementById('post-image-preview'),
+            galleryFiles: document.getElementById('post-gallery-files'),
+            galleryUrls: document.getElementById('post-gallery-urls'),
+            galleryPreview: document.getElementById('post-gallery-preview'),
+            article: document.getElementById('post-article'),
+        };
+
+        // Local cache fallback (optional)
+        function getPosts(){
+            try { return JSON.parse(localStorage.getItem(LS_KEY_POSTS) || '[]'); } catch { return []; }
+        }
+        function savePosts(posts){ localStorage.setItem(LS_KEY_POSTS, JSON.stringify(posts)); }
+
+        // Supabase client
+        let supabaseClient = null;
+        let supabaseReady = new Promise((resolve) => {
+            const check = () => {
+                if (window.supabase?.createClient) {
+                    supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+                    resolve();
+                } else {
+                    setTimeout(check, 50);
+                }
+            };
+            check();
+        });
+
+        function getSupabase(){
+            if (!SUPABASE_URL || SUPABASE_URL.includes('YOUR-PROJECT')) return null;
+            return supabaseClient;
+        }
+
+        async function renderTable(){
+            const tbody = document.getElementById('posts-table');
+            let posts = getPosts();
+            const supabase = getSupabase();
+            if (supabase) {
+                await supabaseReady;
+                const { data, error } = await supabase
+                    .from(TABLE_NAME)
+                    .select('id,title,header,description,date,author,slug,image_url,article')
+                    .order('date', { ascending: false });
+                if (!error && Array.isArray(data)) {
+                    posts = data;
+                    savePosts(posts); // cache local
+                }
+            }
+            tbody.innerHTML = '';
+            posts.forEach((p, idx) => {
+                const tr = document.createElement('tr');
+                tr.className = 'border-b';
+                tr.innerHTML = `
+                    <td class="py-2 pr-4 font-bold text-ipace-blue">${p.title || ''}</td>
+                    <td class="py-2 pr-4">${p.date || ''}</td>
+                    <td class="py-2 pr-4">${p.author || ''}</td>
+                    <td class="py-2 pr-4">${p.slug || ''}</td>
+                    <td class="py-2 pr-4 flex gap-2">
+                        <button data-idx="${idx}" class="edit text-ipace-blue font-bold">Editar</button>
+                        <button data-idx="${idx}" class="delete text-ipace-pink font-bold">Excluir</button>
+                    </td>`;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function clearForm(){
+            Object.values(fields).forEach(f => f.value = '');
+            fields.imageFile.value = '';
+            fields.imagePreview.textContent = '';
+            fields.galleryFiles.value = '';
+            fields.galleryUrls.value = '';
+            fields.galleryPreview.textContent = '';
+        }
+
+        function fillForm(post){
+            fields.title.value = post.title || '';
+            fields.header.value = post.header || '';
+            fields.description.value = post.description || '';
+            fields.date.value = post.date || '';
+            fields.author.value = post.author || '';
+            fields.slug.value = post.slug || '';
+            const url = post.image_url || post.image || '';
+            fields.imageUrlHidden.value = url;
+            fields.imageFile.value = '';
+            fields.imagePreview.textContent = url ? `Imagem atual: ${url}` : '';
+            const galList = Array.isArray(post.gallery) ? post.gallery : [];
+            fields.galleryUrls.value = galList.join("\n");
+            fields.galleryFiles.value = '';
+            fields.galleryPreview.textContent = galList.length ? `Galeria atual: ${galList.length} imagem(ns)` : '';
+            fields.article.value = post.article || '';
+        }
+
+        async function uploadImage(file, folder='posts'){ return uploadFiles([file], folder).then(arr => arr[0] || null); }
+
+        async function uploadFiles(fileList, folder='posts'){
+            const files = Array.from(fileList || []);
+            if (!files.length) return [];
+            const MAX = 5 * 1024 * 1024;
+            for (const f of files) {
+                if (f.size > MAX) {
+                    alert(`Arquivo ${f.name} excede 5MB.`);
+                    return [];
+                }
+            }
+            const supabase = getSupabase();
+            if (!supabase) { alert('Supabase não configurado para upload.'); return []; }
+            const uploaded = [];
+            for (const f of files) {
+                const safeName = f.name.replace(/\s+/g, '-');
+                const path = `${folder}/${Date.now()}-${Math.random().toString(36).slice(2)}-${safeName}`;
+                const { error } = await supabase.storage.from(SUPABASE_BUCKET).upload(path, f, { cacheControl: '3600', upsert: false });
+                if (error) {
+                    alert('Erro ao enviar imagem: ' + error.message);
+                    return uploaded;
+                }
+                const { data } = supabase.storage.from(SUPABASE_BUCKET).getPublicUrl(path);
+                if (data?.publicUrl) uploaded.push(data.publicUrl);
+            }
+            return uploaded;
+        }
+
+        async function handleSave(){
+            let imageUrl = fields.imageUrlHidden.value;
+            if (fields.imageFile.files && fields.imageFile.files[0]) {
+                const uploaded = await uploadImage(fields.imageFile.files[0]);
+                if (uploaded) imageUrl = uploaded;
+            }
+            const newGalleryUploads = fields.galleryFiles.files && fields.galleryFiles.files.length
+                ? await uploadFiles(fields.galleryFiles.files, 'gallery') : [];
+            const gallery = (
+                (fields.galleryUrls.value ? fields.galleryUrls.value.split(/\r?\n/).map(s => s.trim()).filter(Boolean) : [])
+            ).concat(newGalleryUploads);
+            const post = {
+                title: fields.title.value.trim(),
+                header: fields.header.value.trim(),
+                description: fields.description.value.trim(),
+                date: fields.date.value,
+                author: fields.author.value.trim(),
+                slug: fields.slug.value.trim(),
+                image_url: imageUrl,
+                gallery,
+                article: fields.article.value.trim(),
+            };
+            if (!post.title || !post.slug) {
+                alert('Título e slug são obrigatórios.');
+                return;
+            }
+            const supabase = getSupabase();
+            if (supabase) {
+                await supabaseReady;
+                let res;
+                const editIdx = Number(savePosts.editIdx);
+                if (Number.isInteger(editIdx)) {
+                    const cached = getPosts()[editIdx] || {};
+                    res = await supabase
+                        .from(TABLE_NAME)
+                        .update(post)
+                        .eq('slug', cached.slug);
+                    delete savePosts.editIdx;
+                } else {
+                    res = await supabase
+                        .from(TABLE_NAME)
+                        .insert(post)
+                        .select();
+                }
+                if (res.error) {
+                    alert('Erro ao salvar no Supabase: ' + res.error.message);
+                }
+            } else {
+                const posts = getPosts();
+                const editIdx = Number(savePosts.editIdx);
+                if (Number.isInteger(editIdx)) {
+                    posts[editIdx] = post;
+                    delete savePosts.editIdx;
+                } else {
+                    posts.unshift(post);
+                }
+                savePosts(posts);
+            }
+            renderTable();
+            clearForm();
+        }
+
+        async function handleTableClick(e){
+            const idx = Number(e.target.dataset.idx);
+            if (!Number.isInteger(idx)) return;
+            const posts = getPosts();
+            if (e.target.classList.contains('delete')) {
+                const supabase = getSupabase();
+                if (supabase) {
+                    await supabaseReady;
+                    const slug = posts[idx]?.slug;
+                    const { error } = await supabase.from(TABLE_NAME).delete().eq('slug', slug);
+                    if (error) alert('Erro ao excluir: ' + error.message);
+                } else {
+                    posts.splice(idx,1);
+                    savePosts(posts);
+                }
+                renderTable();
+            }
+            if (e.target.classList.contains('edit')) {
+                fillForm(posts[idx]);
+                savePosts.editIdx = idx;
+            }
+        }
+
+        function handleExport(){
+            const data = JSON.stringify(getPosts(), null, 2);
+            const blob = new Blob([data], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'posts.json';
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function checkAuth(){
+            return localStorage.getItem(LS_KEY_AUTH) === 'true';
+        }
+        function setAuth(on){
+            if (on) localStorage.setItem(LS_KEY_AUTH, 'true'); else localStorage.removeItem(LS_KEY_AUTH);
+        }
+
+        function handleLogin(){
+            const email = document.getElementById('login-email').value.trim();
+            const pass = document.getElementById('login-password').value;
+            if (email === DEMO_EMAIL && pass === DEMO_PASS) {
+                setAuth(true);
+                loginSection.classList.add('hidden');
+                adminSection.classList.remove('hidden');
+                logoutBtn.classList.remove('hidden');
+                renderTable();
+                loginError.textContent = '';
+            } else {
+                loginError.textContent = 'Credenciais inválidas';
+            }
+        }
+
+        function init(){
+            // Load supabase client
+            const s = document.createElement('script');
+            s.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';
+            s.defer = true;
+            document.head.appendChild(s);
+            document.getElementById('posts-table').addEventListener('click', handleTableClick);
+            document.getElementById('save-post').addEventListener('click', handleSave);
+            document.getElementById('clear-form').addEventListener('click', clearForm);
+            document.getElementById('export-posts').addEventListener('click', handleExport);
+            logoutBtn.addEventListener('click', () => { setAuth(false); location.reload(); });
+            loginBtn.addEventListener('click', handleLogin);
+            if (checkAuth()) {
+                loginSection.classList.add('hidden');
+                adminSection.classList.remove('hidden');
+                logoutBtn.classList.remove('hidden');
+                renderTable();
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>

@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Artigo - IPACE</title>
+    <link rel="apple-touch-icon" sizes="180x180" href="../favicon_ico/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="../favicon_ico/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../favicon_ico/favicon-16x16.png">
+    <link rel="icon" href="../favicon_ico/favicon.ico">
+    <link rel="manifest" href="../favicon_ico/site.webmanifest">
+    <meta name="theme-color" content="#2cc3f3">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="../styles.css">
+</head>
+<body class="antialiased bg-gray-50 text-ipace-title">
+    <header class="bg-white border-b border-gray-200">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex items-center justify-between">
+            <a href="../index.html" class="flex items-center gap-3">
+                <img src="../logos/logotipo_horizontal_ong_ipace.png" alt="IPACE" class="h-10 w-auto">
+                <span class="font-black uppercase tracking-widest text-sm text-ipace-blue">Artigo</span>
+            </a>
+            <nav class="hidden sm:flex items-center gap-6 text-sm font-bold uppercase tracking-widest text-ipace-title">
+                <a href="../blog/index.html" class="hover:text-ipace-pink">Blog</a>
+                <a href="../index.html#contato" class="hover:text-ipace-pink">Contato</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+        <article id="article" class="bg-white shadow-sm border border-gray-100 overflow-hidden">
+            <div class="h-60 bg-gray-100 overflow-hidden">
+                <img id="post-image" alt="Imagem do post" class="w-full h-full object-cover hidden">
+            </div>
+            <div class="p-6 space-y-4">
+                <div class="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-ipace-pink">
+                    <span id="post-date"></span>
+                    <span class="text-gray-300">•</span>
+                    <span id="post-author"></span>
+                </div>
+                <h1 id="post-title" class="text-2xl sm:text-3xl font-black text-ipace-blue"></h1>
+                <p id="post-header" class="text-sm text-gray-500"></p>
+                <div id="post-article" class="prose max-w-none"></div>
+                <div id="post-gallery" class="mt-6 hidden">
+                    <h3 class="text-lg font-black text-ipace-blue mb-3">Galeria</h3>
+                    <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+                        <!-- imagens inseridas via script -->
+                    </div>
+                </div>
+            </div>
+        </article>
+        <div class="mt-6">
+            <a href="index.html" class="text-ipace-blue font-bold uppercase tracking-widest text-sm hover:text-ipace-pink">← Voltar ao Blog</a>
+        </div>
+        <!-- Actions moved below article -->
+        <div class="flex items-center justify-between mt-6">
+            <div class="flex items-center flex-wrap text-sm text-ipace-title">
+                <button id="share-btn" class="flex items-center gap-2 hover:text-ipace-pink">
+                    <span class="inline-block w-4 h-4" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M14 7l-5.5 3 5.5 3V20l8-8-8-8v6z"/></svg>
+                    </span>
+                    <span>Compartilhar</span>
+                </button>
+                <span class="px-2 text-gray-300">|</span>
+                <button id="copy-link-btn" class="hover:text-ipace-pink">Copiar Link</button>
+                <span class="px-2 text-gray-300">|</span>
+                <a id="wa-share" class="flex items-center gap-2 hover:text-ipace-pink" target="_blank" rel="noopener" aria-label="Compartilhar no WhatsApp">
+                    <span class="inline-block w-4 h-4" aria-hidden="true">
+                        <svg viewBox="0 0 32 32" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M16 3C9.383 3 4 8.383 4 15c0 2.646.855 5.09 2.297 7.086L4 29l7.074-2.307C13.01 28.145 14.447 29 16 29c6.617 0 12-5.383 12-12S22.617 3 16 3zm0 22c-1.256 0-2.47-.314-3.555-.906l-.254-.139-4.17 1.361 1.363-4.162-.139-.254A8.94 8.94 0 017 15c0-4.962 4.038-9 9-9s9 4.038 9 9-4.038 9-9 9zm5.168-6.844c-.283-.141-1.668-.824-1.926-.918-.258-.094-.445-.141-.631.141-.188.281-.725.918-.889 1.109-.165.188-.328.211-.611.07-.283-.141-1.196-.441-2.28-1.405-.842-.75-1.41-1.676-1.574-1.957-.165-.281-.018-.434.123-.575.126-.125.281-.328.422-.492.141-.165.188-.281.283-.469.094-.188.047-.352-.023-.492-.07-.141-.631-1.52-.865-2.082-.227-.546-.459-.472-.631-.472-.165 0-.352-.023-.539-.023-.188 0-.492.07-.75.352-.258.281-.985.965-.985 2.35 0 1.384 1.007 2.724 1.148 2.914.141.188 1.983 3.025 4.801 4.118.672.289 1.197.461 1.609.59.676.215 1.293.184 1.781.111.543-.08 1.668-.68 1.902-1.336.235-.657.235-1.219.165-1.336-.07-.117-.258-.188-.541-.328z"/></svg>
+                    </span>
+                    <span class="sr-only">WhatsApp</span>
+                </a>
+                <span class="px-2 text-gray-300">|</span>
+                <a id="fb-share" class="flex items-center gap-2 hover:text-ipace-pink" target="_blank" rel="noopener" aria-label="Compartilhar no Facebook">
+                    <span class="inline-block w-4 h-4" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M22 12a10 10 0 10-11.5 9.95v-7.04H7.9V12h2.6V9.8c0-2.57 1.53-3.99 3.87-3.99 1.12 0 2.29.2 2.29.2v2.52h-1.29c-1.27 0-1.67.79-1.67 1.6V12h2.84l-.45 2.91h-2.39v7.04A10 10 0 0022 12z"/></svg>
+                    </span>
+                    <span class="sr-only">Facebook</span>
+                </a>
+            </div>
+            <button id="pdf-btn" class="text-xs font-semibold tracking-wide text-white bg-black px-4 py-2 hover:bg-gray-900">Baixar PDF</button>
+        </div>
+    </main>
+
+    <!-- Lightbox Modal -->
+    <div id="lightbox" class="fixed inset-0 bg-black/90 hidden items-center justify-center z-50">
+        <button id="lightbox-close" class="absolute top-6 right-6 text-white">✕</button>
+        <button id="lightbox-prev" class="absolute left-6 top-1/2 -translate-y-1/2 text-white text-3xl">‹</button>
+        <button id="lightbox-next" class="absolute right-6 top-1/2 -translate-y-1/2 text-white text-3xl">›</button>
+        <div class="max-w-5xl w-full px-4">
+            <img id="lightbox-img" class="w-full max-h-[80vh] object-contain" alt="Imagem da galeria">
+        </div>
+    </div>
+
+    <!-- Toast/Popup CSS (no browser alert) -->
+    <div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-black/80 text-white text-sm px-4 py-2 rounded shadow-lg hidden z-50">Mensagem</div>
+
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+    <script>
+        const LS_KEY_POSTS = 'blog_posts';
+        function getPosts(){
+            try { return JSON.parse(localStorage.getItem(LS_KEY_POSTS) || '[]'); } catch { return []; }
+        }
+        function getParam(name){
+            const url = new URL(window.location.href);
+            return url.searchParams.get(name);
+        }
+        function render(){
+            const slug = getParam('slug');
+            const post = getPosts().find(p => (p.slug || '') === slug);
+            if (!post) {
+                document.getElementById('article').innerHTML = '<div class="p-6">Artigo não encontrado.</div>';
+                return;
+            }
+            document.getElementById('post-title').textContent = post.title || '';
+            document.getElementById('post-header').textContent = post.header || '';
+            document.getElementById('post-date').textContent = post.date || '';
+            document.getElementById('post-author').textContent = post.author || '';
+            const img = document.getElementById('post-image');
+            const imgUrl = post.image_url || post.image;
+            if (imgUrl) { img.src = imgUrl; img.classList.remove('hidden'); }
+            // Render artigo com quebras simples; futuramente pode usar Markdown
+            const articleEl = document.getElementById('post-article');
+            const text = (post.article || '').replace(/\n\n/g, '</p><p>').replace(/\n/g, '<br>');
+            articleEl.innerHTML = '<p>' + text + '</p>';
+            // SEO básico: atualiza título
+            document.title = (post.title ? post.title + ' - IPACE' : 'Artigo - IPACE');
+
+            // Renderiza galeria se houver
+            if (Array.isArray(post.gallery) && post.gallery.length) {
+                const gal = document.getElementById('post-gallery');
+                const grid = gal.querySelector('div');
+                gal.classList.remove('hidden');
+                post.gallery.forEach((url, idx) => {
+                    const wrapper = document.createElement('button');
+                    wrapper.type = 'button';
+                    wrapper.className = 'bg-gray-100 overflow-hidden h-28 md:h-32 focus:outline-none';
+                    wrapper.dataset.index = String(idx);
+                    const img = document.createElement('img');
+                    img.src = url;
+                    img.alt = 'Imagem da galeria';
+                    img.className = 'w-full h-full object-cover';
+                    wrapper.appendChild(img);
+                    grid.appendChild(wrapper);
+                });
+
+                // Lightbox behavior
+                const lightbox = document.getElementById('lightbox');
+                const lightboxImg = document.getElementById('lightbox-img');
+                const btnPrev = document.getElementById('lightbox-prev');
+                const btnNext = document.getElementById('lightbox-next');
+                const btnClose = document.getElementById('lightbox-close');
+                let current = 0;
+
+                function show(i){
+                    current = (i + post.gallery.length) % post.gallery.length;
+                    lightboxImg.src = post.gallery[current];
+                    lightbox.classList.remove('hidden');
+                    lightbox.classList.add('flex');
+                }
+                function hide(){
+                    lightbox.classList.add('hidden');
+                    lightbox.classList.remove('flex');
+                }
+                grid.addEventListener('click', (e) => {
+                    const btn = e.target.closest('button');
+                    if (!btn) return;
+                    const idx = Number(btn.dataset.index);
+                    if (Number.isInteger(idx)) show(idx);
+                });
+                btnPrev.addEventListener('click', () => show(current - 1));
+                btnNext.addEventListener('click', () => show(current + 1));
+                btnClose.addEventListener('click', hide);
+                lightbox.addEventListener('click', (e) => { if (e.target.id === 'lightbox') hide(); });
+                document.addEventListener('keydown', (e) => {
+                    if (lightbox.classList.contains('hidden')) return;
+                    if (e.key === 'Escape') hide();
+                    if (e.key === 'ArrowLeft') show(current - 1);
+                    if (e.key === 'ArrowRight') show(current + 1);
+                });
+            }
+
+            // Share links
+            const url = window.location.href;
+            const wa = document.getElementById('wa-share');
+            const fb = document.getElementById('fb-share');
+            wa.href = `https://wa.me/?text=${encodeURIComponent(post.title || 'Artigo')}%20-%20${encodeURIComponent(url)}`;
+            fb.href = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`;
+            const toast = document.getElementById('toast');
+            function showToast(msg){
+                toast.textContent = msg;
+                toast.classList.remove('hidden');
+                clearTimeout(showToast._t);
+                showToast._t = setTimeout(() => toast.classList.add('hidden'), 2000);
+            }
+            document.getElementById('copy-link-btn').addEventListener('click', async () => {
+                try { await navigator.clipboard.writeText(url); showToast('Link copiado!'); }
+                catch { showToast('Não foi possível copiar o link.'); }
+            });
+            const shareBtn = document.getElementById('share-btn');
+            shareBtn.addEventListener('click', async () => {
+                if (navigator.share) {
+                    try { await navigator.share({ title: post.title || 'Artigo', text: post.header || '', url }); } catch {}
+                } else {
+                    showToast('Use WhatsApp ou Facebook ao lado.');
+                }
+            });
+
+            // PDF download using html2canvas + jsPDF
+            document.getElementById('pdf-btn').addEventListener('click', async () => {
+                const { jsPDF } = window.jspdf || {};
+                if (!jsPDF) { alert('Biblioteca PDF não carregou.'); return; }
+                const doc = new jsPDF('p', 'mm', 'a4');
+                // Fonte simples
+                try { doc.setFont('helvetica', 'normal'); } catch {}
+                const el = document.getElementById('article');
+                const canvas = await html2canvas(el, { scale: 2, useCORS: true, logging: false });
+                const imgData = canvas.toDataURL('image/png');
+                const pageWidth = doc.internal.pageSize.getWidth();
+                const pageHeight = doc.internal.pageSize.getHeight();
+                const imgProps = doc.getImageProperties(imgData);
+                const ratio = imgProps.width / imgProps.height;
+                let pdfWidth = pageWidth - 20; // 10mm margins
+                let pdfHeight = pdfWidth / ratio;
+                if (pdfHeight > pageHeight - 20) {
+                    pdfHeight = pageHeight - 20;
+                    pdfWidth = pdfHeight * ratio;
+                }
+                const x = (pageWidth - pdfWidth)/2;
+                const y = 10;
+                doc.addImage(imgData, 'PNG', x, y, pdfWidth, pdfHeight);
+                const filename = (post.slug || 'artigo') + '.pdf';
+                doc.save(filename);
+            });
+        }
+        document.addEventListener('DOMContentLoaded', render);
+    </script>
+</body>
+</html>
