@@ -13,6 +13,28 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700;900&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        ipace: {
+                            blue: '#2cc3f3',
+                            pink: '#ee3a7b',
+                            orange: '#faa82e',
+                            green: '#9ccc51',
+                            white: '#ffffff',
+                            text: '#4b5563',
+                            title: '#374151',
+                        },
+                    },
+                },
+            },
+        };
+    </script>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <link rel="stylesheet" href="styles.css">
@@ -31,7 +53,7 @@
                     <a href="#sobre" class="text-sm uppercase tracking-widest font-bold text-ipace-title hover:text-ipace-pink transition-colors">Quem Somos</a>
                     <a href="#projetos" class="text-sm uppercase tracking-widest font-bold text-ipace-title hover:text-ipace-pink transition-colors">Projetos</a>
                     <a href="#midia" class="text-sm uppercase tracking-widest font-bold text-ipace-title hover:text-ipace-pink transition-colors">Galeria</a>
-                    <a href="blog/index.html" class="bg-ipace-pink text-white px-6 py-3 text-sm font-bold uppercase tracking-widest hover:bg-ipace-blue transition-colors">
+                    <a href="/blog/" class="bg-ipace-pink text-white px-6 py-3 text-sm font-bold uppercase tracking-widest hover:bg-ipace-blue transition-colors">
                         Blog
                     </a>
                 </div>
@@ -49,7 +71,7 @@
             <a href="#sobre" class="mobile-link text-2xl font-black uppercase tracking-tight text-ipace-title hover:text-ipace-blue">Quem Somos</a>
             <a href="#projetos" class="mobile-link text-2xl font-black uppercase tracking-tight text-ipace-title hover:text-ipace-blue">Projetos</a>
             <a href="#midia" class="mobile-link text-2xl font-black uppercase tracking-tight text-ipace-title hover:text-ipace-blue">Galeria</a>
-            <a href="blog/index.html" class="mobile-link text-2xl font-black text-ipace-pink uppercase tracking-tight">Blog</a>
+            <a href="/blog/" class="mobile-link text-2xl font-black text-ipace-pink uppercase tracking-tight">Blog</a>
         </div>
     </nav>
 
