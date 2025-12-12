@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Inscrições — CE Náutico Guarapiranga 2026</title>
+  <link rel="apple-touch-icon" sizes="180x180" href="../favicon_ico/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="../favicon_ico/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="../favicon_ico/favicon-16x16.png">
+  <link rel="icon" href="../favicon_ico/favicon.ico">
+  <link rel="manifest" href="../favicon_ico/site.webmanifest">
+  <meta name="theme-color" content="#2cc3f3">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700;900&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="stylesheet" href="../styles.css" />
+  <script src="../script.js"></script>
+</head>
+<body class="antialiased">
+  <!-- Backlink para voltar ao projeto -->
+  <div class="bg-ipace-green text-white py-2 px-4 text-center">
+    <a href="../ce_nautico_guarapiranga_2026/index.html" class="text-sm font-bold underline hover:opacity-80 transition-opacity">
+      ← Clique aqui para voltar ao projeto
+    </a>
+  </div>
+
+  <header class="relative h-[40vh] md:h-[50vh] flex items-end justify-center overflow-hidden pt-20">
+    <div class="absolute inset-0 z-0">
+      <img src="../imagens/capa-hero-vela-ipace.jpeg" alt="Vela no Clube Náutico Guarapiranga" class="w-full h-full object-cover">
+      <div class="absolute inset-0 bg-ipace-green opacity-30 mix-blend-multiply"></div>
+      <div class="absolute inset-0 bg-gradient-to-t from-ipace-title/80 to-transparent"></div>
+    </div>
+    <div class="relative z-10 max-w-7xl mx-auto px-4 pb-6 text-white">
+      <span class="inline-block bg-ipace-green text-white px-4 py-2 text-xs font-bold uppercase tracking-widest mb-3">Inscrições</span>
+      <h1 class="text-3xl sm:text-4xl md:text-5xl font-black uppercase leading-tight">CE Náutico Guarapiranga 2026</h1>
+      <p class="text-base md:text-lg font-medium max-w-2xl text-white/90">Participe gratuitamente das atividades esportivas.</p>
+    </div>
+  </header>
+
+  <main class="py-12 md:py-20 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12 items-start">
+        <!-- Card Informativo -->
+        <section class="space-y-4">
+          <div class="bg-white border border-gray-200 rounded-lg p-4 space-y-2">
+            <h2 class="text-2xl md:text-3xl font-black text-ipace-blue">Informativo</h2>
+            <p class="text-ipace-text">Secretaria de Esporte de São Paulo</p>
+            <p class="text-ipace-text">IPACE — INSTITUTO PANGEA DE AÇÃO CULTURAL E ESPORTIVA</p>
+            <p class="text-ipace-text">O Programa de Esporte e Lazer CE Náutico Guarapiranga oferecerá aulas gratuitas nas seguintes modalidades: Canoagem Turismo, Canoagem Velocidade, Vela, Futebol, Judô.</p>
+            <p class="text-ipace-text">Senhores pais, responsáveis e alunos, o projeto da Secretaria de Esportes em parceria com a IPACE acontecerá no período de 12 meses no Clube Náutico Guarapiranga, oferecendo Professores, Equipamentos e Transporte (saída do Céu Vila do Sol e escola Blota Junior, com paradas nos pontos de ônibus até o Clube Náutico Guarapiranga) para realização das aulas, estimulando assim a participação ativa em várias modalidades de esporte na região.</p>
+            <p class="text-ipace-text">O objetivo deste projeto é apoiar e incentivar, com base nos fundamentos da educação física, o esporte, a recreação, o lazer, a expressão corporal, como formas de educação e promoção social e como prática sociocultural e de preservação da saúde física e mental do cidadão, de maneira gratuita, com diversidade de público.</p>
+            <p class="text-ipace-text font-bold">Atenção: As vagas são limitadas, portanto o preenchimento dos dados corretamente é importante para que possamos confirmar sua inscrição.</p>
+            <p class="text-ipace-text">Importante: O responsável deverá assinar no primeiro dia de aula o termo de autorização e de uso da imagem em nossas redes sociais no local de aula.</p>
+            <p class="text-ipace-text">Aproveite esta oportunidade, inscreva-se!</p>
+            <p class="text-ipace-text">Atenção: Futebol e Judô a partir de 6 anos. Vela e Canoagem (Turismo e Velocidade) a partir de 7 anos.</p>
+            <p class="text-ipace-text">CE Clube Náutico Guarapiranga — Av. dos Funcionários Públicos, 2501 — Jardim Horizonte Azul — São Paulo — SP.</p>
+          </div>
+        </section>
+
+        <section class="bg-gray-50 p-6 rounded-lg border border-gray-200">
+          <h2 class="text-xl md:text-2xl font-black text-ipace-title mb-4">Formulário de Inscrição</h2>
+          <form id="inscricao-form" class="space-y-6">
+            <!-- Responsável -->
+            <div>
+              <h3 class="text-lg font-black text-ipace-title mb-3">Dados do Responsável</h3>
+              <div class="grid grid-cols-1 gap-4">
+                <div>
+                  <label class="block text-sm font-bold text-ipace-title mb-2 uppercase tracking-widest">Nome completo do responsável *</label>
+                  <input type="text" name="responsavel_nome" required class="w-full px-4 py-2 border-2 border-gray-200 focus:border-ipace-green focus:outline-none rounded text-ipace-title font-bold" />
+                </div>
+                <div>
+                  <label class="block text-sm font-bold text-ipace-title mb-2 uppercase tracking-widest">CPF do responsável *</label>
+                  <input type="text" name="responsavel_cpf" required placeholder="000.000.000-00" inputmode="numeric" pattern="^\d{3}\.\d{3}\.\d{3}-\d{2}$" title="Formato: 000.000.000-00" maxlength="14" class="w-full px-4 py-2 border-2 border-gray-200 focus:border-ipace-green focus:outline-none rounded text-ipace-title font-bold" />
+                </div>
+              </div>
+              <div class="grid grid-cols-1 gap-4 mt-4">
+                <div>
+                  <label class="block text-sm font-bold text-ipace-title mb-2 uppercase tracking-widest">RG do responsável *</label>
+                  <input type="text" name="responsavel_rg" required placeholder="00.000.000-0" inputmode="numeric" pattern="^\d{2}\.\d{3}\.\d{3}-\d{1}$" title="Formato: 00.000.000-0" maxlength="12" class="w-full px-4 py-2 border-2 border-gray-200 focus:border-ipace-green focus:outline-none rounded text-ipace-title font-bold" />
+                </div>
+                <div>
+                  <label class="block text-sm font-bold text-ipace-title mb-2 uppercase tracking-widest">E-mail *</label>
+                  <input type="email" name="responsavel_email" required class="w-full px-4 py-2 border-2 border-gray-200 focus:border-ipace-green focus:outline-none rounded text-ipace-title font-bold" />
+                </div>
+              </div>
+              <div class="grid grid-cols-1 gap-4 mt-4">
+                <div>
+                  <label class="block text-sm font-bold text-ipace-title mb-2 uppercase tracking-widest">Contato 1 (WhatsApp) *</label>
+                  <input type="tel" name="contato1" required placeholder="11999999999" inputmode="numeric" pattern="^\d{11}$" title="Digite 11 dígitos (DDD + 9 + número)" class="w-full px-4 py-2 border-2 border-gray-200 focus:border-ipace-green focus:outline-none rounded text-ipace-title font-bold" />
+                </div>
+                <div>
+                  <label class="block text-sm font-bold text-ipace-title mb-2 uppercase tracking-widest">Contato 2 (opcional)</label>
+                  <input type="tel" name="contato2" placeholder="11999999999" inputmode="numeric" pattern="^\d{11}$" title="Digite 11 dígitos (DDD + 9 + número)" class="w-full px-4 py-2 border-2 border-gray-200 focus:border-ipace-green focus:outline-none rounded text-ipace-title font-bold" />
+                </div>
+                <div>
+                  <label class="block text-sm font-bold text-ipace-title mb-2 uppercase tracking-widest">Escola</label>
+                  <input type="text" name="escola" class="w-full px-4 py-2 border-2 border-gray-200 focus:border-ipace-green focus:outline-none rounded text-ipace-title font-bold" />
+                </div>
+              </div>
+              <div class="grid grid-cols-1 gap-4 mt-4">
+                <div>
+                  <label class="block text-sm font-bold text-ipace-title mb-2 uppercase tracking-widest">Endereço (Rua/Avenida) *</label>
+                  <input type="text" name="endereco" required class="w-full px-4 py-2 border-2 border-gray-200 focus:border-ipace-green focus:outline-none rounded text-ipace-title font-bold" />
+                </div>
+                <div>
+                  <label class="block text-sm font-bold text-ipace-title mb-2 uppercase tracking-widest">Número *</label>
+                  <input type="text" name="numero" required class="w-full px-4 py-2 border-2 border-gray-200 focus:border-ipace-green focus:outline-none rounded text-ipace-title font-bold" />
+                </div>
+                <div>
+                  <label class="block text-sm font-bold text-ipace-title mb-2 uppercase tracking-widest">Bairro *</label>
+                  <input type="text" name="bairro" required class="w-full px-4 py-2 border-2 border-gray-200 focus:border-ipace-green focus:outline-none rounded text-ipace-title font-bold" />
+                </div>
+                <div>
+                  <label class="block text-sm font-bold text-ipace-title mb-2 uppercase tracking-widest">Cidade *</label>
+                  <input type="text" name="cidade" required class="w-full px-4 py-2 border-2 border-gray-200 focus:border-ipace-green focus:outline-none rounded text-ipace-title font-bold" />
+                </div>
+              </div>
+            </div>
+
+            <!-- Aluno -->
+            <div>
+              <h3 class="text-lg font-black text-ipace-title mb-3">Dados do Aluno</h3>
+              <div class="grid grid-cols-1 gap-4">
+                <div>
+                  <label class="block text-sm font-bold text-ipace-title mb-2 uppercase tracking-widest">Nome completo do aluno *</label>
+                  <input type="text" name="aluno_nome" required class="w-full px-4 py-2 border-2 border-gray-200 focus:border-ipace-green focus:outline-none rounded text-ipace-title font-bold" />
+                </div>
+                <div>
+                  <label class="block text-sm font-bold text-ipace-title mb-2 uppercase tracking-widest">Data de nascimento *</label>
+                  <input type="date" name="aluno_nascimento" required class="w-full px-4 py-2 border-2 border-gray-200 focus:border-ipace-green focus:outline-none rounded text-ipace-title font-bold" />
+                </div>
+              </div>
+              <div class="grid grid-cols-1 gap-4 mt-4">
+                <div>
+                  <label class="block text-sm font-bold text-ipace-title mb-2 uppercase tracking-widest">Idade *</label>
+                  <input type="number" name="aluno_idade" min="1" required class="w-full px-4 py-2 border-2 border-gray-200 focus:border-ipace-green focus:outline-none rounded text-ipace-title font-bold" />
+                </div>
+                <div>
+                  <label class="block text-sm font-bold text-ipace-title mb-2 uppercase tracking-widest">CPF *</label>
+                  <input type="text" name="aluno_cpf" required placeholder="000.000.000-00" inputmode="numeric" pattern="^\d{3}\.\d{3}\.\d{3}-\d{2}$" title="Formato: 000.000.000-00" maxlength="14" class="w-full px-4 py-2 border-2 border-gray-200 focus:border-ipace-green focus:outline-none rounded text-ipace-title font-bold" />
+                </div>
+                <div>
+                  <label class="block text-sm font-bold text-ipace-title mb-2 uppercase tracking-widest">RG *</label>
+                  <input type="text" name="aluno_rg" required placeholder="00.000.000-0" inputmode="numeric" pattern="^\d{2}\.\d{3}\.\d{3}-\d{1}$" title="Formato: 00.000.000-0" maxlength="12" class="w-full px-4 py-2 border-2 border-gray-200 focus:border-ipace-green focus:outline-none rounded text-ipace-title font-bold" />
+                </div>
+              </div>
+            </div>
+
+            <!-- Preferências -->
+            <div>
+              <h3 class="text-lg font-black text-ipace-title mb-3">Preferências</h3>
+              <div>
+                <label class="block text-sm font-bold text-ipace-title mb-2 uppercase tracking-widest">Modalidade *</label>
+                <div class="grid grid-cols-1 gap-2">
+                  <label class="inline-flex items-center gap-2"><input type="radio" name="modalidade" value="Futebol" required /> <span>Futebol</span></label>
+                  <label class="inline-flex items-center gap-2"><input type="radio" name="modalidade" value="Judô" /> <span>Judô</span></label>
+                  <label class="inline-flex items-center gap-2"><input type="radio" name="modalidade" value="Vela" /> <span>Vela</span></label>
+                  <label class="inline-flex items-center gap-2"><input type="radio" name="modalidade" value="Canoagem Turismo" /> <span>Canoagem Turismo</span></label>
+                  <label class="inline-flex items-center gap-2"><input type="radio" name="modalidade" value="Canoagem Velocidade" /> <span>Canoagem Velocidade</span></label>
+                </div>
+              </div>
+              <div class="mt-4">
+                <label class="block text-sm font-bold text-ipace-title mb-2 uppercase tracking-widest">Período *</label>
+                <p class="text-xs text-ipace-text mb-2">Aulas de uma hora por dia, duas vezes por semana. Escolha o período e, na confirmação da inscrição, informaremos dias e horários.</p>
+                <div class="grid grid-cols-1 gap-2">
+                  <label class="inline-flex items-center gap-2"><input type="radio" name="periodo" value="Manhã" required /> <span>Manhã</span></label>
+                  <label class="inline-flex items-center gap-2"><input type="radio" name="periodo" value="Tarde" /> <span>Tarde</span></label>
+                </div>
+              </div>
+              <div class="mt-4">
+                <label class="block text-sm font-bold text-ipace-title mb-2 uppercase tracking-widest">Possui alguma deficiência? Informe o CID (opcional)</label>
+                <input type="text" name="cid" placeholder="CID (se houver)" class="w-full px-4 py-2 border-2 border-gray-200 focus:border-ipace-green focus:outline-none rounded text-ipace-title font-bold" />
+              </div>
+              <div class="mt-4">
+                <label class="block text-sm font-bold text-ipace-title mb-2 uppercase tracking-widest">Ponto de Embarque (Transporte)</label>
+                <select name="embarque" class="w-full px-4 py-2 border-2 border-gray-200 focus:border-ipace-green focus:outline-none rounded text-ipace-title font-bold">
+                  <option value="CEU Vila do Sol">CEU Vila do Sol</option>
+                  <option value="Escola Blota Junior">Escola Blota Junior</option>
+                  <option value="Ponto de ônibus">Pontos de ônibus (trajeto)</option>
+                </select>
+              </div>
+              <div class="mt-4">
+                <label class="block text-sm font-bold text-ipace-title mb-2 uppercase tracking-widest">Rematrícula? (Já é aluno do projeto?) *</label>
+                <div class="grid grid-cols-1 gap-2">
+                  <label class="inline-flex items-center gap-2"><input type="radio" name="rematricula" value="Sim" required /> <span>Sim</span></label>
+                  <label class="inline-flex items-center gap-2"><input type="radio" name="rematricula" value="Não" /> <span>Não</span></label>
+                </div>
+              </div>
+            </div>
+
+            <!-- Checkboxes -->
+            <div class="space-y-3">
+              <div class="flex items-start gap-3">
+                <input id="informativo-ok" type="checkbox" />
+                <label for="informativo-ok" class="text-sm text-ipace-text">Confirmo que li e entendi o informativo e que o responsável assinará no primeiro dia de aula o termo de autorização e de uso de imagem.</label>
+              </div>
+              <div class="flex items-start gap-3">
+                <input id="autorizacao-ok" type="checkbox" />
+                <label for="autorizacao-ok" class="text-sm text-ipace-text">Confirmo que o responsável assinará no primeiro dia de aula o termo de autorização e de uso de imagem.</label>
+              </div>
+            </div>
+
+            <div class="mt-6 flex gap-3">
+              <button type="submit" class="bg-ipace-green text-white px-6 py-3 font-bold uppercase tracking-widest hover:bg-ipace-blue transition-colors">Enviar Inscrição</button>
+            </div>
+
+            <p id="form-feedback" class="text-sm text-gray-500 mt-2"></p>
+          </form>
+        </section>
+      </div>
+    </div>
+  </main>
+
+  <footer class="bg-white py-8 border-t border-gray-200">
+    <div class="max-w-7xl mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-4">
+      <div class="flex items-center">
+        <a href="../index.html" aria-label="IPACE">
+          <img src="../logos/logotipo_horizontal_ong_ipace.png" alt="IPACE" class="h-10 w-auto" />
+        </a>
+      </div>
+      <p class="text-gray-400 text-sm font-medium text-center md:text-right">
+        © 2026 IPACE. Todos os direitos reservados.
+      </p>
+    </div>
+  </footer>
+
+  <script>
+    const GOOGLE_SHEETS_URL = 'https://script.google.com/macros/s/AKfycbxATe1IZSe-sBT1kOO88UCme7uMKSVoO0N9l1dri78-T809RtkceZVImtukEhtk7gVg_g/exec';
+
+    document.getElementById('inscricao-form')?.addEventListener('submit', function (e) {
+      e.preventDefault();
+      const form = e.target;
+      const data = new FormData(form);
+      const submitBtn = form.querySelector('button[type="submit"]');
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.classList.add('opacity-50','cursor-not-allowed');
+        submitBtn.innerHTML = '<span class="inline-flex items-center gap-2"><svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path></svg>Enviando...</span>';
+      }
+
+      // Validações adicionais (CPF, RG, WhatsApp)
+      const email = data.get('responsavel_email')?.toString() || '';
+      const cpfResp = data.get('responsavel_cpf')?.toString() || '';
+      const rgResp = data.get('responsavel_rg')?.toString() || '';
+      const cpfAluno = data.get('aluno_cpf')?.toString() || '';
+      const rgAluno = data.get('aluno_rg')?.toString() || '';
+      const whatsapp = data.get('contato1')?.toString() || '';
+
+      const cpfRegex = /^\d{3}\.\d{3}\.\d{3}-\d{2}$/;
+      const rgRegex = /^\d{2}\.\d{3}\.\d{3}-\d{1}$/;
+      const whatsappRegex = /^\d{11}$/; // DDD (2) + 9 + número (8) = 11 dígitos
+
+      // Email: usar validação nativa do input, mas checar rapidamente
+      const isEmailValid = form.querySelector('input[name="responsavel_email"]').checkValidity();
+      if (!isEmailValid) {
+        alert('E-mail inválido. Verifique o formato: usuario@dominio.com');
+        return;
+      }
+      if (!cpfRegex.test(cpfResp)) {
+        alert('CPF do responsável inválido. Use o formato 000.000.000-00');
+        return;
+      }
+      if (!rgRegex.test(rgResp)) {
+        alert('RG do responsável inválido. Use o formato 00.000.000-0');
+        return;
+      }
+      if (!cpfRegex.test(cpfAluno)) {
+        alert('CPF do aluno inválido. Use o formato 000.000.000-00');
+        return;
+      }
+      if (!rgRegex.test(rgAluno)) {
+        alert('RG do aluno inválido. Use o formato 00.000.000-0');
+        return;
+      }
+      if (!whatsappRegex.test(whatsapp)) {
+        alert('WhatsApp inválido. Digite 11 dígitos: DDD + 9 + número');
+        return;
+      }
+
+      // Prepara os dados para enviar ao Google Sheets
+      const sheetsData = new FormData();
+      sheetsData.append('responsavel_nome', data.get('responsavel_nome') || '');
+      sheetsData.append('responsavel_cpf', data.get('responsavel_cpf') || '');
+      sheetsData.append('responsavel_rg', data.get('responsavel_rg') || '');
+      sheetsData.append('responsavel_email', data.get('responsavel_email') || '');
+      sheetsData.append('contato1', data.get('contato1') || '');
+      sheetsData.append('contato2', data.get('contato2') || '');
+      sheetsData.append('endereco', data.get('endereco') || '');
+      sheetsData.append('numero', data.get('numero') || '');
+      sheetsData.append('bairro', data.get('bairro') || '');
+      sheetsData.append('cidade', data.get('cidade') || '');
+      sheetsData.append('escola', data.get('escola') || '');
+      sheetsData.append('aluno_nome', data.get('aluno_nome') || '');
+      sheetsData.append('aluno_nascimento', data.get('aluno_nascimento') || '');
+      sheetsData.append('aluno_idade', data.get('aluno_idade') || '');
+      sheetsData.append('aluno_cpf', data.get('aluno_cpf') || '');
+      sheetsData.append('aluno_rg', data.get('aluno_rg') || '');
+      sheetsData.append('modalidade', data.get('modalidade') || '');
+      sheetsData.append('periodo', data.get('periodo') || '');
+      sheetsData.append('cid', data.get('cid') || '');
+      sheetsData.append('embarque', data.get('embarque') || '');
+      sheetsData.append('rematricula', data.get('rematricula') || '');
+
+      // Envia ao Google Sheets
+      fetch(GOOGLE_SHEETS_URL, {
+        method: 'POST',
+        body: sheetsData
+      })
+      .then(response => response.json())
+      .then(result => {
+        if (result.status === 'success') {
+          // Redireciona para página de sucesso após envio bem-sucedido
+          window.location.href = './sucesso.html';
+        } else {
+          alert('Erro ao enviar inscrição. Tente novamente.');
+          if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.classList.remove('opacity-50','cursor-not-allowed');
+            submitBtn.textContent = 'Enviar Inscrição';
+          }
+        }
+      })
+      .catch(error => {
+        console.error('Erro ao enviar para Sheets:', error);
+        alert('Erro ao enviar inscrição. Tente novamente.');
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.classList.remove('opacity-50','cursor-not-allowed');
+          submitBtn.textContent = 'Enviar Inscrição';
+        }
+      });
+    });
+
+    // Máscaras de entrada para CPF e RG
+    const maskCPF = (value) => {
+      const digits = value.replace(/\D/g, '').slice(0, 11);
+      const parts = [];
+      if (digits.length > 0) parts.push(digits.substring(0, 3));
+      if (digits.length > 3) parts.push(digits.substring(3, 6));
+      if (digits.length > 6) parts.push(digits.substring(6, 9));
+      let out = parts.join('.')
+      if (digits.length > 9) out += '-' + digits.substring(9, 11);
+      return out;
+    };
+
+    const maskRG = (value) => {
+      const digits = value.replace(/\D/g, '').slice(0, 9);
+      const parts = [];
+      if (digits.length > 0) parts.push(digits.substring(0, 2));
+      if (digits.length > 2) parts.push(digits.substring(2, 5));
+      if (digits.length > 5) parts.push(digits.substring(5, 8));
+      let out = parts.join('.')
+      if (digits.length > 8) out += '-' + digits.substring(8, 9);
+      return out;
+    };
+
+    const cpfRespInput = document.querySelector('input[name="responsavel_cpf"]');
+    const cpfAlunoInput = document.querySelector('input[name="aluno_cpf"]');
+    const rgRespInput = document.querySelector('input[name="responsavel_rg"]');
+    const rgAlunoInput = document.querySelector('input[name="aluno_rg"]');
+
+    const attachMask = (input, maskFn) => {
+      if (!input) return;
+      input.addEventListener('input', () => {
+        const formatted = maskFn(input.value);
+        input.value = formatted;
+        // move caret to end to avoid jumping issues
+        const end = input.value.length;
+        input.selectionStart = input.selectionEnd = end;
+      });
+      input.addEventListener('blur', () => {
+        input.value = maskFn(input.value);
+      });
+    };
+
+    attachMask(cpfRespInput, maskCPF);
+    attachMask(cpfAlunoInput, maskCPF);
+    attachMask(rgRespInput, maskRG);
+    attachMask(rgAlunoInput, maskRG);
+
+    // Bloqueia o envio até confirmar ambas as leituras
+    const leituraChk = document.getElementById('informativo-ok');
+    const autorizacaoChk = document.getElementById('autorizacao-ok');
+    const submitBtn = document.querySelector('#inscricao-form button[type="submit"]');
+    if (submitBtn) {
+      submitBtn.disabled = true;
+      submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
+    }
+    const updateSubmitState = () => {
+      const enabled = leituraChk?.checked && autorizacaoChk?.checked;
+      if (submitBtn) {
+        submitBtn.disabled = !enabled;
+        submitBtn.classList.toggle('opacity-50', !enabled);
+        submitBtn.classList.toggle('cursor-not-allowed', !enabled);
+      }
+    };
+    leituraChk?.addEventListener('change', updateSubmitState);
+    autorizacaoChk?.addEventListener('change', updateSubmitState);
+  </script>
+</body>
+</html>

@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clube Náutico Guarapiranga - IPACE</title>
+    <link rel="apple-touch-icon" sizes="180x180" href="../favicon_ico/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="../favicon_ico/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../favicon_ico/favicon-16x16.png">
+    <link rel="icon" href="../favicon_ico/favicon.ico">
+    <link rel="manifest" href="../favicon_ico/site.webmanifest">
+    <meta name="theme-color" content="#2cc3f3">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="../styles.css">
+    <script src="../script.js"></script>
+    <script src="../colaborador-handler.js"></script>
+    <script>
+        // Carrossel da seção "Conheça o Projeto" (dots dinâmicos + setas)
+        document.addEventListener('DOMContentLoaded', () => {
+            const carouselContainer = document.querySelector('.carousel-galeria');
+            if (!carouselContainer) return;
+
+            const images = Array.from(carouselContainer.querySelectorAll('.carousel-img')).filter(img => !img.hasAttribute('data-placeholder'));
+            const dotsContainer = document.querySelector('[data-carousel-dots]');
+            const prevBtn = document.querySelector('[data-carousel-prev]');
+            const nextBtn = document.querySelector('[data-carousel-next]');
+
+            if (!images.length || !dotsContainer) return;
+
+            let currentIndex = 0;
+            let timer;
+
+            function buildDots() {
+                dotsContainer.innerHTML = '';
+                images.forEach((_, index) => {
+                    const dot = document.createElement('button');
+                    dot.className = 'carousel-dot w-2 h-2 rounded-full bg-white opacity-50 transition-opacity';
+                    dot.dataset.index = String(index);
+                    dotsContainer.appendChild(dot);
+                });
+            }
+
+            function showImage(index) {
+                images.forEach((img, i) => {
+                    img.classList.toggle('opacity-100', i === index);
+                    img.classList.toggle('opacity-0', i !== index);
+                });
+
+                const dots = dotsContainer.querySelectorAll('.carousel-dot');
+                dots.forEach((dot, i) => {
+                    dot.classList.toggle('opacity-100', i === index);
+                    dot.classList.toggle('opacity-50', i !== index);
+                });
+            }
+
+            function nextImage() {
+                currentIndex = (currentIndex + 1) % images.length;
+                showImage(currentIndex);
+            }
+
+            function prevImage() {
+                currentIndex = (currentIndex - 1 + images.length) % images.length;
+                showImage(currentIndex);
+            }
+
+            function resetTimer() {
+                if (timer) clearInterval(timer);
+                timer = setInterval(nextImage, 5000);
+            }
+
+            buildDots();
+            showImage(currentIndex);
+            resetTimer();
+
+            dotsContainer.addEventListener('click', event => {
+                const target = event.target;
+                if (target instanceof HTMLElement && target.classList.contains('carousel-dot')) {
+                    const index = Number(target.dataset.index || 0);
+                    currentIndex = index;
+                    showImage(currentIndex);
+                    resetTimer();
+                }
+            });
+
+            prevBtn?.addEventListener('click', () => {
+                prevImage();
+                resetTimer();
+            });
+
+            nextBtn?.addEventListener('click', () => {
+                nextImage();
+                resetTimer();
+            });
+        });
+    </script>
+</head>
+<body class="antialiased">
+    <nav class="fixed w-full z-50 bg-white/95 backdrop-blur-sm border-b border-ipace-blue/20 transition-all duration-300" id="navbar">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <div class="flex-shrink-0 flex items-center">
+                    <a href="../index.html" class="inline-flex items-center" aria-label="IPACE">
+                        <img src="../logos/logotipo_horizontal_ong_ipace.png" alt="IPACE" class="h-10 w-auto">
+                    </a>
+                </div>
+                <div class="hidden md:flex space-x-8 items-center">
+                    <a href="../index.html#sobre" class="text-sm uppercase tracking-widest font-bold text-ipace-title hover:text-ipace-pink transition-colors">Quem Somos</a>
+                    <a href="../index.html#projetos" class="text-sm uppercase tracking-widest font-bold text-ipace-title hover:text-ipace-pink transition-colors">Projetos</a>
+                    <a href="../index.html#midia" class="text-sm uppercase tracking-widest font-bold text-ipace-title hover:text-ipace-pink transition-colors">Galeria</a>
+                    <a href="../index.html#contato" class="bg-ipace-pink text-white px-6 py-3 text-sm font-bold uppercase tracking-widest hover:bg-ipace-blue transition-colors">
+                        Blog
+                    </a>
+                </div>
+                <div class="md:hidden flex items-center">
+                    <button id="mobile-menu-btn" class="text-ipace-blue hover:text-ipace-pink focus:outline-none">
+                        <i data-lucide="menu" class="w-8 h-8"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div id="mobile-menu" class="fixed inset-0 bg-white z-[100] transform translate-x-full transition-transform duration-300 md:hidden flex flex-col justify-center items-center space-y-8 top-0 left-0 w-full h-screen">
+            <button id="close-menu-btn" class="absolute top-6 right-6 text-ipace-pink focus:outline-none">
+                <i data-lucide="x" class="w-8 h-8"></i>
+            </button>
+            <a href="../index.html#sobre" class="mobile-link text-2xl font-black uppercase tracking-tight text-ipace-title hover:text-ipace-blue">Quem Somos</a>
+            <a href="../index.html#projetos" class="mobile-link text-2xl font-black uppercase tracking-tight text-ipace-title hover:text-ipace-blue">Projetos</a>
+            <a href="../index.html#midia" class="mobile-link text-2xl font-black uppercase tracking-tight text-ipace-title hover:text-ipace-blue">Galeria</a>
+            <a href="../index.html#contato" class="mobile-link text-2xl font-black text-ipace-pink uppercase tracking-tight">Blog</a>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="relative h-[60vh] md:h-[70vh] flex items-end md:items-center justify-center overflow-hidden pt-20">
+        <div class="absolute inset-0 z-0">
+            <img src="../imagens/foto-canoagem-capa-ipace.jpeg" alt="Canoagem no Clube Náutico Guarapiranga" class="w-full h-full object-cover">
+            <div class="absolute inset-0 bg-ipace-green opacity-30 mix-blend-multiply"></div>
+            <div class="absolute inset-0 bg-gradient-to-t from-ipace-title/80 to-transparent"></div>
+        </div>
+        <div class="relative z-10 max-w-7xl mx-auto px-4 pb-8 md:pb-16 text-white">
+            <span class="inline-block bg-ipace-green text-white px-4 py-2 text-xs font-bold uppercase tracking-widest mb-4">Projeto Social</span>
+            <h1 class="text-3xl sm:text-4xl md:text-6xl font-black uppercase leading-tight mb-4">
+                Clube Náutico<br>Guarapiranga
+            </h1>
+            <p class="text-lg md:text-xl font-medium max-w-2xl text-white/90">
+                Formando cidadãos e atletas através do esporte na maior represa de São Paulo
+            </p>
+        </div>
+    </header>
+
+    <!-- Conheça o Projeto -->
+    <section class="py-12 md:py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="mb-8 md:mb-12">
+                <span class="text-ipace-green font-bold uppercase tracking-widest mb-2 block text-xs sm:text-sm">Sobre o Projeto</span>
+                <h2 class="text-3xl sm:text-4xl md:text-5xl font-black text-ipace-blue mb-6 leading-tight">
+                    Conheça o Projeto
+                </h2>
+            </div>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12 items-center">
+                <div>
+                    <p class="text-base sm:text-lg text-ipace-text mb-4 leading-relaxed">
+                        Proporcionar aos jovens experiências que vão além do cotidiano é uma missão essencial para o desenvolvimento de cidadãos comprometidos com valores como união, solidariedade, companheirismo e ética.
+                    </p>
+                    <p class="text-base sm:text-lg text-ipace-text mb-4 leading-relaxed">
+                        A IPACE, em parceria com a SEME (Secretaria Municipal de Esportes e Lazer), apresenta com orgulho o <strong>Projeto Clube Náutico Guarapiranga</strong>, parte fundamental da Rede Olímpica do Município de São Paulo, com resultados significativos desde seu início em 2023.
+                    </p>
+                </div>
+                <div class="relative h-[300px] md:h-[400px] group overflow-hidden rounded-lg">
+                    <!-- Carrossel de Imagens -->
+                    <div class="carousel-galeria relative w-full h-full">
+                        <img src="../imagens/vela-ce-náutico-guarapiranga-ipace.jpeg" alt="Vela" class="absolute inset-0 w-full h-full object-cover carousel-img opacity-100 transition-opacity duration-1000">
+                        <img src="../imagens/judo-ce-nautico-guarapiranga-ipace.jpeg" alt="Judô" class="absolute inset-0 w-full h-full object-cover carousel-img opacity-0 transition-opacity duration-1000">
+                        <img src="../imagens/aula-futebol-ce-guarapiranga-ipace.jpg" alt="aula-futebol-ce-guarapiranga-ipace" class="absolute inset-0 w-full h-full object-cover carousel-img opacity-0 transition-opacity duration-1000">
+                        <img src="../imagens/vela-ce-náutico-guarapiranga-ipace-deck.jpg" alt="vela-ce-náutico-guarapiranga-ipace-deck" class="absolute inset-0 w-full h-full object-cover carousel-img opacity-0 transition-opacity duration-1000">
+                        <img src="../imagens/foto-canoagem-ipace.jpeg" alt="vela-ce-náutico-guarapiranga-ipace-deck" class="absolute inset-0 w-full h-full object-cover carousel-img opacity-0 transition-opacity duration-1000">
+                        <!-- Slot extra: substitua o src e remova data-placeholder para ativar -->
+                        <img data-placeholder="true" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==" alt="Nova foto do carrossel" class="absolute inset-0 w-full h-full object-cover carousel-img opacity-0 transition-opacity duration-1000 hidden">
+                    </div>
+                    <!-- Navegação do carrossel -->
+                    <div class="absolute inset-0 flex items-center justify-between px-3 z-10 pointer-events-none">
+                        <button type="button" aria-label="Anterior" data-carousel-prev class="pointer-events-auto bg-white/80 hover:bg-white text-ipace-title px-3 py-2 rounded-full shadow transition">
+                            <span class="text-lg font-black">&lt;</span>
+                        </button>
+                        <button type="button" aria-label="Próxima" data-carousel-next class="pointer-events-auto bg-white/80 hover:bg-white text-ipace-title px-3 py-2 rounded-full shadow transition">
+                            <span class="text-lg font-black">&gt;</span>
+                        </button>
+                    </div>
+                    <!-- Indicadores -->
+                    <div class="absolute bottom-4 left-0 right-0 flex justify-center gap-2 z-10" data-carousel-dots></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Rede Olímpica Stats -->
+    <section class="bg-ipace-blue text-white py-12 md:py-16">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <h3 class="text-2xl sm:text-3xl md:text-4xl font-black mb-4 uppercase">Rede Olímpica</h3>
+            <p class="text-base sm:text-lg mb-8 max-w-3xl mx-auto text-white/90 leading-relaxed">
+                Treinando Futuros Atletas e Cidadãos
+            </p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 max-w-4xl mx-auto">
+                <div class="bg-white/10 backdrop-blur-sm p-6 md:p-8">
+                    <span class="block text-4xl sm:text-5xl font-black text-white mb-2">64.800</span>
+                    <span class="text-xs sm:text-sm uppercase tracking-widest text-white/80 font-bold">Atendimentos Anuais em 2024</span>
+                </div>
+                <div class="bg-white/10 backdrop-blur-sm p-6 md:p-8">
+                    <span class="block text-4xl sm:text-5xl font-black text-white mb-2">5</span>
+                    <span class="text-xs sm:text-sm uppercase tracking-widest text-white/80 font-bold">Modalidades Esportivas</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Modalidades e Horários -->
+    <section class="py-12 md:py-20 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="mb-10 md:mb-16">
+                <div class="text-center mb-8">
+                    <span class="text-ipace-pink font-bold uppercase tracking-widest mb-2 block text-xs sm:text-sm">Atividades</span>
+                    <h2 class="text-3xl sm:text-4xl md:text-5xl font-black text-ipace-title mb-4">Horários das Modalidades</h2>
+                    <p class="text-base sm:text-lg text-ipace-text max-w-3xl mx-auto leading-relaxed">
+                        Nossas atividades são realizadas de terça a sexta-feira em quatro horários diários – dois pela manhã e dois à tarde –, proporcionando flexibilidade para que os alunos conciliem o esporte com os estudos.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Calendário de Modalidades -->
+            <div class="overflow-x-auto">
+                <div class="min-w-[800px]">
+                    <!-- Header dos Dias -->
+                    <div class="grid grid-cols-3 gap-4 mb-4">
+                        <div class="bg-ipace-blue text-white p-4 text-center font-black uppercase tracking-widest">
+                            Terça e Quinta
+                        </div>
+                        <div class="bg-ipace-green text-white p-4 text-center font-black uppercase tracking-widest">
+                            Quarta e Sexta
+                        </div>
+                        <div class="bg-ipace-pink text-white p-4 text-center font-black uppercase tracking-widest">
+                            Quarta e Sexta
+                        </div>
+                    </div>
+
+                    <!-- Grid de Horários -->
+                    <div class="grid grid-cols-3 gap-4">
+                        <!-- Coluna 1: Terça e Quinta (Judô e Canoagem Velocidade) -->
+                        <div class="space-y-3">
+                            <!-- Judô -->
+                            <div class="bg-white border-l-4 border-ipace-orange p-4">
+                                <h3 class="text-lg font-black text-ipace-title mb-3">Judô</h3>
+                                <div class="space-y-2 text-sm text-ipace-text">
+                                    <div class="bg-gray-50 p-2 font-bold">Manhã</div>
+                                    <div class="pl-2">8h às 9h</div>
+                                    <div class="pl-2">9h às 10h</div>
+                                    <div class="pl-2">10h às 11h</div>
+                                    <div class="bg-gray-50 p-2 font-bold mt-3">Tarde</div>
+                                    <div class="pl-2">14h às 15h</div>
+                                    <div class="pl-2">15h às 16h</div>
+                                    <div class="pl-2">16h às 17h</div>
+                                </div>
+                            </div>
+
+                            <!-- Canoagem Velocidade -->
+                            <div class="bg-white border-l-4 border-ipace-green p-4">
+                                <h3 class="text-lg font-black text-ipace-title mb-3">Canoagem Velocidade</h3>
+                                <div class="space-y-2 text-sm text-ipace-text">
+                                    <div class="bg-gray-50 p-2 font-bold">Manhã</div>
+                                    <div class="pl-2">9h às 10:30h</div>
+                                    <div class="bg-gray-50 p-2 font-bold mt-3">Tarde</div>
+                                    <div class="pl-2">14h às 15:30h</div>
+                                    <div class="pl-2">15:30 às 17h</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Coluna 2: Quarta e Sexta (Futebol e Canoagem Turismo) -->
+                        <div class="space-y-3">
+                            <!-- Futebol -->
+                            <div class="bg-white border-l-4 border-ipace-blue p-4">
+                                <h3 class="text-lg font-black text-ipace-title mb-3">Futebol</h3>
+                                <div class="space-y-2 text-sm text-ipace-text">
+                                    <div class="bg-gray-50 p-2 font-bold">Manhã</div>
+                                    <div class="pl-2">8h às 9h</div>
+                                    <div class="pl-2">9h às 10h</div>
+                                    <div class="pl-2">10h às 11h</div>
+                                    <div class="bg-gray-50 p-2 font-bold mt-3">Tarde</div>
+                                    <div class="pl-2">14h às 15h</div>
+                                    <div class="pl-2">15h às 16h</div>
+                                    <div class="pl-2">16h às 17h</div>
+                                </div>
+                            </div>
+
+                            <!-- Canoagem Turismo -->
+                            <div class="bg-white border-l-4 border-ipace-green p-4">
+                                <h3 class="text-lg font-black text-ipace-title mb-3">Canoagem Turismo</h3>
+                                <div class="space-y-2 text-sm text-ipace-text">
+                                    <div class="bg-gray-50 p-2 font-bold">Manhã</div>
+                                    <div class="pl-2">9h às 10:30h</div>
+                                    <div class="bg-gray-50 p-2 font-bold mt-3">Tarde</div>
+                                    <div class="pl-2">14h às 15:30h</div>
+                                    <div class="pl-2">15:30h às 17h</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Coluna 3: Quarta e Sexta (Vela) -->
+                        <div class="space-y-3">
+                            <!-- Vela -->
+                            <div class="bg-white border-l-4 border-ipace-pink p-4">
+                                <h3 class="text-lg font-black text-ipace-title mb-3">Vela</h3>
+                                <div class="space-y-2 text-sm text-ipace-text">
+                                    <div class="bg-gray-50 p-2 font-bold">Manhã</div>
+                                    <div class="pl-2">9h às 10:30h</div>
+                                    <div class="bg-gray-50 p-2 font-bold mt-3">Tarde</div>
+                                    <div class="pl-2">14h às 15:30h</div>
+                                    <div class="pl-2">15:30 às 17h</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Botão Saiba Mais -->
+                <div class="mt-10 text-center">
+                    <a href="https://wa.me/5511917766265?text=Ol%C3%A1%2C%20Gostaria%20de%20Saber%20mais%20sobre%20o%20Projeto%20modalidade%20e%20hor%C3%A1rios" target="_blank" rel="noopener noreferrer" class="inline-block bg-ipace-green text-white px-8 py-3 font-bold uppercase tracking-widest hover:bg-ipace-blue transition-colors">
+                        Saiba Mais
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Transformando Vidas -->
+    <section class="py-12 md:py-20 bg-ipace-green text-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12 items-center">
+                <div class="relative h-[300px] md:h-[400px] lg:order-2 overflow-hidden rounded-lg">
+                    <img src="../imagens/foto-canoagem-capa-ipace.jpeg" alt="Canoagem no Clube Náutico Guarapiranga" class="w-full h-full object-cover">
+                </div>
+                <div class="lg:order-1">
+                    <h2 class="text-3xl sm:text-4xl md:text-5xl font-black mb-6 leading-tight">
+                        Transformando Vidas pelo Esporte
+                    </h2>
+                    <p class="text-base sm:text-lg mb-4 leading-relaxed text-white/90">
+                        Mais do que formar atletas, o projeto busca transformar vidas por meio da prática esportiva, proporcionando acesso a oportunidades e promovendo inclusão social.
+                    </p>
+                    <p class="text-base sm:text-lg mb-6 leading-relaxed text-white/90">
+                        Jovens de diferentes realidades encontram no esporte um caminho de crescimento, não só físico, mas também emocional e social.
+                    </p>
+                    <p class="text-lg md:text-xl font-bold leading-relaxed">
+                        Venha fazer parte dessa jornada transformadora no Clube Náutico Guarapiranga, onde cada treino é uma chance de aprender, crescer e conquistar!
+                    </p>
+                    <p class="text-sm md:text-base mt-8 text-white/70">
+                        Interessado em contribuir? <button id="colaborador-btn" class="text-white underline hover:text-ipace-orange transition-colors font-bold cursor-pointer">Seja um colaborador</button>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Inscrições -->
+    <section class="py-16 md:py-24 bg-ipace-orange text-white relative overflow-hidden">
+        <div class="absolute top-0 right-0 w-64 h-64 border-l-4 border-b-4 border-white/20"></div>
+        <div class="max-w-4xl mx-auto px-4 text-center relative z-10">
+            <h2 class="text-3xl sm:text-4xl md:text-6xl font-black mb-6 uppercase tracking-tighter">Faça Sua Inscrição</h2>
+            <p class="text-lg sm:text-xl mb-10 font-medium text-white/90 max-w-2xl mx-auto">
+                Garanta sua vaga no Clube Náutico Guarapiranga e comece a transformar sua vida através do esporte.
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                <a href="../inscricoescenautico2026/index.html" class="bg-white text-ipace-orange px-8 py-4 font-bold uppercase tracking-widest hover:bg-ipace-blue hover:text-white transition-colors w-full sm:w-auto shadow-lg text-sm sm:text-base">
+                    Inscreva-se Agora
+                </a>
+                <a href="../index.html#contato" class="border-2 border-white text-white px-8 py-4 font-bold uppercase tracking-widest hover:bg-white hover:text-ipace-orange transition-colors w-full sm:w-auto text-sm sm:text-base">
+                    Saiba Mais
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-white py-8 border-t border-gray-200">
+        <div class="max-w-7xl mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="flex items-center">
+                <a href="../index.html" aria-label="IPACE">
+                    <img src="../logos/logotipo_horizontal_ong_ipace.png" alt="IPACE" class="h-10 w-auto">
+                </a>
+            </div>
+            <p class="text-gray-400 text-sm font-medium text-center md:text-right">
+                © 2026 IPACE. Todos os direitos reservados.
+            </p>
+        </div>
+    </footer>
+
+    <!-- Modal Trabalhe Conosco -->
+    <div id="colaborador-modal" class="fixed inset-0 bg-black/50 z-[200] hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-lg max-w-md w-full max-h-[90vh] overflow-y-auto">
+            <div class="bg-ipace-green text-white p-6 flex justify-between items-center sticky top-0">
+                <h3 class="text-2xl font-black uppercase tracking-widest">Seja um Colaborador</h3>
+                <button id="close-colaborador-modal" class="text-white hover:bg-white/20 p-2 rounded">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+            </div>
+            <form id="colaborador-form" class="p-6 space-y-4">
+                <div>
+                    <label for="collab-nome" class="block text-sm font-bold text-ipace-title mb-2 uppercase tracking-widest">Nome</label>
+                    <input type="text" id="collab-nome" name="nome" required class="w-full px-4 py-2 border-2 border-gray-200 focus:border-ipace-green focus:outline-none rounded text-ipace-title font-bold" placeholder="Seu nome completo">
+                </div>
+                <div>
+                    <label for="collab-email" class="block text-sm font-bold text-ipace-title mb-2 uppercase tracking-widest">Email</label>
+                    <input type="email" id="collab-email" name="email" required class="w-full px-4 py-2 border-2 border-gray-200 focus:border-ipace-green focus:outline-none rounded text-ipace-title font-bold" placeholder="seu@email.com">
+                </div>
+                <div>
+                    <label for="collab-telefone" class="block text-sm font-bold text-ipace-title mb-2 uppercase tracking-widest">Telefone</label>
+                    <input type="tel" id="collab-telefone" name="telefone" required class="w-full px-4 py-2 border-2 border-gray-200 focus:border-ipace-green focus:outline-none rounded text-ipace-title font-bold" placeholder="(11) 9999-9999">
+                </div>
+                <button type="submit" class="w-full bg-ipace-green text-white py-3 font-bold uppercase tracking-widest hover:bg-ipace-blue transition-colors rounded mt-6">
+                    Enviar Interesse
+                </button>
+                <p id="form-message" class="text-sm text-center text-gray-500 mt-2"></p>
+            </form>
+        </div>
+    </div>
+
+</body>
+</html>
