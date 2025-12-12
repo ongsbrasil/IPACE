@@ -75,12 +75,14 @@
                         <input id="post-image-file" type="file" accept="image/*" class="w-full border border-gray-300 px-3 py-2">
                         <input id="post-image-url" type="hidden">
                         <p id="post-image-preview" class="text-xs text-gray-600 break-all"></p>
+                        <button type="button" id="remove-image" class="text-xs font-bold uppercase tracking-widest text-ipace-pink hover:text-ipace-blue">Remover imagem</button>
                     </div>
                     <div class="md:col-span-2 space-y-2">
                         <label class="block text-sm font-bold uppercase tracking-widest mb-1">Galeria (upload múltiplo) — até 5MB cada</label>
                         <input id="post-gallery-files" type="file" accept="image/*" multiple class="w-full border border-gray-300 px-3 py-2">
                         <input id="post-gallery-urls" type="hidden">
                         <p id="post-gallery-preview" class="text-xs text-gray-600 break-all"></p>
+                        <button type="button" id="remove-gallery" class="text-xs font-bold uppercase tracking-widest text-ipace-pink hover:text-ipace-blue">Remover galeria</button>
                     </div>
                     <div class="md:col-span-2">
                         <label class="block text-sm font-bold uppercase tracking-widest mb-1">Artigo</label>
@@ -132,6 +134,9 @@
         const logoutBtn = document.getElementById('logout-btn');
         const loginBtn = document.getElementById('login-btn');
         const loginError = document.getElementById('login-error');
+        const saveBtn = document.getElementById('save-post');
+        const removeImageBtn = document.getElementById('remove-image');
+        const removeGalleryBtn = document.getElementById('remove-gallery');
 
         const fields = {
             title: document.getElementById('post-title'),
@@ -245,6 +250,7 @@
                     return [];
                 }
             }
+            await supabaseReady;
             const supabase = getSupabase();
             if (!supabase) { alert('Supabase não configurado para upload.'); return []; }
             const uploaded = [];
@@ -263,6 +269,11 @@
         }
 
         async function handleSave(){
+            if (handleSave.running) return;
+            handleSave.running = true;
+            const originalText = saveBtn.textContent;
+            saveBtn.textContent = 'Salvando...';
+            saveBtn.disabled = true;
             let imageUrl = fields.imageUrlHidden.value;
             if (fields.imageFile.files && fields.imageFile.files[0]) {
                 const uploaded = await uploadImage(fields.imageFile.files[0]);
@@ -286,6 +297,9 @@
             };
             if (!post.title || !post.slug) {
                 alert('Título e slug são obrigatórios.');
+                saveBtn.textContent = originalText;
+                saveBtn.disabled = false;
+                handleSave.running = false;
                 return;
             }
             const supabase = getSupabase();
@@ -322,6 +336,21 @@
             }
             renderTable();
             clearForm();
+            saveBtn.textContent = originalText;
+            saveBtn.disabled = false;
+            handleSave.running = false;
+        }
+        
+        function handleRemoveImage(){
+            fields.imageUrlHidden.value = '';
+            fields.imageFile.value = '';
+            fields.imagePreview.textContent = 'Imagem será removida ao salvar.';
+        }
+
+        function handleRemoveGallery(){
+            fields.galleryUrls.value = '';
+            fields.galleryFiles.value = '';
+            fields.galleryPreview.textContent = 'Galeria será removida ao salvar.';
         }
 
         async function handleTableClick(e){
@@ -390,6 +419,8 @@
             document.getElementById('save-post').addEventListener('click', handleSave);
             document.getElementById('clear-form').addEventListener('click', clearForm);
             document.getElementById('export-posts').addEventListener('click', handleExport);
+            removeImageBtn.addEventListener('click', handleRemoveImage);
+            removeGalleryBtn.addEventListener('click', handleRemoveGallery);
             logoutBtn.addEventListener('click', () => { setAuth(false); location.reload(); });
             loginBtn.addEventListener('click', handleLogin);
             if (checkAuth()) {

@@ -98,10 +98,15 @@
     <!-- Toast/Popup CSS (no browser alert) -->
     <div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-black/80 text-white text-sm px-4 py-2 rounded shadow-lg hidden z-50">Mensagem</div>
 
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
     <script>
         const LS_KEY_POSTS = 'blog_posts';
+        const SUPABASE_URL = 'https://ofvwqwkucgrgczpngmaq.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9mdndxd2t1Y2dyZ2N6cG5nbWFxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU1NTkxNTksImV4cCI6MjA4MTEzNTE1OX0.xFHzAlxJF_n_27PQn9eZE-In8p0D2AIgmVFbUZx6tjE';
+        const TABLE_NAME = 'posts';
+
         function getPosts(){
             try { return JSON.parse(localStorage.getItem(LS_KEY_POSTS) || '[]'); } catch { return []; }
         }
@@ -109,9 +114,29 @@
             const url = new URL(window.location.href);
             return url.searchParams.get(name);
         }
-        function render(){
+
+        async function fetchPostBySlug(slug){
+            if (!slug) return null;
+            if (!SUPABASE_URL || SUPABASE_URL.includes('YOUR-PROJECT')) {
+                return getPosts().find(p => (p.slug || '') === slug) || null;
+            }
+            const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+            const { data, error } = await supabase
+                .from(TABLE_NAME)
+                .select('*')
+                .eq('slug', slug)
+                .maybeSingle();
+            if (error) {
+                console.warn('Erro ao carregar post:', error.message);
+                // fallback local cache
+                return getPosts().find(p => (p.slug || '') === slug) || null;
+            }
+            return data;
+        }
+
+        async function render(){
             const slug = getParam('slug');
-            const post = getPosts().find(p => (p.slug || '') === slug);
+            const post = await fetchPostBySlug(slug);
             if (!post) {
                 document.getElementById('article').innerHTML = '<div class="p-6">Artigo não encontrado.</div>';
                 return;
