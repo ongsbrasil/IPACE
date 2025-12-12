@@ -14,7 +14,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700;900&display=swap" rel="stylesheet">
     <script>
-        tailwind.config = {
+        window.tailwind = window.tailwind || {};
+        window.tailwind.config = {
             theme: {
                 extend: {
                     fontFamily: {
@@ -46,7 +47,7 @@
                 <span class="font-black uppercase tracking-widest text-sm text-ipace-blue">Artigo</span>
             </a>
             <nav class="hidden sm:flex items-center gap-6 text-sm font-bold uppercase tracking-widest text-ipace-title">
-                <a href="../blog/" class="hover:text-ipace-pink">Blog</a>
+                <a href="../blog/index.html" class="hover:text-ipace-pink">Blog</a>
                 <a href="../index.html#contato" class="hover:text-ipace-pink">Contato</a>
             </nav>
         </div>
@@ -81,7 +82,9 @@
         <div class="flex items-center justify-between mt-6">
             <div class="flex items-center flex-wrap text-sm text-ipace-title">
                 <button id="share-btn" class="flex items-center gap-2 hover:text-ipace-pink">
-                    <img src="https://img.icons8.com/ios-glyphs/30/share--v1.png" alt="Compartilhar" width="15" height="15" aria-hidden="true">
+                    <span class="inline-block w-4 h-4" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M14 7l-5.5 3 5.5 3V20l8-8-8-8v6z"/></svg>
+                    </span>
                     <span>Compartilhar</span>
                 </button>
                 <span class="px-2 text-gray-300">|</span>
