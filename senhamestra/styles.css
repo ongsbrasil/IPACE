@@ -1,0 +1,186 @@
+html { height: 100%; }
+
+body {
+    min-height: 100%;
+    font-family: 'Inter', sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+}
+
+#app-screen {
+    height: 100vh;
+    height: 100dvh;
+    width: 100%;
+}
+
+.chat-bubble {
+    max-width: 85%;
+    padding: 10px 15px;
+    border-radius: 20px;
+    margin-bottom: 10px;
+    word-wrap: break-word;
+    line-height: 1.6;
+}
+
+.user-bubble {
+    background-color: #0ea5e9;
+    color: white;
+    margin-left: auto;
+    border-bottom-right-radius: 5px;
+}
+
+.bot-bubble {
+    background-color: #4b5563;
+    color: #f1f5f9;
+    margin-right: auto;
+    border-bottom-left-radius: 5px;
+}
+
+.modal {
+    background-color: rgba(0, 0, 0, 0.75);
+    z-index: 50;
+}
+
+.collab-info-modal {
+    z-index: 55;
+}
+
+.share-modal {
+    z-index: 60;
+}
+
+#chat-messages::-webkit-scrollbar {
+    width: 8px;
+}
+
+#chat-messages::-webkit-scrollbar-track {
+    background: #334155;
+    border-radius: 10px;
+}
+
+#chat-messages::-webkit-scrollbar-thumb {
+    background: #64748b;
+    border-radius: 10px;
+}
+
+#chat-messages::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
+
+.action-button {
+    background-color: #0ea5e9;
+    color: white;
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    display: inline-block;
+    font-size: 0.875rem;
+    border: none;
+    transition: background-color 0.2s;
+    font-weight: 500;
+    margin-top: 0.25rem;
+}
+
+.action-button:hover { background-color: #0284c7; }
+
+.action-button.delete { background-color: #ef4444; }
+.action-button.delete:hover { background-color: #dc2626; }
+
+.action-button.copy { background-color: #22c55e; }
+.action-button.copy:hover { background-color: #16a34a; }
+
+.action-button.share { background-color: #a855f7; }
+.action-button.share:hover { background-color: #9333ea; }
+
+.password-display-container {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.password-text-display {
+    font-family: monospace;
+    background-color: #334155;
+    padding: 2px 6px;
+    border-radius: 4px;
+}
+
+.upgrade-button { background-color: #f59e0b; color: white; }
+.upgrade-button:hover { background-color: #d97706; }
+
+.donut-chart-container-svg {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+}
+
+.donut-chart-svg {
+    width: 150px;
+    height: 150px;
+}
+
+.donut-chart-svg path {
+    transition: d 0.5s ease-out, fill 0.3s ease;
+}
+
+.donut-legend-svg {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1rem;
+    justify-content: center;
+    font-size: 0.75rem;
+    width: 100%;
+}
+
+.legend-item-svg {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+.legend-color-box-svg {
+    width: 10px;
+    height: 10px;
+    border-radius: 2px;
+}
+
+.bot-bubble code,
+.user-bubble code {
+    background-color: #334155;
+    color: #e2e8f0;
+    padding: 0.1em 0.4em;
+    border-radius: 0.25rem;
+    font-family: monospace;
+    font-size: 0.9em;
+}
+
+.suggestion-button {
+    background-color: #4a5568;
+    color: #e2e8f0;
+    padding: 6px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    display: inline-block;
+    font-size: 0.75rem;
+    border: none;
+    transition: background-color 0.2s;
+    font-weight: 500;
+}
+
+.suggestion-button:hover {
+    background-color: #2d3748;
+}
+
+#shared-link-textarea {
+    font-family: monospace;
+    word-break: break-all;
+    resize: none;
+}
+
+/* Estilo para feedback de envio do formulario de colaboracao */
+#collab-submit-feedback {
+    min-height: 1.25rem; /* Garante espaco mesmo quando vazio */
+}
