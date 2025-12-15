@@ -1057,6 +1057,7 @@ function resetApp() {
 }
 
 // ==================== Event Listeners ====================
+function setupEventListeners() {
 if (loginForm) {
     loginForm.addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -1245,9 +1246,11 @@ if (togglePasswordVisibilityButton) {
         }
     });
 }
+} // fim de setupEventListeners
 
 // ==================== Initialization ====================
 async function initializeApp() {
+    setupEventListeners();
     console.log('Inicializando SenhaMestra...');
 
     if (!supabaseClient) {
@@ -1281,5 +1284,9 @@ window.openEditCredentialModal = openEditCredentialModal;
 window.confirmDeleteCredential = confirmDeleteCredential;
 window.openShareCredentialModal = openShareCredentialModal;
 
-// Start the app
-initializeApp();
+// Start the app when DOM is ready
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initializeApp);
+} else {
+    initializeApp();
+}
