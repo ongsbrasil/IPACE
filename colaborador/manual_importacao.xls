@@ -1,0 +1,109 @@
+<?xml version="1.0"?>
+<?mso-application progid="Excel.Sheet"?>
+<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"
+ xmlns:o="urn:schemas-microsoft-com:office:office"
+ xmlns:x="urn:schemas-microsoft-com:office:excel"
+ xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"
+ xmlns:html="http://www.w3.org/TR/REC-html40">
+ <Styles>
+  <Style ss:ID="Default" ss:Name="Normal">
+   <Alignment ss:Vertical="Bottom"/>
+   <Borders/>
+   <Font ss:FontName="Arial" x:Family="Swiss" ss:Size="10" ss:Color="#000000"/>
+   <Interior/>
+   <NumberFormat/>
+   <Protection/>
+  </Style>
+  <Style ss:ID="sHeader">
+   <Font ss:FontName="Arial" x:Family="Swiss" ss:Size="12" ss:Color="#FFFFFF" ss:Bold="1"/>
+   <Interior ss:Color="#000080" ss:Pattern="Solid"/>
+  </Style>
+  <Style ss:ID="sBold">
+   <Font ss:FontName="Arial" x:Family="Swiss" ss:Size="10" ss:Bold="1"/>
+  </Style>
+ </Styles>
+ <Worksheet ss:Name="Instruções">
+  <Table>
+   <Column ss:Width="150"/>
+   <Column ss:Width="400"/>
+   <Row>
+    <Cell ss:StyleID="sHeader"><Data ss:Type="String">Campo</Data></Cell>
+    <Cell ss:StyleID="sHeader"><Data ss:Type="String">Regra</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="sBold"><Data ss:Type="String">Nome</Data></Cell>
+    <Cell><Data ss:Type="String">Nome completo do aluno</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="sBold"><Data ss:Type="String">Data Nascimento</Data></Cell>
+    <Cell><Data ss:Type="String">Formato AAAA-MM-DD (Ex: 2010-05-15)</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="sBold"><Data ss:Type="String">RG</Data></Cell>
+    <Cell><Data ss:Type="String">Formato XX.XXX.XXX-X</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="sBold"><Data ss:Type="String">Sexo</Data></Cell>
+    <Cell><Data ss:Type="String">"Masculino", "Feminino" ou "Outro"</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="sBold"><Data ss:Type="String">Modalidade</Data></Cell>
+    <Cell><Data ss:Type="String">Deve ser idêntico à tabela na aba "Horários"</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="sBold"><Data ss:Type="String">Horário</Data></Cell>
+    <Cell><Data ss:Type="String">Deve ser idêntico à tabela na aba "Horários"</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="sBold"><Data ss:Type="String">Data Entrada</Data></Cell>
+    <Cell><Data ss:Type="String">Opcional. Formato AAAA-MM-DD. Se vazio, usa data atual.</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="sBold"><Data ss:Type="String">G</Data></Cell>
+    <Cell><Data ss:Type="String">Opcional. "Sim" ou "Não". (Grávida?)</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="sBold"><Data ss:Type="String">PCD</Data></Cell>
+    <Cell><Data ss:Type="String">Opcional. "Sim" ou "Não". (Pessoa com Deficiência)</Data></Cell>
+   </Row>
+  </Table>
+ </Worksheet>
+ <Worksheet ss:Name="Horários e Modalidades">
+  <Table>
+   <Column ss:Width="150"/>
+   <Column ss:Width="100"/>
+   <Column ss:Width="200"/>
+   <Row>
+    <Cell ss:StyleID="sHeader"><Data ss:Type="String">Modalidade</Data></Cell>
+    <Cell ss:StyleID="sHeader"><Data ss:Type="String">Período</Data></Cell>
+    <Cell ss:StyleID="sHeader"><Data ss:Type="String">Valor Exato para CSV</Data></Cell>
+   </Row>
+   <!-- Judô -->
+   <Row><Cell><Data ss:Type="String">Judô</Data></Cell><Cell><Data ss:Type="String">Manhã</Data></Cell><Cell><Data ss:Type="String">Manhã - 8h às 9h</Data></Cell></Row>
+   <Row><Cell><Data ss:Type="String">Judô</Data></Cell><Cell><Data ss:Type="String">Manhã</Data></Cell><Cell><Data ss:Type="String">Manhã - 9h às 10h</Data></Cell></Row>
+   <Row><Cell><Data ss:Type="String">Judô</Data></Cell><Cell><Data ss:Type="String">Manhã</Data></Cell><Cell><Data ss:Type="String">Manhã - 10h às 11h</Data></Cell></Row>
+   <Row><Cell><Data ss:Type="String">Judô</Data></Cell><Cell><Data ss:Type="String">Tarde</Data></Cell><Cell><Data ss:Type="String">Tarde - 14h às 15h</Data></Cell></Row>
+   <Row><Cell><Data ss:Type="String">Judô</Data></Cell><Cell><Data ss:Type="String">Tarde</Data></Cell><Cell><Data ss:Type="String">Tarde - 15h às 16h</Data></Cell></Row>
+   <Row><Cell><Data ss:Type="String">Judô</Data></Cell><Cell><Data ss:Type="String">Tarde</Data></Cell><Cell><Data ss:Type="String">Tarde - 16h às 17h</Data></Cell></Row>
+   <!-- Futebol -->
+   <Row><Cell><Data ss:Type="String">Futebol</Data></Cell><Cell><Data ss:Type="String">Manhã</Data></Cell><Cell><Data ss:Type="String">Manhã - 8h às 9h</Data></Cell></Row>
+   <Row><Cell><Data ss:Type="String">Futebol</Data></Cell><Cell><Data ss:Type="String">Manhã</Data></Cell><Cell><Data ss:Type="String">Manhã - 9h às 10h</Data></Cell></Row>
+   <Row><Cell><Data ss:Type="String">Futebol</Data></Cell><Cell><Data ss:Type="String">Manhã</Data></Cell><Cell><Data ss:Type="String">Manhã - 10h às 11h</Data></Cell></Row>
+   <Row><Cell><Data ss:Type="String">Futebol</Data></Cell><Cell><Data ss:Type="String">Tarde</Data></Cell><Cell><Data ss:Type="String">Tarde - 14h às 15h</Data></Cell></Row>
+   <Row><Cell><Data ss:Type="String">Futebol</Data></Cell><Cell><Data ss:Type="String">Tarde</Data></Cell><Cell><Data ss:Type="String">Tarde - 15h às 16h</Data></Cell></Row>
+   <Row><Cell><Data ss:Type="String">Futebol</Data></Cell><Cell><Data ss:Type="String">Tarde</Data></Cell><Cell><Data ss:Type="String">Tarde - 16h às 17h</Data></Cell></Row>
+   <!-- Vela -->
+   <Row><Cell><Data ss:Type="String">Vela</Data></Cell><Cell><Data ss:Type="String">Manhã</Data></Cell><Cell><Data ss:Type="String">Manhã - 9h às 10:30h</Data></Cell></Row>
+   <Row><Cell><Data ss:Type="String">Vela</Data></Cell><Cell><Data ss:Type="String">Tarde</Data></Cell><Cell><Data ss:Type="String">Tarde - 14h às 15:30h</Data></Cell></Row>
+   <Row><Cell><Data ss:Type="String">Vela</Data></Cell><Cell><Data ss:Type="String">Tarde</Data></Cell><Cell><Data ss:Type="String">Tarde - 15:30h às 17h</Data></Cell></Row>
+   <!-- Canoagem Velocidade -->
+   <Row><Cell><Data ss:Type="String">Canoagem Velocidade</Data></Cell><Cell><Data ss:Type="String">Manhã</Data></Cell><Cell><Data ss:Type="String">Manhã - 9h às 10:30h</Data></Cell></Row>
+   <Row><Cell><Data ss:Type="String">Canoagem Velocidade</Data></Cell><Cell><Data ss:Type="String">Tarde</Data></Cell><Cell><Data ss:Type="String">Tarde - 14h às 15:30h</Data></Cell></Row>
+   <Row><Cell><Data ss:Type="String">Canoagem Velocidade</Data></Cell><Cell><Data ss:Type="String">Tarde</Data></Cell><Cell><Data ss:Type="String">Tarde - 15:30h às 17h</Data></Cell></Row>
+   <!-- Canoagem Turismo -->
+   <Row><Cell><Data ss:Type="String">Canoagem Turismo</Data></Cell><Cell><Data ss:Type="String">Manhã</Data></Cell><Cell><Data ss:Type="String">Manhã - 9h às 10:30h</Data></Cell></Row>
+   <Row><Cell><Data ss:Type="String">Canoagem Turismo</Data></Cell><Cell><Data ss:Type="String">Tarde</Data></Cell><Cell><Data ss:Type="String">Tarde - 14h às 15:30h</Data></Cell></Row>
+   <Row><Cell><Data ss:Type="String">Canoagem Turismo</Data></Cell><Cell><Data ss:Type="String">Tarde</Data></Cell><Cell><Data ss:Type="String">Tarde - 15:30h às 17h</Data></Cell></Row>
+  </Table>
+ </Worksheet>
+</Workbook>

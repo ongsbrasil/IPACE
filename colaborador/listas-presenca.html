@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Listas de Presença - IPACE</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .title-bar {
+            background: linear-gradient(to right, #000080, #1084d0);
+            color: white;
+            padding: 2px 4px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-family: 'MS Sans Serif', sans-serif;
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+        .title-text {
+            flex-grow: 1;
+        }
+        .buttons {
+            display: flex;
+        }
+        .btn-win {
+            width: 16px;
+            height: 14px;
+            margin: 0 1px;
+            border: 1px outset #c0c0c0;
+            background: #c0c0c0;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            color: black;
+        }
+        .btn-close::before {
+            content: '×';
+        }
+        .btn-help::before {
+            content: '?';
+        }
+        table { 
+            width: 100%; 
+            border-collapse: collapse; 
+            font-size: 0.6rem;
+            line-height: 1;
+        }
+        th, td { 
+            border: 1px solid #000; 
+            padding: 0px 2px; 
+            text-align: center;
+            height: 14px;
+        }
+        th { 
+            background-color: #f0f0f0;
+            height: 16px;
+            font-size: 0.4rem;
+        }
+        .assinatura { border-top: 1px solid #000; padding-top: 2px; }
+        #listasPresenca {
+            max-height: 600px;
+            overflow-y: auto;
+            border: 1px solid #c0c0c0;
+            padding: 10px;
+            background: white;
+        }
+        #listasPresenca h3 {
+            margin: 10px 0 5px 0;
+            font-size: 0.8rem;
+            padding-bottom: 3px;
+            border-bottom: 1px solid #dfdfdf;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="secretaria.html" class="back-btn">Voltar</a>
+        
+        <div class="title-bar">
+            <div class="title-text">Listas de Presença</div>
+            <div class="buttons">
+                <button class="btn-win btn-help" onclick="alert('Ajuda: Selecione os filtros para visualizar as listas de presença.')"></button>
+                <button class="btn-win btn-close" onclick="window.location.href='secretaria.html'"></button>
+            </div>
+        </div>
+
+        <div class="panel-header">
+            <div>
+                <h1>Listas de Presença</h1>
+                <p style="margin: 0; font-size: 0.9rem;">CE Náutico Guarapiranga</p>
+            </div>
+            <div>
+                <span id="dateTime"></span>
+            </div>
+        </div>
+
+        <div class="panel-content">
+            <h2>LISTAS DE PRESENÇA</h2>
+            <div id="filtroListasPresenca" style="margin-bottom: 20px;"></div>
+            <div id="listasPresenca"></div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-config.js"></script>
+    <script src="supabase-client.js"></script>
+    <script src="data-manager.js"></script>
+    <script src="sync.js"></script>
+    <script src="listas-presenca.js"></script>
+    <footer style="text-align: center; font-size: 0.75rem; padding: 10px; color: #666; margin-top: 20px; border-top: 1px solid #ccc;">
+        Software web desenvolvido para uso exclusivo do Instituto Pangea de Ação Cultura e Esportiva IPACE - 2026
+    </footer>
+</body>
+</html>

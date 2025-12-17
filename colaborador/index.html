@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - IPACE</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            background: #1fa1a1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: 'MS Sans Serif', Arial, sans-serif;
+        }
+
+        .login-container {
+            background: white;
+            border: 2px solid #dfdfdf;
+            box-shadow: 1px 1px 0 #dfdfdf, 2px 2px 0 #808080;
+            padding: 30px;
+            width: 350px;
+            border-radius: 3px;
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 30px;
+            background: linear-gradient(to right, #000080, #1084d0);
+            color: white;
+            padding: 15px;
+            margin: -30px -30px 20px -30px;
+            border-bottom: 2px solid #000080;
+        }
+
+        .login-header h1 {
+            margin: 0;
+            font-size: 1.8rem;
+        }
+
+        .login-header p {
+            margin: 5px 0 0 0;
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #000080;
+            font-size: 0.9rem;
+        }
+
+        .input-form {
+            width: 100%;
+            padding: 8px;
+            border: 2px inset #dfdfdf;
+            background: white;
+            font-family: 'MS Sans Serif', Arial, sans-serif;
+            font-size: 0.95rem;
+            box-sizing: border-box;
+        }
+
+        .input-form:focus {
+            outline: none;
+            background: #ffffcc;
+        }
+
+        .btn-login {
+            width: 100%;
+            padding: 10px;
+            background: linear-gradient(to bottom, #000080, #1084d0);
+            color: white;
+            border: 2px outset #dfdfdf;
+            font-weight: bold;
+            cursor: pointer;
+            font-family: 'MS Sans Serif', Arial, sans-serif;
+            font-size: 1rem;
+            margin-top: 20px;
+            transition: all 0.1s;
+        }
+
+        .btn-login:hover {
+            background: linear-gradient(to bottom, #1084d0, #000080);
+        }
+
+        .btn-login:active {
+            border-style: inset;
+            transform: translateY(1px);
+        }
+
+        .error-message {
+            color: #c00000;
+            text-align: center;
+            margin-bottom: 15px;
+            padding: 10px;
+            background: #ffcccc;
+            border: 1px solid #cc0000;
+            border-radius: 3px;
+            display: none;
+            font-size: 0.9rem;
+        }
+
+        .back-link {
+            text-align: center;
+            margin-top: 15px;
+        }
+
+        .back-link a {
+            color: #000080;
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+
+        .back-link a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-header">
+            <h1>IPACE</h1>
+            <p>CE Náutico Guarapiranga</p>
+        </div>
+
+        <div id="errorMessage" class="error-message"></div>
+
+        <form id="loginForm" onsubmit="fazerLogin(event)">
+            <div class="form-group">
+                <label for="usuario">Usuário:</label>
+                <input type="text" id="usuario" class="input-form" required autofocus>
+            </div>
+
+            <div class="form-group">
+                <label for="senha">Senha:</label>
+                <input type="password" id="senha" class="input-form" required>
+            </div>
+
+            <button type="submit" class="btn-login">Entrar</button>
+        </form>
+
+        <div style="text-align: center; margin-top: 20px; border-top: 1px solid #dfdfdf; padding-top: 15px;">
+            <a href="admin-login.html" style="color: #000080; text-decoration: none; font-size: 0.85rem; margin-right: 15px;">Painel Admin</a>
+            <a href="https://www.ipace.org.br" target="_blank" style="color: #000080; text-decoration: none; font-size: 0.85rem;">www.ipace.org.br</a>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-config.js"></script>
+    <script src="supabase-client.js"></script>
+    <script src="data-manager.js"></script>
+    <script src="login.js"></script>
+</body>
+</html>

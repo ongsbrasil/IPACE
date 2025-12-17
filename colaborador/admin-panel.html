@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel de Administração</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; background: #f5f5f5; height: 100vh; overflow: hidden; }
+        
+        .container { display: flex; height: 100vh; }
+        .sidebar { width: 250px; background: #1f3a5c; color: white; display: flex; flex-direction: column; overflow-y: auto; }
+        .sidebar-header { padding: 20px; border-bottom: 1px solid #0d1b2a; }
+        .sidebar-header h2 { margin: 0; font-size: 18px; }
+        .sidebar-menu { flex: 1; padding: 20px 0; }
+        .sidebar-item { padding: 15px 20px; cursor: pointer; border-left: 3px solid transparent; transition: all 0.3s; }
+        .sidebar-item:hover { background: #2a5a8c; }
+        .sidebar-item.active { border-left-color: #ffc107; background: #264a78; }
+        .sidebar-footer { padding: 15px 20px; border-top: 1px solid #0d1b2a; }
+        
+        .main-content { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+        .header { background: white; padding: 20px; border-bottom: 1px solid #ddd; display: flex; justify-content: space-between; align-items: center; }
+        .header h1 { margin: 0; color: #333; }
+        .logout-btn { background: #dc3545; color: white; padding: 8px 15px; border: none; border-radius: 3px; cursor: pointer; }
+        
+        .content { flex: 1; overflow-y: auto; padding: 20px; }
+        .tab { display: none; }
+        .tab.active { display: block; }
+        
+        .controls { margin-bottom: 20px; display: flex; gap: 10px; flex-wrap: wrap; }
+        button { padding: 8px 15px; background: #007bff; color: white; border: none; border-radius: 3px; cursor: pointer; }
+        button:hover { background: #0056b3; }
+        button.danger { background: #dc3545; }
+        button.danger:hover { background: #c82333; }
+        button.success { background: #28a745; }
+        button.success:hover { background: #218838; }
+        button.secondary { background: #6c757d; }
+        button.secondary:hover { background: #5a6268; }
+        
+        input, select { padding: 8px; border: 1px solid #ccc; border-radius: 3px; margin: 5px; }
+        table { width: 100%; border-collapse: collapse; background: white; }
+        th, td { padding: 10px; text-align: left; border-bottom: 1px solid #ddd; }
+        th { background: #f8f9fa; font-weight: bold; }
+        tr:hover { background: #f9f9f9; }
+        
+        .modal { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 1000; }
+        .modal.show { display: flex; align-items: center; justify-content: center; }
+        .modal-content { background: white; padding: 20px; border-radius: 5px; width: 90%; max-width: 600px; max-height: 80vh; overflow-y: auto; }
+        
+        /* Modal de editar chamada em tela cheia */
+        #modalEditarChamada .modal-content { max-width: 95vw; max-height: 95vh; width: 95vw; height: 95vh; }
+        #modalEditarChamada table { font-size: 0.95rem; }
+        #modalEditarChamada th { padding: 12px; font-size: 0.9rem; }
+        #modalEditarChamada td { padding: 12px; font-size: 0.9rem; }
+        #modalEditarChamada select { padding: 6px; font-size: 0.85rem; }
+        
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .modal-header h2 { margin: 0; }
+        .close { background: none; border: none; font-size: 24px; cursor: pointer; }
+        
+        .alert { padding: 10px; margin-bottom: 20px; border-radius: 3px; }
+        .alert.success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .alert.danger { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; }
+        
+        .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin-bottom: 20px; }
+        .stat-box { background: white; padding: 15px; border-radius: 5px; text-align: center; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        .stat-number { font-size: 28px; font-weight: bold; color: #007bff; }
+        .stat-label { font-size: 12px; color: #666; margin-top: 5px; }
+        
+        .filter-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin-bottom: 20px; }
+        .badge { display: inline-block; padding: 3px 8px; border-radius: 12px; font-size: 12px; font-weight: bold; }
+        .badge.active { background: #28a745; color: white; }
+        .badge.inactive { background: #6c757d; color: white; }
+        .badge.professor { background: #007bff; color: white; }
+        .badge.secretaria { background: #6f42c1; color: white; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- SIDEBAR -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <h2>Admin Panel</h2>
+            </div>
+            <div class="sidebar-menu">
+                <div class="sidebar-item active" onclick="abrirAba('usuarios', this)">Usuarios</div>
+                <div class="sidebar-item" onclick="abrirAba('chamadas', this)">Chamadas</div>
+                <div class="sidebar-item" onclick="abrirAba('dashboard', this)">Dashboard</div>
+            </div>
+            <div class="sidebar-footer">
+                <button class="logout-btn" onclick="fazerLogoutAdmin()" style="width: 100%;">Sair</button>
+            </div>
+        </div>
+
+        <!-- MAIN CONTENT -->
+        <div class="main-content">
+            <div class="header">
+                <h1 id="tabTitulo">Gerenciar Usuarios</h1>
+            </div>
+
+            <div class="content">
+                <div id="alert"></div>
+
+                <!-- TAB: USUARIOS -->
+                <div id="tab-usuarios" class="tab active">
+                    <div class="stats">
+                        <div class="stat-box">
+                            <div class="stat-number" id="totalUsuarios">0</div>
+                            <div class="stat-label">Total de Usuarios</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-number" id="totalProfessores">0</div>
+                            <div class="stat-label">Professores</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-number" id="totalSecretarias">0</div>
+                            <div class="stat-label">Secretarias</div>
+                        </div>
+                    </div>
+
+                    <div class="controls">
+                        <button class="success" onclick="abrirModalNovoUsuario()">+ Novo Usuario</button>
+                        <button onclick="recarregarUsuarios()">Recarregar</button>
+                    </div>
+
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Usuario</th>
+                                <th>Tipo</th>
+                                <th>Nome</th>
+                                <th>Modalidade</th>
+                                <th>Status</th>
+                                <th>Acoes</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabelaUsuarios">
+                            <tr><td colspan="6" style="text-align: center; color: #999;">Carregando...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- TAB: CHAMADAS -->
+                <div id="tab-chamadas" class="tab">
+                    <div class="controls">
+                        <button onclick="abrirModalNovaChamada()">+ Criar Nova Chamada</button>
+                        <button onclick="recarregarChamadas()">Recarregar</button>
+                        <div style="display:inline-flex; gap:6px; align-items:center; margin-left:8px;">
+                            <span style="color:#555;">Ordenar meses:</span>
+                            <button onclick="setOrdenacaoChamadas('asc')" title="Jan → Dez" style="padding: 6px 10px;">↑ Jan→Dez</button>
+                            <button onclick="setOrdenacaoChamadas('desc')" title="Dez → Jan" style="padding: 6px 10px;">↓ Dez→Jan</button>
+                        </div>
+                    </div>
+
+                    <div class="filter-row">
+                        <div>
+                            <label>Modalidade:</label>
+                            <select id="filtroModalidade" onchange="filtrarChamadas()">
+                                <option value="">Todas</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label>Horário (Turma):</label>
+                            <select id="filtroTurma" onchange="filtrarChamadas()">
+                                <option value="">Todos</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label>Mes:</label>
+                            <select id="filtroMes" onchange="filtrarChamadas()">
+                                <option value="">Selecione</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label>Ano:</label>
+                            <select id="filtroAno" onchange="filtrarChamadas()">
+                                <option value="">Selecione</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Mês/Ano</th>
+                                <th>Modalidade</th>
+                                <th>Horário</th>
+                                <th>Alunos</th>
+                                <th>Status</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabelaChamadas">
+                            <tr><td colspan="6" style="text-align: center; color: #999;">Carregando...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- TAB: DASHBOARD -->
+                <div id="tab-dashboard" class="tab">
+                    <div class="filter-row">
+                        <div>
+                            <label>Mes:</label>
+                            <select id="dashMes" onchange="atualizarDashboard()">
+                                <option value="">Todos</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label>Modalidade:</label>
+                            <select id="dashModalidade" onchange="atualizarDashboard()">
+                                <option value="">Todas</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="stats">
+                        <div class="stat-box">
+                            <div class="stat-number" id="dashTotalAlunos">0</div>
+                            <div class="stat-label">Total de Alunos</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-number" id="dashAlunosAtivos">0</div>
+                            <div class="stat-label">Alunos Ativos</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-number" id="dashFrequenciaMedia">0%</div>
+                            <div class="stat-label">Frequencia Media</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-number" id="dashChamadasTotal">0</div>
+                            <div class="stat-label">Chamadas Registradas</div>
+                        </div>
+                    </div>
+
+                    <h3>Ranking de Presenca</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Aluno</th>
+                                <th>Presentes</th>
+                                <th>Faltas</th>
+                                <th>Taxa %</th>
+                            </tr>
+                        </thead>
+                        <tbody id="rankingPresenca">
+                            <tr><td colspan="5" style="text-align: center; color: #999;">Carregando...</td></tr>
+                        </tbody>
+                    </table>
+
+                    <h3 style="margin-top: 30px;">Professores com Mais Chamadas</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Professor</th>
+                                <th>Modalidade</th>
+                                <th>Chamadas</th>
+                                <th>Ultima Chamada</th>
+                            </tr>
+                        </thead>
+                        <tbody id="professoresChamadas">
+                            <tr><td colspan="4" style="text-align: center; color: #999;">Carregando...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: Editar/Criar Usuario -->
+    <div id="modalUsuario" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalUsuarioTitulo">Novo Usuario</h2>
+                <button class="close" onclick="fecharModal('modalUsuario')">&times;</button>
+            </div>
+            <form id="formUsuario" onsubmit="salvarUsuario(event)">
+                <div class="form-group">
+                    <label>Usuario (login):</label>
+                    <input type="text" id="inputUsuario" required>
+                </div>
+                <div class="form-group">
+                    <label>Senha:</label>
+                    <input type="password" id="inputSenha" required>
+                </div>
+                <div class="form-group">
+                    <label>Tipo:</label>
+                    <select id="inputTipo" onchange="atualizarCamposModalidadeModal()">
+                        <option value="professor">Professor</option>
+                        <option value="secretaria">Secretaria</option>
+                    </select>
+                </div>
+                <div class="form-group" id="grupoModalidadeModal">
+                    <label>Modalidade:</label>
+                    <select id="inputModalidade">
+                        <option value="judo">Judo</option>
+                        <option value="futebol">Futebol</option>
+                        <option value="vela">Vela</option>
+                        <option value="canoagem-velocidade">Canoagem Velocidade</option>
+                        <option value="canoagem-turismo">Canoagem Turismo</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Nome Completo:</label>
+                    <input type="text" id="inputNome" required>
+                </div>
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" id="inputAtivo" checked> Ativo
+                    </label>
+                </div>
+                <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                    <button type="button" class="secondary" onclick="fecharModal('modalUsuario')">Cancelar</button>
+                    <button type="submit" class="success">Salvar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: Editar Chamada -->
+    <div id="modalEditarChamada" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Editar Chamada</h2>
+                <button class="close" onclick="fecharModal('modalEditarChamada')">&times;</button>
+            </div>
+            <div id="conteudoChamada"></div>
+        </div>
+    </div>
+
+    <!-- MODAL: Criar Nova Chamada -->
+    <div id="modalNovaChamada" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalChamadaTitulo">Criar Nova Chamada</h2>
+                <button class="close" onclick="fecharModal('modalNovaChamada')">&times;</button>
+            </div>
+            <form onsubmit="salvarNovaChamada(event)">
+                <div class="form-group">
+                    <label>Modalidade:</label>
+                    <select id="selectModalidadeChamada" onchange="atualizarHorariosModal()" required>
+                        <option value="">-- Selecione a Modalidade --</option>
+                        <option value="judo">Judô</option>
+                        <option value="canoagem-velocidade">Canoagem Velocidade</option>
+                        <option value="futebol">Futebol</option>
+                        <option value="vela">Vela</option>
+                        <option value="canoagem-turismo">Canoagem Turismo</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Horário (Turma):</label>
+                    <select id="selectTurmaChamada" required>
+                        <option value="">-- Selecione o Horário --</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Mês:</label>
+                    <select id="selectMesChamada" required>
+                        <option value="">-- Selecione o Mês --</option>
+                        <option value="01">Janeiro</option>
+                        <option value="02">Fevereiro</option>
+                        <option value="03">Março</option>
+                        <option value="04">Abril</option>
+                        <option value="05">Maio</option>
+                        <option value="06">Junho</option>
+                        <option value="07">Julho</option>
+                        <option value="08">Agosto</option>
+                        <option value="09">Setembro</option>
+                        <option value="10">Outubro</option>
+                        <option value="11">Novembro</option>
+                        <option value="12">Dezembro</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Ano:</label>
+                    <select id="selectAnoChamada" required>
+                        <option value="">-- Selecione o Ano --</option>
+                        <option value="2024">2024</option>
+                        <option value="2025">2025</option>
+                        <option value="2026">2026</option>
+                        <option value="2027">2027</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Nome da Chamada:</label>
+                    <input type="text" id="inputNomeChamada" placeholder="Ex: Aula 1 - Janeiro" required>
+                </div>
+                <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                    <button type="button" class="secondary" onclick="fecharModal('modalNovaChamada')">Cancelar</button>
+                    <button type="submit" class="success">Criar Chamada</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-config.js"></script>
+    <script src="supabase-client.js"></script>
+    <script src="data-manager.js"></script>
+    <script src="login.js"></script>
+    <script src="sync.js"></script>
+    <script src="admin-panel.js"></script>
+</body>
+</html>

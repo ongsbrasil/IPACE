@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Alunos - IPACE</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .title-bar {
+            background: linear-gradient(to right, #000080, #1084d0);
+            color: white;
+            padding: 2px 4px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-family: 'MS Sans Serif', sans-serif;
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+        .title-text {
+            flex-grow: 1;
+        }
+        .buttons {
+            display: flex;
+        }
+        .btn-win {
+            width: 16px;
+            height: 14px;
+            margin: 0 1px;
+            border: 1px outset #c0c0c0;
+            background: #c0c0c0;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            color: black;
+        }
+        .btn-close::before {
+            content: '×';
+        }
+        .btn-help::before {
+            content: '?';
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="secretaria.html" class="back-btn">Voltar</a>
+        
+        <div class="title-bar">
+            <div class="title-text">Lista de Alunos</div>
+            <div class="buttons">
+                <button class="btn-win btn-help" onclick="alert('Ajuda: Use os filtros para buscar alunos específicos.')"></button>
+                <button class="btn-win btn-close" onclick="window.location.href='secretaria.html'"></button>
+            </div>
+        </div>
+
+        <div class="panel-header">
+            <div>
+                <h1>Lista de Alunos</h1>
+                <p style="margin: 0; font-size: 0.9rem;">CE Náutico Guarapiranga</p>
+            </div>
+            <div>
+                <span id="dateTime"></span>
+            </div>
+        </div>
+
+        <div class="panel-content">
+            <div class="form-group">
+                <label for="nomeBusca">Nome do Aluno:</label>
+                <input type="text" id="nomeBusca" placeholder="Digite o nome...">
+            </div>
+            <div class="form-group">
+                <label for="modalidadeBusca">Modalidade:</label>
+                <select id="modalidadeBusca" onchange="carregarTurmasBusca()">
+                    <option value="">Todas as Modalidades</option>
+                    <option value="canoagem-velocidade">Canoagem Velocidade</option>
+                    <option value="canoagem-turismo">Canoagem Turismo</option>
+                    <option value="vela">Vela</option>
+                    <option value="futebol">Futebol</option>
+                    <option value="judo">Judô</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="turmaBusca">Turma:</label>
+                <select id="turmaBusca">
+                    <option value="">Todas as Turmas</option>
+                </select>
+            </div>
+            <div style="display: flex; gap: 10px; margin-top: 20px;">
+                <button type="button" class="btn" onclick="filtrarAlunos()">FILTRAR</button>
+                <button type="button" class="btn btn-secondary" onclick="limparFiltros()">LIMPAR</button>
+            </div>
+            
+            <div style="text-align: right; margin-top: 15px; font-size: 0.85rem; color: #666;">
+                <span id="totalAlunos">0</span> total | <span id="alunosEncontrados">0</span> encontrados
+            </div>
+            
+            <div id="listaAlunos" style="margin-top: 20px;"></div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-config.js"></script>
+    <script src="supabase-client.js"></script>
+    <script src="data-manager.js"></script>
+    <script src="sync.js" defer></script>
+    <script src="lista-alunos.js" defer></script>    <footer style="text-align: center; font-size: 0.75rem; padding: 10px; color: #666; margin-top: 20px; border-top: 1px solid #ccc;">
+        Software web desenvolvido para uso exclusivo do Instituto Pangea de Ação Cultura e Esportiva IPACE - 2026
+    </footer></body>
+</html>
