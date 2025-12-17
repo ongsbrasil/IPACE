@@ -412,4 +412,40 @@ table tr:hover {
         font-size: 0.75rem;
         padding: 4px 8px;
     }
+    
+    #tabelaChamada th:nth-child(4),
+    #tabelaChamada td:nth-child(4),
+    #tabelaChamada th:nth-child(5),
+    #tabelaChamada td:nth-child(5) {
+        display: none;
+    }
+    
+    #tabelaChamada th:nth-child(2) {
+        width: 40%;
+    }
+    
+    #tabelaChamada th:nth-child(3) {
+        width: 30%;
+    }
+    
+    #tabelaChamada th:nth-child(6) {
+        width: 30%;
+    }
+    
+    body {
+        padding: 10px;
+    }
+    
+    .title-bar {
+        font-size: 14px;
+    }
+    
+    .title-text {
+        font-size: 14px;
+    }
+    
+    #tabelaChamada td button {
+        font-size: 1rem;
+        padding: 8px 12px;
+    }
 }

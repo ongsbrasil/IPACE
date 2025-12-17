@@ -2,6 +2,12 @@
 let usuarios = {};
 let dataManagerInicializado = false;
 
+// Verificar se estamos na página de login
+if (!document.getElementById('loginForm')) {
+    console.log('Login.js: Página não é de login, ignorando execução.');
+    // Não executar o resto do script
+} else {
+
 // Mostrar mensagem de inicialização
 console.log('%c=== IPACE - SISTEMA DE LOGIN ===', 'color: #1084d0; font-weight: bold; font-size: 14px;');
 
@@ -149,3 +155,5 @@ window.addEventListener('usuariosAtualizados', async function() {
     console.log('Login.js recebeu atualizacao de usuarios');
     await carregarUsuarios();
 });
+
+} // Fecha o else do guard

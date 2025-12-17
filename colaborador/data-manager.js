@@ -27,6 +27,8 @@ const DataManager = {
     },
     _cacheDuration: 5 * 60 * 1000, // 5 MINUTOS de cache (reduzir latência)
     
+    _initPromise: null, // Para tornar init() idempotente
+    
     _getCachedData: function(key) {
         const now = Date.now();
         if (this._cache[key] && (now - this._cacheTime[key]) < this._cacheDuration) {
@@ -52,68 +54,115 @@ const DataManager = {
     },
 
     init: async function() {
-        console.log('🔄 DataManager: Iniciando...');
+        if (this._initPromise) return this._initPromise;
         
-        // Aguardar Supabase inicializar com mais tempo
-        let tentativas = 0;
-        const maxTentativas = 50; // 5 segundos com delay de 100ms
-        
-        console.log('⏳ DataManager: Aguardando Supabase inicializar...');
-        
-        while (!window.supabaseClient && tentativas < maxTentativas) {
-            await new Promise(resolve => setTimeout(resolve, 100));
-            tentativas++;
-            if (tentativas % 10 === 0) {
-                console.log(`  Tentativa ${tentativas}/${maxTentativas}`);
-            }
-        }
-        
-        // Se ainda não inicializou, tentar chamar initSupabase diretamente
-        if (!window.supabaseClient) {
-            console.log('🔄 DataManager: Tentando chamar initSupabase() manualmente...');
+        this._initPromise = (async () => {
+            console.log('🔄 DataManager: Iniciando...');
             
-            if (typeof initSupabase === 'function') {
-                const result = initSupabase();
-                if (result) {
-                    window.supabaseClient = result;
-                    console.log('✓ DataManager: initSupabase() bem-sucedido');
+            // Aguardar Supabase inicializar com mais tempo
+            let tentativas = 0;
+            const maxTentativas = 50; // 5 segundos com delay de 100ms
+            
+            console.log('⏳ DataManager: Aguardando Supabase inicializar...');
+            
+            while (!window.supabaseClient && tentativas < maxTentativas) {
+                await new Promise(resolve => setTimeout(resolve, 100));
+                tentativas++;
+                if (tentativas % 10 === 0) {
+                    console.log(`  Tentativa ${tentativas}/${maxTentativas}`);
                 }
             }
-        }
-        
-        // Última verificação
-        if (!window.supabaseClient) {
-            console.error('❌ DataManager ERRO CRÍTICO: Supabase não foi inicializado após 5 segundos!');
-            console.error('   Verificar se:');
-            console.error('   1. supabase-js CDN foi carregado (window.supabase)');
-            console.error('   2. supabase-config.js foi carregado (window.SUPABASE_CONFIG)');
-            console.error('   3. supabase-client.js foi carregado e executado');
-            console.error('   Variáveis globais:');
-            console.error('   - window.supabase:', typeof window.supabase);
-            console.error('   - window.SUPABASE_CONFIG:', typeof window.SUPABASE_CONFIG);
-            console.error('   - window._supabaseClientInitialized:', window._supabaseClientInitialized);
-            throw new Error('Supabase não disponível após 5 segundos');
-        }
-        
-        console.log('✅ DataManager: Supabase Inicializado com Sucesso');
-        
-        // Testar conexão
-        try {
-            console.log('🔌 DataManager: Testando conexão Supabase...');
-            const { error, count } = await window.supabaseClient
-                .from('alunos')
-                .select('count', { count: 'exact' })
-                .limit(1);
+            
+            // Se ainda não inicializou, tentar chamar initSupabase diretamente
+            if (!window.supabaseClient) {
+                console.log('🔄 DataManager: Tentando chamar initSupabase() manualmente...');
                 
-            if (error) {
-                console.error('❌ DataManager ERRO: Supabase retornou erro na conexão:', error.message);
-                throw error;
+                if (typeof initSupabase === 'function') {
+                    const result = initSupabase();
+                    if (result) {
+                        window.supabaseClient = result;
+                        console.log('✓ DataManager: initSupabase() bem-sucedido');
+                    }
+                }
             }
-            console.log('✅ DataManager: Conexão Supabase OK');
-        } catch (e) {
-            console.error('❌ DataManager ERRO CRÍTICO na conexão Supabase:', e.message);
-            throw e;
-        }
+            
+            // Última verificação
+            if (!window.supabaseClient) {
+                console.error('❌ DataManager ERRO CRÍTICO: Supabase não foi inicializado após 5 segundos!');
+                console.error('   Verificar se:');
+                console.error('   1. supabase-js CDN foi carregado (window.supabase)');
+                console.error('   2. supabase-config.js foi carregado (window.SUPABASE_CONFIG)');
+                console.error('   3. supabase-client.js foi carregado e executado');
+                console.error('   Variáveis globais:');
+                console.error('   - window.supabase:', typeof window.supabase);
+                console.error('   - window.SUPABASE_CONFIG:', typeof window.SUPABASE_CONFIG);
+                console.error('   - window._supabaseClientInitialized:', window._supabaseClientInitialized);
+                throw new Error('Supabase não disponível após 5 segundos');
+            }
+            
+            console.log('✅ DataManager: Supabase Inicializado com Sucesso');
+            
+            // Testar conexão
+            try {
+                console.log('🔌 DataManager: Testando conexão Supabase...');
+                const { error, count } = await window.supabaseClient
+                    .from('alunos')
+                    .select('count', { count: 'exact' })
+                    .limit(1);
+                    
+                if (error) {
+                    console.error('❌ DataManager ERRO: Supabase retornou erro na conexão:', error.message);
+                    throw error;
+                }
+                console.log('✅ DataManager: Conexão Supabase OK');
+            } catch (e) {
+                console.error('❌ DataManager ERRO CRÍTICO na conexão Supabase:', e.message);
+                throw e;
+            }
+            
+            // Configurar realtime subscriptions
+            this._setupRealtimeSubscriptions();
+        })();
+        
+        return this._initPromise;
+    },
+
+    _setupRealtimeSubscriptions: function() {
+        console.log('🔄 DataManager: Configurando subscriptions realtime...');
+        
+        // Subscription para alunos
+        window.supabaseClient
+            .channel('alunos_changes')
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'alunos' }, (payload) => {
+                console.log('📡 Realtime: Mudança em alunos', payload);
+                this._clearCache('alunos');
+                // Disparar evento para atualizar UI
+                window.dispatchEvent(new CustomEvent('alunosAtualizados'));
+            })
+            .subscribe();
+        
+        // Subscription para usuarios
+        window.supabaseClient
+            .channel('usuarios_changes')
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'usuarios' }, (payload) => {
+                console.log('📡 Realtime: Mudança em usuarios', payload);
+                this._clearCache('usuarios');
+                window.dispatchEvent(new CustomEvent('usuariosAtualizados'));
+            })
+            .subscribe();
+        
+        // Subscription para listas
+        window.supabaseClient
+            .channel('listas_changes')
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'listas' }, (payload) => {
+                console.log('📡 Realtime: Mudança em listas', payload);
+                this._clearCache('listas');
+                this._clearCache('listaAlunos'); // Como depende de listas
+                window.dispatchEvent(new CustomEvent('listasAtualizadas'));
+            })
+            .subscribe();
+        
+        console.log('✅ DataManager: Subscriptions realtime configuradas');
     },
 
     // ============================================================

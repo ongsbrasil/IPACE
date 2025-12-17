@@ -199,9 +199,24 @@ async function excluirAluno(id) {
 }
 
 // Inicializar
-window.addEventListener('DOMContentLoaded', function() {
+window.addEventListener('DOMContentLoaded', async function() {
     updateDateTime();
     setInterval(updateDateTime, 1000);
+    
+    // Debug: verificar se DataManager está funcionando
+    console.log('🔍 Debug: Verificando DataManager...');
+    try {
+        const alunos = await DataManager.getAlunos();
+        console.log('🔍 Debug: Alunos encontrados:', alunos.length);
+        if (alunos.length > 0) {
+            console.log('🔍 Debug: Primeiro aluno:', alunos[0]);
+        } else {
+            console.log('🔍 Debug: Nenhum aluno encontrado no banco!');
+        }
+    } catch (e) {
+        console.error('🔍 Debug: Erro ao buscar alunos:', e);
+    }
+    
     exibirAlunos();
 });
 

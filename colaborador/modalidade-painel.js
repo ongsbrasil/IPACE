@@ -138,14 +138,27 @@ const diasPorModalidade = {
     'vela': ['Quarta', 'Sexta']
 };
 
+// Função auxiliar para normalizar modalidade (remover acentos e converter para minúsculo)
+function normalizarModalidade(modalidade) {
+    return modalidade
+        .toLowerCase()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '') // Remove acentos
+        .replace(/\s+/g, '-') // Substituir espaços por hífens
+        .replace(/[^\w-]/g, ''); // Remover caracteres especiais
+}
+
 // Função para gerar datas das aulas do mês
 function gerarDatasAulas(mes, ano, modalidade) {
     const diasDaSemana = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
     
+    // Normalizar modalidade para busca
+    const modalidadeNormalizada = normalizarModalidade(modalidade);
+    
     // ⚠️ VALIDAÇÃO INTELIGENTE: se modalidade não existe, logar erro e usar default com warning
-    const diasDaModalidade = diasPorModalidade[modalidade];
+    const diasDaModalidade = diasPorModalidade[modalidadeNormalizada];
     if (!diasDaModalidade) {
-        console.error(`❌ ERRO CRÍTICO: Modalidade "${modalidade}" não encontrada em diasPorModalidade!`);
+        console.error(`❌ ERRO CRÍTICO: Modalidade "${modalidade}" (normalizada: "${modalidadeNormalizada}") não encontrada em diasPorModalidade!`);
         console.error(`   Modalidades válidas: ${Object.keys(diasPorModalidade).join(', ')}`);
         console.error(`   Usando FALLBACK ["Terça", "Sexta"] - ISSO PODE ESTAR ERRADO!`);
         return []; // Retornar array vazio ao invés de silenciosamente retornar valor errado
@@ -212,6 +225,7 @@ if (!modalidadeSelecionada) {
 
 // Carregar horários para o filtro
 async function carregarHorarios() {
+    console.time('⏱️ carregarHorarios');
     console.log('📋 carregarHorarios iniciada para modalidade:', modalidadeSelecionada);
     
     if (!modalidadeSelecionada) {
@@ -252,10 +266,14 @@ async function carregarHorarios() {
     } else {
         console.error('❌ Elemento filtroTurma não encontrado no DOM');
     }
+    
+    console.timeEnd('⏱️ carregarHorarios');
 }
 
 // Carregar lista de presença
 async function carregarLista() {
+    console.time('⏱️ carregarLista');
+    
     const filtroEl = document.getElementById('filtroTurma');
     if (!filtroEl) {
         console.error('Elemento filtroTurma não encontrado');
@@ -271,6 +289,7 @@ async function carregarLista() {
         if (listasEl) {
             listasEl.innerHTML = '<p style="text-align: center; color: #999;">Selecione um horário</p>';
         }
+        console.timeEnd('⏱️ carregarLista');
         return;
     }
 
@@ -348,6 +367,9 @@ async function carregarLista() {
             listasEl.innerHTML = '<p style="color: red; text-align: center;">Erro ao carregar listas</p>';
         }
     }
+    
+    console.timeEnd('⏱️ carregarLista');
+
 }
 
 // Variável global para armazenar a lista atual
@@ -359,101 +381,106 @@ async function atualizarTabelaAoMudarDia() {
         console.error('❌ listaAtual é null/undefined');
         return;
     }
-    
+
+    console.time('⏱️ atualizarTabelaAoMudarDia');
     try {
-        console.log('📊 atualizarTabelaAoMudarDia iniciada');
-        console.log('   listaAtual.presencas:', listaAtual.presencas?.length || 0);
-        
+        const presencas = Array.isArray(listaAtual.presencas) ? listaAtual.presencas : [];
+
         const diaSelecionadoEl = document.getElementById('diaSelecionado');
         if (!diaSelecionadoEl) {
             console.error('❌ Elemento diaSelecionado não encontrado');
             return;
         }
-        
+
         const diaSelecionado = diaSelecionadoEl.value;
-        console.log('   diaSelecionado:', diaSelecionado);
-        
-        // Inicializar estrutura de chamadas se não existir
+
         if (!listaAtual.chamadas) {
             listaAtual.chamadas = {};
         }
-        
-        // Se desmarcou o dia, zerar tudo
+
         if (!diaSelecionado) {
-            // Limpar todos os estados
-            listaAtual.presencas.forEach(p => p.status = null);
+            presencas.forEach(p => (p.status = null));
         } else {
-            // Se mudou para um dia diferente, fazer reset automático
-            // Carregar dados daquela data se existir, senão zera tudo
-            const estadosDaquelaDia = listaAtual.chamadas[diaSelecionado];
-            
-            if (estadosDaquelaDia) {
-                // Restaurar estados salvos daquela data
-                listaAtual.presencas.forEach(presenca => {
-                const estadoSalvo = estadosDaquelaDia.find(e => e.alunoId === presenca.alunoId);
-                presenca.status = estadoSalvo ? estadoSalvo.status : null;
-            });
-        } else {
-            // Primeira vez neste dia - zerar tudo
-            listaAtual.presencas.forEach(p => p.status = null);
+            const estadosDoDia = listaAtual.chamadas[diaSelecionado];
+            if (Array.isArray(estadosDoDia)) {
+                const statusPorAlunoId = new Map(estadosDoDia.map(e => [Number(e.alunoId), e.status]));
+                presencas.forEach(p => {
+                    const statusSalvo = statusPorAlunoId.get(Number(p.alunoId));
+                    p.status = statusSalvo ?? null;
+                });
+            } else {
+                presencas.forEach(p => (p.status = null));
+            }
         }
-    }
-    
-    // Recriar tabela com estados atualizados
-    let html = '';
-    const alunos = await DataManager.getAlunos();
-    console.log('   alunos carregados:', alunos.length);
-    
-    listaAtual.presencas.forEach((presenca, index) => {
-        const statusPresente = presenca.status === 'presente' ? 'btn-present' : '';
-        const statusFalta = presenca.status === 'falta' ? 'btn-absent' : '';
-        
-        // Buscar data de nascimento e RG do aluno
-        const aluno = alunos.find(a => a.id === presenca.alunoId);
-        const dataNascimento = aluno ? new Date(aluno.dataNascimento).toLocaleDateString('pt-BR') : '-';
-        const sexo = aluno ? (aluno.sexo || '-') : '-';
-        const rg = aluno ? (aluno.rg || '-') : '-';
 
-        html += `
-            <tr>
-                <td>${index + 1}</td>
-                <td>${presenca.alunoNome}</td>
-                <td>${dataNascimento}</td>
-                <td>${sexo}</td>
-                <td>${rg}</td>
-                <td style="text-align: center;">
-                    <button class="attendance-btn ${statusPresente}" 
-                            onclick="marcarPresenca(${index}, 'presente')"
-                            id="btn-presente-${index}">
-                        P
-                    </button>
-                    <button class="attendance-btn ${statusFalta}" 
-                            onclick="marcarPresenca(${index}, 'falta')"
-                            id="btn-falta-${index}">
-                        F
-                    </button>
-                </td>
-            </tr>
-        `;
-    });
+        console.time('  ⏱️ Carregando alunos');
+        const alunos = await DataManager.getAlunos();
+        console.timeEnd('  ⏱️ Carregando alunos');
 
-    const corpoTabelaEl = document.getElementById('corpoTabelaChamada');
-    if (corpoTabelaEl) {
+        const alunosPorId = new Map((alunos || []).map(a => [Number(a.id), a]));
+
+        const formatarDataBR = (iso) => {
+            if (!iso) return '-';
+            const d = new Date(iso);
+            if (Number.isNaN(d.getTime())) return String(iso);
+            return d.toLocaleDateString('pt-BR');
+        };
+
+        console.time('  ⏱️ Renderizando tabela');
+        let html = '';
+        presencas.forEach((presenca, index) => {
+            const statusPresente = presenca.status === 'presente' ? 'btn-present' : '';
+            const statusFalta = presenca.status === 'falta' ? 'btn-absent' : '';
+
+            const aluno = alunosPorId.get(Number(presenca.alunoId));
+            const dataNascimento = formatarDataBR(aluno?.dataNascimento);
+            const sexo = aluno?.sexo || '-';
+            const rg = aluno?.rg || '-';
+
+            html += `
+                <tr>
+                    <td>${index + 1}</td>
+                    <td>${presenca.alunoNome}</td>
+                    <td>${dataNascimento}</td>
+                    <td>${sexo}</td>
+                    <td>${rg}</td>
+                    <td style="text-align: center;">
+                        <button class="attendance-btn ${statusPresente}" 
+                                onclick="marcarPresenca(${index}, 'presente')"
+                                id="btn-presente-${index}">
+                            P
+                        </button>
+                        <button class="attendance-btn ${statusFalta}" 
+                                onclick="marcarPresenca(${index}, 'falta')"
+                                id="btn-falta-${index}">
+                            F
+                        </button>
+                    </td>
+                </tr>
+            `;
+        });
+        console.timeEnd('  ⏱️ Renderizando tabela');
+
+        const corpoTabelaEl = document.getElementById('corpoTabelaChamada');
+        if (!corpoTabelaEl) {
+            console.error('❌ Elemento corpoTabelaChamada não encontrado');
+            return;
+        }
+
         corpoTabelaEl.innerHTML = html;
-        console.log('✅ Tabela atualizada com', listaAtual.presencas.length, 'alunos');
-    } else {
-        console.error('❌ Elemento corpoTabelaChamada não encontrado');
-    }
-    atualizarResumo();
+        atualizarResumo();
     } catch (e) {
-        console.error('❌ Erro em atualizarTabelaAoMudarDia:', e.message);
-        console.error('📍 Stack:', e.stack);
+        console.error('❌ Erro em atualizarTabelaAoMudarDia:', e?.message || e);
+        console.error('📍 Stack:', e?.stack);
+    } finally {
+        console.timeEnd('⏱️ atualizarTabelaAoMudarDia');
     }
 }
 
 // Abrir modal de chamada
 async function abrirChamada(listaId) {
     try {
+        console.time('⏱️ abrirChamada');
         console.log('🔵 abrirChamada chamada com listaId:', listaId);
         
         const listas = await DataManager.getListas();
@@ -544,6 +571,7 @@ async function abrirChamada(listaId) {
         
         // Carregar tabela (se hoje for dia de aula, já carrega)
         await atualizarTabelaAoMudarDia();
+        console.timeEnd('⏱️ abrirChamada');
     } catch (e) {
         console.error('❌ Erro em abrirChamada:', e.message);
         console.error('📍 Stack:', e.stack);
@@ -624,6 +652,8 @@ function atualizarResumo() {
 
 // Salvar chamada
 async function salvarChamada() {
+    console.time('⏱️ salvarChamada');
+    
     if (!listaAtual) return;
     
     const diaSelecionadoEl = document.getElementById('diaSelecionado');
@@ -684,6 +714,8 @@ async function salvarChamada() {
         console.error('❌ Erro ao salvar chamada:', e.message);
         alert('Erro ao salvar: ' + e.message);
     }
+    
+    console.timeEnd('⏱️ salvarChamada');
 }
 
 // Inicializar
@@ -767,3 +799,25 @@ function voltarParaListas() {
     fecharChamada();
     carregarLista();
 }
+
+// ============================================================================
+// LISTENERS PARA ATUALIZAÇÃO REALTIME
+// ============================================================================
+
+// Listener para alunos atualizados
+window.addEventListener('alunosAtualizados', function() {
+    console.log('📡 modalidade-painel.js: Alunos atualizados, recarregando lista...');
+    if (listaAtual) {
+        // Se está na chamada, recarregar a tabela
+        atualizarTabelaAoMudarDia();
+    } else {
+        // Se na lista de listas, recarregar
+        carregarLista();
+    }
+});
+
+// Listener para listas atualizadas
+window.addEventListener('listasAtualizadas', function() {
+    console.log('📡 modalidade-painel.js: Listas atualizadas, recarregando...');
+    carregarLista();
+});

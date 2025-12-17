@@ -25,10 +25,21 @@ const diasPorModalidade = {
     'vela': ['Quarta', 'Sexta']
 };
 
+// Função auxiliar para normalizar modalidade (remover acentos e converter para minúsculo)
+function normalizarModalidade(modalidade) {
+    return modalidade
+        .toLowerCase()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '') // Remove acentos
+        .replace(/\s+/g, '-') // Substituir espaços por hífens
+        .replace(/[^\w-]/g, ''); // Remover caracteres especiais
+}
+
 // Função para gerar datas das aulas do mês
 function gerarDatasAulasListas(mes, ano, modalidade) {
     const diasDaSemana = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
-    const diasDaModalidade = diasPorModalidade[modalidade] || ['Terça', 'Sexta'];
+    const modalidadeNormalizada = normalizarModalidade(modalidade);
+    const diasDaModalidade = diasPorModalidade[modalidadeNormalizada] || ['Terça', 'Sexta'];
     const datasAulas = [];
     
     const ultimoDiaDoMes = new Date(ano, mes, 0).getDate();

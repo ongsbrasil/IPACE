@@ -162,18 +162,31 @@ async function gerarListasAutomaticamenteSincronizado() {
     const anosParaProcessar = [ano];
     if (hoje.getMonth() === 11) anosParaProcessar.push(ano + 1);
 
-    console.log('📋 gerarListasAutomaticamenteSincronizado - APENAS SUPABASE (OTIMIZADO)');
+    console.log('📋 gerarListasAutomaticamenteSincronizado - APENAS SUPABASE (LIMPA TUDO PRIMEIRO)');
     const tempoInicio = performance.now();
     
     try {
-        // 1. Buscar todos os alunos
+        // 1. APAGAR TODAS AS LISTAS EXISTENTES
+        console.log('🗑️ Apagando todas as listas existentes...');
+        const { error: errDeleteAll } = await window.supabaseClient
+            .from('listas')
+            .delete()
+            .neq('id', 0); // Apaga tudo
+        
+        if (errDeleteAll) {
+            console.error('❌ Erro ao apagar listas:', errDeleteAll);
+            return false;
+        }
+        console.log('✅ Todas as listas apagadas');
+        
+        // 2. Buscar todos os alunos
         const alunos = await DataManager.getAlunos();
         if (!alunos || alunos.length === 0) {
             console.log('⚠️ Nenhum aluno cadastrado');
             return true;
         }
 
-        // 2. Agrupar alunos por Modalidade e Turma
+        // 3. Agrupar alunos por Modalidade e Turma
         const grupos = {};
         alunos.forEach(a => {
             if (!a.modalidade || !a.turma) return;
@@ -183,18 +196,6 @@ async function gerarListasAutomaticamenteSincronizado() {
         });
 
         console.log('📊 Grupos encontrados:', Object.keys(grupos).length);
-
-        // 3. Buscar TODAS as listas de uma vez (não 12*N queries)
-        const { data: todasAsListas } = await window.supabaseClient
-            .from('listas')
-            .select('id, mes, ano, modalidade, turma');
-        
-        const mapListasExistentes = {};
-        (todasAsListas || []).forEach(l => {
-            mapListasExistentes[`${l.mes}||${l.ano}||${l.modalidade}||${l.turma}`] = l.id;
-        });
-
-        console.log('📦 Listas existentes no banco:', todasAsListas?.length || 0);
 
         // 4. Preparar todas as operações em batch
         const operacoes = [];
@@ -218,23 +219,18 @@ async function gerarListasAutomaticamenteSincronizado() {
                         (!aluno.data_saida || aluno.data_saida >= primeiroDiaStr)
                     );
 
+                    // SÓ CRIAR LISTA SE HOUVER ALUNOS ATIVOS
                     if (alunosAtivos.length === 0) continue;
-
-                    // Verificar se a lista já existe (do mapa)
-                    const chaveMapaLista = `${mesStr}||${anoIter}||${modalidade}||${turma}`;
-                    const listaId = mapListasExistentes[chaveMapaLista];
 
                     // Preparar operação
                     operacoes.push({
-                        tipo: listaId ? 'atualizar' : 'criar',
-                        listaId,
+                        tipo: 'criar',
                         nome: `${nomeMes} ${anoIter}`,
                         mes: mesStr,
                         ano: anoIter,
                         modalidade,
                         turma,
-                        alunosAtivos,
-                        chaveMapaLista
+                        alunosAtivos
                     });
                 }
             }
@@ -250,74 +246,40 @@ async function gerarListasAutomaticamenteSincronizado() {
             
             await Promise.all(lote.map(async (op) => {
                 try {
-                    let listaId = op.listaId;
-
-                    // Se não existe, criar
-                    if (!listaId) {
-                        const { data: novaLista, error: errCreate } = await window.supabaseClient
-                            .from('listas')
-                            .insert({
-                                nome: op.nome,
-                                mes: op.mes,
-                                ano: op.ano,
-                                modalidade: op.modalidade,
-                                turma: op.turma,
-                                salva: false
-                            })
-                            .select();
-                        
-                        if (errCreate || !novaLista) {
-                            console.error('❌ Erro ao criar lista:', op.chaveMapaLista, errCreate);
-                            return;
-                        }
-                        listaId = novaLista[0].id;
-                    }
-
-                    // Buscar alunos já na lista
-                    const { data: alunosNaLista, error: errSelect } = await window.supabaseClient
-                        .from('lista_alunos')
-                        .select('aluno_id')
-                        .eq('lista_id', listaId);
+                    // Criar lista
+                    const { data: novaLista, error: errCreate } = await window.supabaseClient
+                        .from('listas')
+                        .insert({
+                            nome: op.nome,
+                            mes: op.mes,
+                            ano: op.ano,
+                            modalidade: op.modalidade,
+                            turma: op.turma,
+                            salva: false
+                        })
+                        .select();
                     
-                    if (errSelect) {
-                        console.error('❌ Erro ao buscar alunos na lista:', listaId, errSelect);
+                    if (errCreate || !novaLista) {
+                        console.error('❌ Erro ao criar lista:', op, errCreate);
                         return;
                     }
                     
-                    const idsNaLista = new Set((alunosNaLista || []).map(a => a.aluno_id));
-                    const idsAtivos = new Set(op.alunosAtivos.map(a => a.id));
+                    const listaId = novaLista[0].id;
 
-                    // Adicionar novos alunos
-                    const novosParaAdicionar = op.alunosAtivos
-                        .filter(a => !idsNaLista.has(a.id))
-                        .map(a => ({
-                            lista_id: listaId,
-                            aluno_id: a.id,
-                            aluno_nome: a.nome,
-                            status: null
-                        }));
+                    // Adicionar alunos ativos
+                    const alunosParaAdicionar = op.alunosAtivos.map(a => ({
+                        lista_id: listaId,
+                        aluno_id: a.id,
+                        aluno_nome: a.nome,
+                        status: null
+                    }));
                     
-                    if (novosParaAdicionar.length > 0) {
-                        const { error: errInsert } = await window.supabaseClient
-                            .from('lista_alunos')
-                            .insert(novosParaAdicionar);
-                        if (errInsert) {
-                            console.warn('⚠️ Erro ao adicionar alunos na lista:', listaId, errInsert);
-                        }
-                    }
-
-                    // Remover alunos inativos
-                    const idsParaRemover = [...idsNaLista].filter(id => !idsAtivos.has(id));
+                    const { error: errInsert } = await window.supabaseClient
+                        .from('lista_alunos')
+                        .insert(alunosParaAdicionar);
                     
-                    if (idsParaRemover.length > 0) {
-                        const { error: errDelete } = await window.supabaseClient
-                            .from('lista_alunos')
-                            .delete()
-                            .eq('lista_id', listaId)
-                            .in('aluno_id', idsParaRemover);
-                        if (errDelete) {
-                            console.warn('⚠️ Erro ao remover alunos da lista:', listaId, errDelete);
-                        }
+                    if (errInsert) {
+                        console.warn('⚠️ Erro ao adicionar alunos na lista:', listaId, errInsert);
                     }
 
                 } catch (e) {
@@ -331,7 +293,7 @@ async function gerarListasAutomaticamenteSincronizado() {
         const tempoFinal = performance.now();
         const tempoDecorrido = ((tempoFinal - tempoInicio) / 1000).toFixed(2);
         
-        console.log(`✅ Sincronização Supabase concluída em ${tempoDecorrido}s`);
+        console.log(`✅ Sincronização concluída em ${tempoDecorrido}s - ${operacoes.length} listas criadas`);
         return true;
 
     } catch (e) {

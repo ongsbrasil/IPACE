@@ -18,14 +18,27 @@ const diasPorModalidade = {
     'vela': ['Quarta', 'Sexta']
 };
 
+// Função auxiliar para normalizar modalidade (remover acentos e converter para minúsculo)
+function normalizarModalidade(modalidade) {
+    return modalidade
+        .toLowerCase()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '') // Remove acentos
+        .replace(/\s+/g, '-') // Substituir espaços por hífens
+        .replace(/[^\w-]/g, ''); // Remover caracteres especiais
+}
+
 // Função para gerar datas das aulas do mês
 function gerarDatasAulas(mes, ano, modalidade) {
     const diasDaSemana = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
     
+    // Normalizar modalidade para busca
+    const modalidadeNormalizada = normalizarModalidade(modalidade);
+    
     // ⚠️ VALIDAÇÃO INTELIGENTE: se modalidade não existe, logar erro
-    const diasDaModalidade = diasPorModalidade[modalidade];
+    const diasDaModalidade = diasPorModalidade[modalidadeNormalizada];
     if (!diasDaModalidade) {
-        console.error(`❌ ERRO CRÍTICO: Modalidade "${modalidade}" não encontrada em diasPorModalidade!`);
+        console.error(`❌ ERRO CRÍTICO: Modalidade "${modalidade}" (normalizada: "${modalidadeNormalizada}") não encontrada em diasPorModalidade!`);
         console.error(`   Modalidades válidas: ${Object.keys(diasPorModalidade).join(', ')}`);
         console.error(`   Usando FALLBACK ["Terça", "Sexta"] - ISSO PODE ESTAR ERRADO!`);
         return []; // Retornar array vazio ao invés de silenciosamente retornar valor errado
@@ -953,6 +966,36 @@ async function deletarChamada(listaId) {
     }
 }
 
+async function apagarTodasChamadas() {
+    console.log('Função apagarTodasChamadas chamada');
+    const senha = prompt('Digite a senha para apagar TODAS as chamadas:');
+    if (senha !== '123') {
+        alert('Senha incorreta!');
+        return;
+    }
+    
+    if (!confirm('ATENÇÃO: Isso vai apagar TODAS as chamadas permanentemente!\n\nTem certeza?')) {
+        return;
+    }
+    
+    try {
+        const listas = await DataManager.getListas();
+        let deletadas = 0;
+        
+        for (const lista of listas) {
+            await DataManager.deleteLista(lista.id);
+            deletadas++;
+        }
+        
+        window.dispatchEvent(new CustomEvent('listasAtualizadas'));
+        await recarregarChamadas();
+        mostrarAlerta(`${deletadas} chamadas apagadas!`, 'success');
+    } catch (e) {
+        console.error('Erro ao apagar chamadas:', e);
+        mostrarAlerta('Erro ao apagar chamadas!', 'error');
+    }
+}
+
 // Função para abrir modal de criar nova chamada
 function abrirModalNovaChamada() {
     document.getElementById('modalChamadaTitulo').textContent = 'Criar Nova Chamada';
@@ -1345,3 +1388,6 @@ function pararMonitoragemUsuarios() {
         intervaloRecarregaUsuarios = null;
     }
 }
+
+// Expor função globalmente
+window.apagarTodasChamadas = apagarTodasChamadas;
