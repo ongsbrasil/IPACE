@@ -71,7 +71,8 @@ const DataManager = {
                 if (index !== -1) alunos[index] = aluno;
                 else alunos.push(aluno);
             } else {
-                aluno.id = Date.now();
+                // Gerar ID único combinando timestamp e random para evitar colisão em imports rápidos
+                aluno.id = Date.now() + Math.floor(Math.random() * 10000);
                 alunos.push(aluno);
             }
             localStorage.setItem('alunos', JSON.stringify(alunos));
@@ -88,7 +89,8 @@ const DataManager = {
             return !error;
         } else {
             let alunos = JSON.parse(localStorage.getItem('alunos')) || [];
-            alunos = alunos.filter(a => a.id !== id);
+            // Usar != para permitir comparação entre string e number
+            alunos = alunos.filter(a => a.id != id);
             localStorage.setItem('alunos', JSON.stringify(alunos));
             return true;
         }
@@ -340,7 +342,8 @@ const DataManager = {
             return !error;
         } else {
             let listas = JSON.parse(localStorage.getItem('listas')) || [];
-            listas = listas.filter(l => l.id !== id);
+            // Usar != para permitir comparação entre string e number
+            listas = listas.filter(l => l.id != id);
             localStorage.setItem('listas', JSON.stringify(listas));
             return true;
         }

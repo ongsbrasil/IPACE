@@ -324,8 +324,11 @@ function cancelarEdicao() {
 // Carregar dados do aluno no formulário de edição
 async function carregarAlunoParaEdicao(id) {
     const alunos = await DataManager.getAlunos();
-    const aluno = alunos.find(a => a.id === id);
+    // Usar comparação solta (==) para garantir que string/number funcionem
+    const aluno = alunos.find(a => a.id == id);
+    
     if (aluno) {
+        console.log('Editando aluno:', aluno.nome, 'ID:', aluno.id);
         document.getElementById('alunoId').value = aluno.id;
         document.getElementById('nomeAluno').value = aluno.nome;
         document.getElementById('dataNascimento').value = aluno.dataNascimento || aluno.data_nascimento;
@@ -341,6 +344,9 @@ async function carregarAlunoParaEdicao(id) {
         document.getElementById('btnSubmit').textContent = 'ATUALIZAR';
         document.getElementById('btnCancelar').style.display = 'inline-block';
         document.getElementById('tituloForm').textContent = 'EDITAR ALUNO';
+    } else {
+        console.error('Aluno não encontrado para edição. ID:', id);
+        alert('Erro: Aluno não encontrado. Verifique se o ID está correto.');
     }
 }
 

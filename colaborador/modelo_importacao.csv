@@ -1,12 +1,5 @@
-Nome,Data Nascimento,RG,Sexo,Modalidade,Horário,Data Entrada,G,PCD
-João Silva,2010-05-15,12.345.678-9,Masculino,Judô,Manhã - 8h às 9h,2026-01-15,Não,Não
-Maria Santos,2012-03-20,23.456.789-0,Feminino,Vela,Tarde - 14h às 15:30h,2026-02-01,Não,Sim
-Pedro Costa,2011-08-10,34.567.890-1,Masculino,Futebol,Manhã - 9h às 10h,,Não,Não
-Ana Oliveira,2013-01-25,45.678.901-2,Feminino,Canoagem Velocidade,Manhã - 9h às 10:30h,2026-01-20,Não,Não
-Lucas Ferreira,2010-12-05,56.789.012-3,Masculino,Judô,Tarde - 15h às 16h,,Não,Não
-Juliana Souza,2012-06-18,67.890.123-4,Feminino,Vela,Manhã - 9h às 10:30h,,Não,Não
-Gabriel Lima,2011-04-30,78.901.234-5,Masculino,Futebol,Tarde - 14h às 15h,,Não,Sim
-Beatriz Alves,2013-09-12,89.012.345-6,Feminino,Canoagem Turismo,Tarde - 14h às 15:30h,,Não,Não
-Rafael Mendes,2010-07-22,90.123.456-7,Masculino,Judô,Manhã - 10h às 11h,,Não,Não
-Carolina Ribeiro,2012-11-08,01.234.567-8,Feminino,Vela,Tarde - 15:30h às 17h,,Sim,Não
-Alex Pereira,2011-02-15,11.222.333-4,Outro,Futebol,Manhã - 8h às 9h,,Não,Não
+Nome;Data Nascimento;RG;Sexo;Gravida;PCD;Modalidade;Horário;Data Entrada
+João Silva;2010-05-15;12.345.678-9;M;Não;Não;judo;Manhã - 8h às 9h;2024-01-01
+Maria Oliveira;2012-08-20;98.765.432-1;F;Não;Não;futebol;Tarde - 14h às 15h;2024-02-01
+Pedro Santos;2011-03-10;11.222.333-4;M;Não;Sim;vela;Manhã - 9h às 10:30h;2024-01-15
+Ana Costa;2009-11-25;55.666.777-8;F;Sim;Não;canoagem-velocidade;Tarde - 15:30h às 17h;2024-03-01

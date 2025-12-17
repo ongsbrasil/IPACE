@@ -107,6 +107,16 @@ async function exibirAlunos(alunosParaExibir) {
     };
     
     let html = '<table><thead><tr><th style="width: 40px;">#</th><th>Nome</th><th>Data Nascimento</th><th>Sexo</th><th>RG</th><th>G</th><th>PCD</th><th>Idade</th><th>Modalidade</th><th>Horário</th><th>Ações</th></tr></thead><tbody>';
+    // Verificar duplicidade de IDs para debug
+    const ids = alunos.map(a => a.id);
+    const idsUnicos = new Set(ids);
+    if (ids.length !== idsUnicos.size) {
+        console.warn('⚠️ ALERTA: Existem alunos com IDs duplicados na lista! Isso pode causar erros na edição.');
+        // Identificar duplicados
+        const duplicados = ids.filter((item, index) => ids.indexOf(item) !== index);
+        console.warn('IDs duplicados:', duplicados);
+    }
+
     if (alunos.length === 0) {
         html += '<tr><td colspan="11" style="text-align: center;">Nenhum aluno encontrado</td></tr>';
     } else {
@@ -115,6 +125,7 @@ async function exibirAlunos(alunosParaExibir) {
             const dataNasc = aluno.dataNascimento || aluno.data_nascimento;
             const idade = calcularIdade(dataNasc);
             
+            // Usar aspas no ID para garantir que strings/UUIDs funcionem e evitar erros de sintaxe
             html += `
                 <tr>
                     <td style="text-align: center; font-weight: bold;">${index + 1}</td>
@@ -128,8 +139,8 @@ async function exibirAlunos(alunosParaExibir) {
                     <td>${modalidadeNomes[aluno.modalidade] || aluno.modalidade}</td>
                     <td>${aluno.turma}</td>
                     <td>
-                        <button class="btn" onclick="editarAluno(${aluno.id})" style="padding: 5px 10px; font-size: 0.9rem;">Editar</button>
-                        <button class="btn btn-danger" onclick="excluirAluno(${aluno.id})" style="padding: 5px 10px; font-size: 0.9rem;">Excluir</button>
+                        <button class="btn" onclick="editarAluno('${aluno.id}')" style="padding: 5px 10px; font-size: 0.9rem;">Editar</button>
+                        <button class="btn btn-danger" onclick="excluirAluno('${aluno.id}')" style="padding: 5px 10px; font-size: 0.9rem;">Excluir</button>
                     </td>
                 </tr>
             `;

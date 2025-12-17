@@ -63,7 +63,7 @@ function loginSucesso(usuario) {
     mostrarAlerta('Login realizado com sucesso!', 'success');
     
     setTimeout(() => {
-        window.location.href = 'admin-panel.html';
+        window.location.href = '/colaborador/admin-panel.html';
     }, 500);
 }
 

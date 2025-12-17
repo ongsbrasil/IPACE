@@ -1,10 +1,24 @@
 // Verificar se professor está logado
 verificarLogin();
 
+function verificarLogin() {
+    const professorLogado = localStorage.getItem('professorLogado');
+    if (!professorLogado) {
+        // Se não estiver logado, redirecionar para login
+        window.location.href = '/colaborador/index.html';
+    } else {
+        // Se estiver logado, garantir que a modalidade selecionada está correta
+        const dados = JSON.parse(professorLogado);
+        if (dados.modalidade) {
+            localStorage.setItem('modalidadeSelecionada', dados.modalidade);
+        }
+    }
+}
+
 // Fazer logout
 function fazerLogout() {
     localStorage.removeItem('professorLogado');
-    window.location.href = 'index.html';
+    window.location.href = '/colaborador/index.html';
 }
 
 // Cronograma Oficial (sincronizado com admin-panel.js)
@@ -421,10 +435,13 @@ async function salvarChamada() {
 }
 
 // Inicializar
-window.addEventListener('DOMContentLoaded', function() {
+window.addEventListener('DOMContentLoaded', async function() {
     updateDateTime();
     setInterval(updateDateTime, 1000);
     
+    // Garantir que o DataManager está inicializado (Supabase ou LocalStorage)
+    await DataManager.init();
+
     // Nome da modalidade no título
     const nomes = {
         'judo': 'Judô',
@@ -433,7 +450,11 @@ window.addEventListener('DOMContentLoaded', function() {
         'vela': 'Vela',
         'canoagem-turismo': 'Canoagem Turismo'
     };
-    document.getElementById('tituloModalidade').textContent = nomes[modalidadeSelecionada] || modalidadeSelecionada;
+    
+    const tituloEl = document.getElementById('tituloModalidade');
+    if (tituloEl) {
+        tituloEl.textContent = nomes[modalidadeSelecionada] || modalidadeSelecionada;
+    }
     
     carregarHorarios();
 });

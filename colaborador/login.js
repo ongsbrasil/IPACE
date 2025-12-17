@@ -68,21 +68,21 @@ async function fazerLogin(event) {
                 'futebol': 'futebol.html'
             };
             
-            window.location.href = paginasModalidades[dadosUser.modalidade];
+            window.location.href = '/colaborador/' + paginasModalidades[dadosUser.modalidade];
         } else if (dadosUser.tipo === 'secretaria') {
             localStorage.setItem('secretariaLogada', JSON.stringify({
                 usuario: usuario,
                 nome: dadosUser.nome,
                 dataLogin: new Date().toISOString()
             }));
-            window.location.href = 'secretaria.html';
+            window.location.href = '/colaborador/secretaria.html';
         } else if (dadosUser.tipo === 'admin') {
             localStorage.setItem('adminLogado', JSON.stringify({
                 usuario: usuario,
                 nome: dadosUser.nome,
                 dataLogin: new Date().toISOString()
             }));
-            window.location.href = 'admin-panel.html';
+            window.location.href = '/colaborador/admin-panel.html';
         }
     } else {
         // Login falhou

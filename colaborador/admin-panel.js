@@ -12,13 +12,13 @@ let ordenacaoMesAscChamadas = true; // Default: Jan → Dez
 function verificarAutenticacaoAdmin() {
     const adminLogado = localStorage.getItem('adminLogado');
     if (!adminLogado) {
-        window.location.href = 'admin-login.html';
+        window.location.href = '/colaborador/admin-login.html';
     }
 }
 
 function fazerLogoutAdmin() {
     localStorage.removeItem('adminLogado');
-    window.location.href = 'admin-login.html';
+    window.location.href = '/colaborador/admin-login.html';
 }
 
 // ============================================================
