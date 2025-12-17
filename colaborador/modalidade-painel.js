@@ -90,7 +90,8 @@ async function obterHorariosPorModalidade(modalidade) {
     try {
         const listas = await DataManager.getListas();
         console.log('Listas obtidas:', listas.length);
-        const turmasListas = [...new Set(listas.filter(l => l && l.modalidade === modalidade).map(l => l.turma))];
+        const modalidadeNormalizada = normalizarModalidade(modalidade);
+        const turmasListas = [...new Set(listas.filter(l => l && normalizarModalidade(l.modalidade) === modalidadeNormalizada).map(l => l.turma))];
         console.log('Turmas encontradas em listas:', turmasListas);
         if (turmasListas.length > 0) {
             const resultado = turmasListas.sort();
@@ -105,7 +106,8 @@ async function obterHorariosPorModalidade(modalidade) {
     try {
         const alunos = await DataManager.getAlunos();
         console.log('Alunos obtidos:', alunos.length);
-        const turmasAlunos = [...new Set(alunos.filter(a => a && a.modalidade === modalidade).map(a => a.turma))];
+        const modalidadeNormalizada = normalizarModalidade(modalidade);
+        const turmasAlunos = [...new Set(alunos.filter(a => a && normalizarModalidade(a.modalidade) === modalidadeNormalizada).map(a => a.turma))];
         console.log('Turmas encontradas em alunos:', turmasAlunos);
         if (turmasAlunos.length > 0) {
             const resultado = turmasAlunos.sort();
@@ -301,10 +303,10 @@ async function carregarLista() {
         console.log('📋 Todas as listas carregadas:', listas.length);
         
         const listasModalidade = listas.filter(l => 
-            l && l.modalidade === modalidadeSelecionada && l.turma === horarioSelecionado
+            l && normalizarModalidade(l.modalidade) === normalizarModalidade(modalidadeSelecionada) && l.turma === horarioSelecionado
         );
         
-        console.log('🔍 Listas filtradas para', modalidadeSelecionada, '-', horarioSelecionado, ':', listasModalidade.length);
+        console.log('🔍 Listas filtradas para', modalidadeSelecionada, '(normalizada:', normalizarModalidade(modalidadeSelecionada), ')', '-', horarioSelecionado, ':', listasModalidade.length);
         
         // Debug: mostrar todas as combinações modalidade/turma disponíveis
         if (listasModalidade.length === 0) {
@@ -776,7 +778,7 @@ window.addEventListener('DOMContentLoaded', async function() {
     
     const tituloEl = document.getElementById('tituloModalidade');
     if (tituloEl) {
-        tituloEl.textContent = nomes[modalidadeSelecionada] || modalidadeSelecionada;
+        tituloEl.textContent = nomes[normalizarModalidade(modalidadeSelecionada)] || modalidadeSelecionada;
     }
 });
 
