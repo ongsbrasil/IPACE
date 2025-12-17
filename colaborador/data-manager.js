@@ -8,15 +8,35 @@
  */
 
 const DataManager = {
-    useSupabase: false,
+    useSupabase: true, // APENAS SUPABASE
 
     init: async function() {
-        const client = initSupabase();
-        if (client) {
-            this.useSupabase = true;
-            console.log('DataManager: Usando Supabase');
-        } else {
-            console.log('DataManager: Usando LocalStorage');
+        // Aguardar Supabase inicializar
+        let tentativas = 0;
+        while (!window.supabaseClient && tentativas < 10) {
+            console.log('⏳ Aguardando Supabase... tentativa', tentativas + 1);
+            await new Promise(resolve => setTimeout(resolve, 100));
+            tentativas++;
+        }
+        
+        if (!window.supabaseClient) {
+            console.error('❌ ERRO CRÍTICO: Supabase não foi inicializado!');
+            throw new Error('Supabase não disponível');
+        }
+        
+        console.log('✅ DataManager: Supabase Inicializado');
+        
+        // Testar conexão
+        try {
+            const { error } = await window.supabaseClient.from('alunos').select('count', { count: 'exact' }).limit(1);
+            if (error) {
+                console.error('❌ ERRO: Supabase retornou erro na conexão:', error.message);
+                throw error;
+            }
+            console.log('✅ Conexão Supabase OK');
+        } catch (e) {
+            console.error('❌ ERRO CRÍTICO na conexão Supabase:', e.message);
+            throw e;
         }
     },
 
@@ -25,74 +45,86 @@ const DataManager = {
     // ============================================================
 
     getAlunos: async function() {
-        if (this.useSupabase) {
+        try {
+            if (!window.supabaseClient) {
+                throw new Error('Supabase não inicializado');
+            }
+            
             const { data, error } = await window.supabaseClient
                 .from('alunos')
                 .select('*')
                 .order('nome');
+            
             if (error) {
-                console.error('Erro ao buscar alunos:', error);
-                return [];
+                console.error('❌ Erro ao buscar alunos:', error.message);
+                throw error;
             }
-            return data;
-        } else {
-            return JSON.parse(localStorage.getItem('alunos')) || [];
+            
+            console.log('✅ Alunos obtidos:', data ? data.length : 0);
+            return data || [];
+        } catch (e) {
+            console.error('❌ getAlunos falhou:', e.message);
+            throw e;
         }
     },
 
     saveAluno: async function(aluno) {
-        if (this.useSupabase) {
-            // Mapear campos camelCase para snake_case para o Supabase
+        try {
+            if (!window.supabaseClient) {
+                throw new Error('Supabase não inicializado');
+            }
+            
+            // Mapear campos camelCase para snake_case
             const alunoDB = {
                 ...aluno,
                 data_nascimento: aluno.dataNascimento || aluno.data_nascimento,
                 data_cadastro: aluno.dataCadastro || aluno.data_cadastro
             };
             
-            // Remover campos camelCase que não existem no banco para evitar erro
             delete alunoDB.dataNascimento;
             delete alunoDB.dataCadastro;
 
-            // Remover ID se for novo (para auto-incremento) ou manter se for update
+            console.log('📤 Salvando aluno:', alunoDB.nome);
+
             const { data, error } = await window.supabaseClient
                 .from('alunos')
                 .upsert(alunoDB)
                 .select();
             
             if (error) {
-                console.error('Erro ao salvar aluno:', error);
-                return null;
+                console.error('❌ Erro ao salvar aluno:', error.message);
+                throw error;
             }
-            return data[0];
-        } else {
-            let alunos = JSON.parse(localStorage.getItem('alunos')) || [];
-            if (aluno.id) {
-                const index = alunos.findIndex(a => a.id === aluno.id);
-                if (index !== -1) alunos[index] = aluno;
-                else alunos.push(aluno);
-            } else {
-                // Gerar ID único combinando timestamp e random para evitar colisão em imports rápidos
-                aluno.id = Date.now() + Math.floor(Math.random() * 10000);
-                alunos.push(aluno);
-            }
-            localStorage.setItem('alunos', JSON.stringify(alunos));
-            return aluno;
+            
+            console.log('✅ Aluno salvo com sucesso');
+            return data && data.length > 0 ? data[0] : null;
+        } catch (e) {
+            console.error('❌ saveAluno falhou:', e.message);
+            throw e;
         }
     },
 
     deleteAluno: async function(id) {
-        if (this.useSupabase) {
+        try {
+            if (!window.supabaseClient) {
+                throw new Error('Supabase não inicializado');
+            }
+            
             const { error } = await window.supabaseClient
                 .from('alunos')
                 .delete()
                 .eq('id', id);
-            return !error;
-        } else {
-            let alunos = JSON.parse(localStorage.getItem('alunos')) || [];
-            // Usar != para permitir comparação entre string e number
-            alunos = alunos.filter(a => a.id != id);
-            localStorage.setItem('alunos', JSON.stringify(alunos));
+            
+            if (error) {
+                console.error('❌ Erro ao deletar aluno:', error.message);
+                throw error;
+            }
+            
+            console.log('✅ Aluno deletado');
             return true;
+        } catch (e) {
+            console.error('❌ deleteAluno falhou:', e.message);
+            throw e;
         }
     },
 
@@ -101,73 +133,91 @@ const DataManager = {
     // ============================================================
 
     getUsuarios: async function() {
-        if (this.useSupabase) {
+        try {
+            if (!window.supabaseClient) {
+                throw new Error('Supabase não inicializado');
+            }
+
             const { data, error } = await window.supabaseClient
                 .from('usuarios')
                 .select('*');
             
-            if (error) return {};
+            if (error) {
+                console.error('❌ Erro ao buscar usuarios:', error.message);
+                throw error;
+            }
             
             // Converter array para objeto {username: {dados}}
             const usuariosObj = {};
-            data.forEach(u => {
-                usuariosObj[u.username] = u;
-            });
+            if (Array.isArray(data)) {
+                data.forEach(u => {
+                    if (u && u.username) {
+                        usuariosObj[u.username] = u;
+                    }
+                });
+            }
+            console.log('✅ Usuários obtidos:', Object.keys(usuariosObj).length);
             return usuariosObj;
-        } else {
-            return JSON.parse(localStorage.getItem('usuariosAdmin')) || {};
+        } catch (e) {
+            console.error('❌ getUsuarios falhou:', e.message);
+            throw e;
         }
     },
 
     saveUsuario: async function(usuarioData) {
-        // usuarioData deve ter { username, senha, tipo, nome, modalidade, ativo }
-        // No localStorage era { username: { ...dados } }
-        // Aqui esperamos o objeto de dados, e o username deve estar dentro ou ser passado
-        
-        // Normalizar para formato do banco
-        const usuarioDB = {
-            username: usuarioData.username || usuarioData.usuario, // Aceitar ambos
-            senha: usuarioData.senha,
-            tipo: usuarioData.tipo,
-            nome: usuarioData.nome,
-            modalidade: usuarioData.modalidade,
-            ativo: usuarioData.ativo
-        };
+        try {
+            if (!window.supabaseClient) {
+                throw new Error('Supabase não inicializado');
+            }
+            
+            const usuarioDB = {
+                username: usuarioData.username || usuarioData.usuario,
+                senha: usuarioData.senha,
+                tipo: usuarioData.tipo,
+                nome: usuarioData.nome,
+                modalidade: usuarioData.modalidade,
+                ativo: usuarioData.ativo !== undefined ? usuarioData.ativo : true
+            };
 
-        if (this.useSupabase) {
+            console.log('📤 Salvando usuário:', usuarioDB.username);
+            
             const { data, error } = await window.supabaseClient
                 .from('usuarios')
                 .upsert(usuarioDB)
                 .select();
             
             if (error) {
-                console.error('Erro ao salvar usuario:', error);
-                return null;
+                console.error('❌ Erro ao salvar usuario:', error.message);
+                throw error;
             }
-            return data[0];
-        } else {
-            let usuarios = JSON.parse(localStorage.getItem('usuariosAdmin')) || {};
-            usuarios[usuarioDB.username] = usuarioDB;
-            localStorage.setItem('usuariosAdmin', JSON.stringify(usuarios));
-            // Manter compatibilidade com login.js antigo
-            localStorage.setItem('usuarios', JSON.stringify(usuarios));
-            return usuarioDB;
+            console.log('✅ Usuário salvo com sucesso');
+            return data && data.length > 0 ? data[0] : null;
+        } catch (e) {
+            console.error('❌ saveUsuario falhou:', e.message);
+            throw e;
         }
     },
 
     deleteUsuario: async function(username) {
-        if (this.useSupabase) {
+        try {
+            if (!window.supabaseClient) {
+                throw new Error('Supabase não inicializado');
+            }
+            
             const { error } = await window.supabaseClient
                 .from('usuarios')
                 .delete()
                 .eq('username', username);
-            return !error;
-        } else {
-            let usuarios = JSON.parse(localStorage.getItem('usuariosAdmin')) || {};
-            delete usuarios[username];
-            localStorage.setItem('usuariosAdmin', JSON.stringify(usuarios));
-            localStorage.setItem('usuarios', JSON.stringify(usuarios));
+            
+            if (error) {
+                console.error('❌ Erro ao deletar usuario:', error.message);
+                throw error;
+            }
+            console.log('✅ Usuário deletado');
             return true;
+        } catch (e) {
+            console.error('❌ deleteUsuario falhou:', e.message);
+            throw e;
         }
     },
 
@@ -176,56 +226,55 @@ const DataManager = {
     // ============================================================
     
     getListas: async function() {
-        if (this.useSupabase) {
+        try {
+            if (!window.supabaseClient) {
+                throw new Error('Supabase não inicializado');
+            }
+            
             // 1. Buscar Listas
             const { data: listas, error: errListas } = await window.supabaseClient
                 .from('listas')
                 .select('*');
-            
+        
             if (errListas) {
-                console.error('Erro ao buscar listas:', errListas);
-                return [];
+                console.error('❌ Erro ao buscar listas:', errListas.message);
+                throw errListas;
             }
 
             // Se não houver listas, retornar vazio
-            if (!listas.length) return [];
+            if (!listas || !listas.length) {
+                console.log('✅ Nenhuma lista encontrada');
+                return [];
+            }
 
-            // 2. Buscar Alunos das Listas (lista_alunos)
-            const { data: listaAlunos, error: errAlunos } = await window.supabaseClient
+            // 2. Buscar Alunos das Listas
+            const { data: listaAlunos } = await window.supabaseClient
                 .from('lista_alunos')
                 .select('*');
             
             // 3. Buscar Chamadas
-            const { data: chamadas, error: errChamadas } = await window.supabaseClient
+            const { data: chamadas } = await window.supabaseClient
                 .from('chamadas')
                 .select('*');
 
             // Reconstruir estrutura complexa
-            return listas.map(lista => {
-                // Filtrar alunos desta lista
+            const resultado = listas.map(lista => {
                 const alunosDestaLista = listaAlunos
                     ? listaAlunos.filter(la => la.lista_id === lista.id)
                     : [];
                 
-                // Mapear para formato esperado (presencas)
                 const presencas = alunosDestaLista.map(la => ({
                     alunoId: la.aluno_id,
                     alunoNome: la.aluno_nome,
                     status: la.status
                 }));
 
-                // Filtrar chamadas desta lista
                 const chamadasDestaLista = chamadas
                     ? chamadas.filter(c => c.lista_id === lista.id)
                     : [];
                 
-                // Agrupar chamadas por data
                 const chamadasMap = {};
                 chamadasDestaLista.forEach(c => {
-                    // Converter data YYYY-MM-DD para DD/MM/YYYY
-                    const dataObj = new Date(c.data_chamada);
-                    // Ajuste de fuso horário simples (adicionar minutos do offset se necessário, mas aqui assumimos UTC ou local consistente)
-                    // Melhor usar string split para evitar problemas de timezone
                     const [ano, mes, dia] = c.data_chamada.split('-');
                     const dataFormatada = `${dia}/${mes}/${ano}`;
 
@@ -244,80 +293,87 @@ const DataManager = {
                     chamadas: chamadasMap
                 };
             });
-
-        } else {
-            return JSON.parse(localStorage.getItem('listas')) || [];
+            
+            console.log('✅ Listas obtidas:', resultado.length);
+            return resultado;
+        } catch (e) {
+            console.error('❌ getListas falhou:', e.message);
+            throw e;
         }
     },
 
     saveLista: async function(lista) {
         if (this.useSupabase) {
-            // 1. Salvar/Atualizar Lista (Cabeçalho)
-            const listaHeader = {
-                nome: lista.nome,
-                mes: lista.mes,
-                ano: lista.ano,
-                modalidade: lista.modalidade,
-                turma: lista.turma,
-                salva: lista.salva
-            };
-            
-            if (lista.id) listaHeader.id = lista.id;
+            try {
+                // 1. Salvar/Atualizar Lista (Cabeçalho)
+                const listaHeader = {
+                    nome: lista.nome,
+                    mes: lista.mes,
+                    ano: lista.ano,
+                    modalidade: lista.modalidade,
+                    turma: lista.turma,
+                    salva: lista.salva
+                };
+                
+                if (lista.id) listaHeader.id = lista.id;
 
-            const { data: listaSalva, error: errLista } = await window.supabaseClient
-                .from('listas')
-                .upsert(listaHeader)
-                .select()
-                .single();
-            
-            if (errLista) {
-                console.error('Erro ao salvar lista header:', errLista);
+                const { data: listaSalva, error: errLista } = await window.supabaseClient
+                    .from('listas')
+                    .upsert(listaHeader)
+                    .select()
+                    .single();
+                
+                if (errLista) {
+                    console.error('Erro ao salvar lista header:', errLista);
+                    return null;
+                }
+
+                const listaId = listaSalva.id;
+
+                // 2. Salvar Alunos da Lista (lista_alunos)
+                // Primeiro remover existentes para substituir (estratégia simples)
+                await window.supabaseClient.from('lista_alunos').delete().eq('lista_id', listaId);
+                
+                if (lista.presencas && lista.presencas.length > 0) {
+                    const alunosParaSalvar = lista.presencas.map(p => ({
+                        lista_id: listaId,
+                        aluno_id: p.alunoId,
+                        aluno_nome: p.alunoNome,
+                        status: p.status
+                    }));
+                    await window.supabaseClient.from('lista_alunos').insert(alunosParaSalvar);
+                }
+
+                // 3. Salvar Chamadas
+                // Remover existentes
+                await window.supabaseClient.from('chamadas').delete().eq('lista_id', listaId);
+
+                if (lista.chamadas) {
+                    const chamadasParaSalvar = [];
+                    for (const [dataChamada, registros] of Object.entries(lista.chamadas)) {
+                        // Converter DD/MM/YYYY para YYYY-MM-DD
+                        const [dia, mes, ano] = dataChamada.split('/');
+                        const dataISO = `${ano}-${mes}-${dia}`;
+
+                        registros.forEach(r => {
+                            chamadasParaSalvar.push({
+                                lista_id: listaId,
+                                data_chamada: dataISO,
+                                aluno_id: r.alunoId,
+                                status: r.status
+                            });
+                        });
+                    }
+                    if (chamadasParaSalvar.length > 0) {
+                        await window.supabaseClient.from('chamadas').insert(chamadasParaSalvar);
+                    }
+                }
+
+                return listaSalva;
+            } catch (e) {
+                console.error('Erro ao salvar lista Supabase:', e);
                 return null;
             }
-
-            const listaId = listaSalva.id;
-
-            // 2. Salvar Alunos da Lista (lista_alunos)
-            // Primeiro remover existentes para substituir (estratégia simples)
-            await window.supabaseClient.from('lista_alunos').delete().eq('lista_id', listaId);
-            
-            if (lista.presencas && lista.presencas.length > 0) {
-                const alunosParaSalvar = lista.presencas.map(p => ({
-                    lista_id: listaId,
-                    aluno_id: p.alunoId,
-                    aluno_nome: p.alunoNome,
-                    status: p.status
-                }));
-                await window.supabaseClient.from('lista_alunos').insert(alunosParaSalvar);
-            }
-
-            // 3. Salvar Chamadas
-            // Remover existentes
-            await window.supabaseClient.from('chamadas').delete().eq('lista_id', listaId);
-
-            if (lista.chamadas) {
-                const chamadasParaSalvar = [];
-                for (const [dataChamada, registros] of Object.entries(lista.chamadas)) {
-                    // Converter DD/MM/YYYY para YYYY-MM-DD
-                    const [dia, mes, ano] = dataChamada.split('/');
-                    const dataISO = `${ano}-${mes}-${dia}`;
-
-                    registros.forEach(r => {
-                        chamadasParaSalvar.push({
-                            lista_id: listaId,
-                            data_chamada: dataISO,
-                            aluno_id: r.alunoId,
-                            status: r.status
-                        });
-                    });
-                }
-                if (chamadasParaSalvar.length > 0) {
-                    await window.supabaseClient.from('chamadas').insert(chamadasParaSalvar);
-                }
-            }
-
-            return listaSalva;
-
         } else {
             let listas = JSON.parse(localStorage.getItem('listas')) || [];
             if (lista.id) {
@@ -335,11 +391,16 @@ const DataManager = {
 
     deleteLista: async function(id) {
         if (this.useSupabase) {
-            const { error } = await window.supabaseClient
-                .from('listas')
-                .delete()
-                .eq('id', id);
-            return !error;
+            try {
+                const { error } = await window.supabaseClient
+                    .from('listas')
+                    .delete()
+                    .eq('id', id);
+                return !error;
+            } catch (e) {
+                console.error('Erro ao deletar lista:', e);
+                return false;
+            }
         } else {
             let listas = JSON.parse(localStorage.getItem('listas')) || [];
             // Usar != para permitir comparação entre string e number

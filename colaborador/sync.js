@@ -12,21 +12,30 @@
 // ============================================================================
 
 async function obterAlunosAtivosNoMes(mes, ano, modalidade, turma) {
-    const alunos = await DataManager.getAlunos();
-    
-    // Primeiro dia e último dia do mês
-    const primeiroDia = new Date(ano, mes - 1, 1);
-    const ultimoDia = new Date(ano, mes, 0);
-    
-    const primeiroDiaStr = primeiroDia.toISOString().split('T')[0]; // YYYY-MM-DD
-    const ultimoDiaStr = ultimoDia.toISOString().split('T')[0];    // YYYY-MM-DD
-    
-    return alunos.filter(aluno => 
-        aluno.modalidade === modalidade && 
-        aluno.turma === turma &&
-        aluno.data_entrada <= ultimoDiaStr &&
-        (!aluno.data_saida || aluno.data_saida >= primeiroDiaStr)
-    );
+    try {
+        const alunos = await DataManager.getAlunos();
+        if (!Array.isArray(alunos)) {
+            console.warn('getAlunos retornou valor não-array:', alunos);
+            return [];
+        }
+        
+        // Primeiro dia e último dia do mês
+        const primeiroDia = new Date(ano, mes - 1, 1);
+        const ultimoDia = new Date(ano, mes, 0);
+        
+        const primeiroDiaStr = primeiroDia.toISOString().split('T')[0]; // YYYY-MM-DD
+        const ultimoDiaStr = ultimoDia.toISOString().split('T')[0];    // YYYY-MM-DD
+        
+        return alunos.filter(aluno => 
+            aluno && aluno.modalidade === modalidade && 
+            aluno.turma === turma &&
+            aluno.data_entrada <= ultimoDiaStr &&
+            (!aluno.data_saida || aluno.data_saida >= primeiroDiaStr)
+        );
+    } catch (e) {
+        console.error('Erro em obterAlunosAtivosNoMes:', e);
+        return [];
+    }
 }
 
 // ============================================================================
@@ -60,9 +69,9 @@ async function adicionarAluno(aluno) {
             novoAluno.dataCadastro = new Date().toISOString();
         }
 
-        const sucesso = await DataManager.saveAluno(novoAluno);
+        const alunoSalvo = await DataManager.saveAluno(novoAluno);
 
-        if (sucesso) {
+        if (alunoSalvo) {
             // Gerar listas automaticamente
             await gerarListasAutomaticamenteSincronizado();
             
@@ -82,7 +91,11 @@ async function editarAlunoSincronizado(alunoId, dadosAtualizados) {
     try {
         // Buscar aluno atual para comparar mudanças
         const alunos = await DataManager.getAlunos();
-        const alunoAnterior = alunos.find(a => a.id === alunoId);
+        if (!Array.isArray(alunos)) {
+            console.error('getAlunos retornou valor não-array');
+            return false;
+        }
+        const alunoAnterior = alunos.find(a => a && a.id === alunoId);
 
         if (!alunoAnterior) {
             console.error('Aluno não encontrado:', alunoId);
@@ -142,111 +155,164 @@ async function removerAluno(alunoId) {
 // ============================================================================
 
 async function gerarListasAutomaticamenteSincronizado() {
-    if (DataManager.useSupabase) {
-        console.log('Gerar listas no Supabase: Pendente de implementação completa');
-        return true;
-    }
+    const mesesNomes = {'01': 'Janeiro', '02': 'Fevereiro', '03': 'Março', '04': 'Abril', '05': 'Maio', '06': 'Junho', '07': 'Julho', '08': 'Agosto', '09': 'Setembro', '10': 'Outubro', '11': 'Novembro', '12': 'Dezembro'};
+    
+    const hoje = new Date();
+    let ano = hoje.getFullYear();
+    const anosParaProcessar = [ano];
+    if (hoje.getMonth() === 11) anosParaProcessar.push(ano + 1);
 
+    console.log('📋 gerarListasAutomaticamenteSincronizado - APENAS SUPABASE');
+    
     try {
-        let listas = JSON.parse(localStorage.getItem('listas')) || [];
-        const mesesNomes = {'01': 'Janeiro', '02': 'Fevereiro', '03': 'Março', '04': 'Abril', '05': 'Maio', '06': 'Junho', '07': 'Julho', '08': 'Agosto', '09': 'Setembro', '10': 'Outubro', '11': 'Novembro', '12': 'Dezembro'};
-        const alunos = JSON.parse(localStorage.getItem('alunos')) || [];
-        const grupos = new Set();
-        alunos.forEach(a => grupos.add(`${a.modalidade}||${a.turma}`));
+        // 1. Buscar todos os alunos
+        const alunos = await DataManager.getAlunos();
+        if (!alunos || alunos.length === 0) {
+            console.log('⚠️ Nenhum aluno cadastrado');
+            return true;
+        }
 
-        const hoje = new Date();
-        let ano = hoje.getFullYear();
-        if (hoje.getMonth() === 11) ano = ano + 1;
+        // 2. Agrupar alunos por Modalidade e Turma
+        const grupos = {};
+        alunos.forEach(a => {
+            if (!a.modalidade || !a.turma) return;
+            const chave = `${a.modalidade}||${a.turma}`;
+            if (!grupos[chave]) grupos[chave] = [];
+            grupos[chave].push(a);
+        });
 
-        for (let anoIter = ano; anoIter <= ano; anoIter++) {
+        console.log('📊 Grupos encontrados:', Object.keys(grupos).length);
+
+        // 3. Para cada ano e mês
+        for (const anoIter of anosParaProcessar) {
             for (let mes = 1; mes <= 12; mes++) {
                 const mesStr = String(mes).padStart(2, '0');
-                const meNome = mesesNomes[mesStr];
+                const nomeMes = mesesNomes[mesStr];
 
-                grupos.forEach(grupo => {
-                    const [modalidade, turma] = grupo.split('||');
+                // Para cada grupo (Turma)
+                for (const [chave, alunosDoGrupo] of Object.entries(grupos)) {
+                    const [modalidade, turma] = chave.split('||');
+
+                    // Filtrar alunos ativos neste mês
                     const primeiroDiaStr = `${anoIter}-${mesStr}-01`;
                     const ultimoDia = new Date(anoIter, mes, 0);
                     const ultimoDiaStr = ultimoDia.toISOString().split('T')[0];
-                    
-                    const alunosAtivos = alunos.filter(aluno => 
-                        aluno.modalidade === modalidade && 
-                        aluno.turma === turma &&
+
+                    const alunosAtivos = alunosDoGrupo.filter(aluno => 
                         aluno.data_entrada <= ultimoDiaStr &&
                         (!aluno.data_saida || aluno.data_saida >= primeiroDiaStr)
                     );
-                    
-                    if (alunosAtivos.length === 0) return;
-                    
-                    let lista = listas.find(l => l.mes === mesStr && l.ano === anoIter && l.modalidade === modalidade && l.turma === turma);
-                    
-                    if (lista) {
-                        const alunosJaExistentes = new Set(lista.presencas.map(p => p.alunoId));
-                        lista.presencas = lista.presencas.filter(p => alunosAtivos.some(a => a.id === p.alunoId));
-                        alunosAtivos.forEach(aluno => {
-                            if (!alunosJaExistentes.has(aluno.id)) {
-                                lista.presencas.push({ alunoId: aluno.id, alunoNome: aluno.nome, status: null });
-                            }
-                        });
+
+                    if (alunosAtivos.length === 0) continue;
+
+                    // Verificar se a lista já existe
+                    const { data: listasExistentes, error: errLista } = await window.supabaseClient
+                        .from('listas')
+                        .select('id')
+                        .eq('mes', mesStr)
+                        .eq('ano', anoIter)
+                        .eq('modalidade', modalidade)
+                        .eq('turma', turma);
+
+                    let listaId;
+
+                    if (listasExistentes && listasExistentes.length > 0) {
+                        listaId = listasExistentes[0].id;
                     } else {
-                        listas.push({
-                            id: Math.floor(Date.now() + Math.random() * 10000),
-                            nome: `${meNome} ${anoIter}`,
-                            mes: mesStr,
-                            ano: anoIter,
-                            modalidade: modalidade,
-                            turma: turma,
-                            dataCriacao: new Date().toISOString(),
-                            presencas: alunosAtivos.map(a => ({ alunoId: a.id, alunoNome: a.nome, status: null })),
-                            chamadas: {},
-                            diasSalvos: [],
-                            salva: false
-                        });
+                        // Criar nova lista
+                        const { data: novaLista, error: errCreate } = await window.supabaseClient
+                            .from('listas')
+                            .insert({
+                                nome: `${nomeMes} ${anoIter}`,
+                                mes: mesStr,
+                                ano: anoIter,
+                                modalidade: modalidade,
+                                turma: turma,
+                                salva: false
+                            })
+                            .select();
+                        
+                        if (errCreate || !novaLista) {
+                            console.error('❌ Erro ao criar lista:', errCreate);
+                            continue;
+                        }
+                        listaId = novaLista[0].id;
                     }
-                });
+
+                    // Sincronizar alunos na lista (lista_alunos)
+                    // Buscar alunos já na lista
+                    const { data: alunosNaLista } = await window.supabaseClient
+                        .from('lista_alunos')
+                        .select('aluno_id')
+                        .eq('lista_id', listaId);
+                    
+                    const idsNaLista = new Set((alunosNaLista || []).map(a => a.aluno_id));
+                    const idsAtivos = new Set(alunosAtivos.map(a => a.id));
+
+                    // Adicionar novos
+                    const novosParaAdicionar = alunosAtivos
+                        .filter(a => !idsNaLista.has(a.id))
+                        .map(a => ({
+                            lista_id: listaId,
+                            aluno_id: a.id,
+                            aluno_nome: a.nome,
+                            status: null
+                        }));
+                    
+                    if (novosParaAdicionar.length > 0) {
+                        await window.supabaseClient.from('lista_alunos').insert(novosParaAdicionar);
+                    }
+
+                    // Remover inativos
+                    const idsParaRemover = [...idsNaLista].filter(id => !idsAtivos.has(id));
+                    
+                    if (idsParaRemover.length > 0) {
+                        await window.supabaseClient
+                            .from('lista_alunos')
+                            .delete()
+                            .eq('lista_id', listaId)
+                            .in('aluno_id', idsParaRemover);
+                    }
+                }
             }
         }
-        localStorage.setItem('listas', JSON.stringify(listas));
-        window.dispatchEvent(new CustomEvent('listasAtualizadas', { detail: { totalListas: listas.length } }));
+        console.log('✅ Sincronização Supabase concluída');
         return true;
-    } catch (error) {
-        console.error('Erro ao gerar listas (LocalStorage):', error);
+
+    } catch (e) {
+        console.error('❌ Erro na sincronização:', e);
         return false;
     }
 }
 
 function removerAlunodasListas(alunoId) {
-    let listas = JSON.parse(localStorage.getItem('listas')) || [];
-    const listasAtualizadas = listas.map(lista => {
-        lista.presencas = lista.presencas.filter(p => p.alunoId !== alunoId);
-        return lista;
-    });
-    localStorage.setItem('listas', JSON.stringify(listasAtualizadas));
+    try {
+        if (!alunoId) return;
+        // Apenas Supabase
+        console.log('⚠️ removerAlunodasListas deprecated');
+    } catch (e) {
+        console.error('Erro:', e);
+    }
 }
 
 function removerAlunodasListasEspecificas(alunoId, modalidade, turma) {
-    let listas = JSON.parse(localStorage.getItem('listas')) || [];
-    const listasAtualizadas = listas.map(lista => {
-        if (lista.modalidade === modalidade && lista.turma === turma) {
-            lista.presencas = lista.presencas.filter(p => p.alunoId !== alunoId);
-        }
-        return lista;
-    });
-    localStorage.setItem('listas', JSON.stringify(listasAtualizadas));
+    try {
+        if (!alunoId || !modalidade || !turma) return;
+        // Apenas Supabase
+        console.log('⚠️ removerAlunodasListasEspecificas deprecated');
+    } catch (e) {
+        console.error('Erro:', e);
+    }
 }
 
 function sincronizarAlunoComListas(aluno) {
-    let listas = JSON.parse(localStorage.getItem('listas')) || [];
-    const listasAtualizadas = listas.map(lista => {
-        if (lista.modalidade === aluno.modalidade && lista.turma === aluno.turma) {
-            const alunoJaExiste = lista.presencas.some(p => p.alunoId === aluno.id);
-            if (!alunoJaExiste) {
-                lista.presencas.push({ alunoId: aluno.id, alunoNome: aluno.nome, status: null });
-            }
-        }
-        return lista;
-    });
-    localStorage.setItem('listas', JSON.stringify(listasAtualizadas));
+    try {
+        if (!aluno || !aluno.id || !aluno.modalidade || !aluno.turma) return;
+        // Apenas Supabase
+        console.log('⚠️ sincronizarAlunoComListas deprecated');
+    } catch (e) {
+        console.error('Erro:', e);
+    }
 }
 
 // ============================================================================
@@ -254,18 +320,39 @@ function sincronizarAlunoComListas(aluno) {
 // ============================================================================
 
 async function obterAlunosPorModalidade(modalidade) {
-    const alunos = await DataManager.getAlunos();
-    return alunos.filter(a => a.modalidade === modalidade && a.ativo);
+    try {
+        if (!modalidade) return [];
+        const alunos = await DataManager.getAlunos();
+        if (!Array.isArray(alunos)) return [];
+        return alunos.filter(a => a && a.modalidade === modalidade && a.ativo !== false);
+    } catch (e) {
+        console.error('Erro em obterAlunosPorModalidade:', e);
+        return [];
+    }
 }
 
 async function obterAlunosPorModalidadeETurma(modalidade, turma) {
-    const alunos = await DataManager.getAlunos();
-    return alunos.filter(a => a.modalidade === modalidade && a.turma === turma && a.ativo);
+    try {
+        if (!modalidade || !turma) return [];
+        const alunos = await DataManager.getAlunos();
+        if (!Array.isArray(alunos)) return [];
+        return alunos.filter(a => a && a.modalidade === modalidade && a.turma === turma && a.ativo !== false);
+    } catch (e) {
+        console.error('Erro em obterAlunosPorModalidadeETurma:', e);
+        return [];
+    }
 }
 
 async function obterListasPorModalidade(modalidade) {
-    const listas = await DataManager.getListas();
-    return listas.filter(l => l.modalidade === modalidade);
+    try {
+        if (!modalidade) return [];
+        const listas = await DataManager.getListas();
+        if (!Array.isArray(listas)) return [];
+        return listas.filter(l => l && l.modalidade === modalidade);
+    } catch (e) {
+        console.error('Erro em obterListasPorModalidade:', e);
+        return [];
+    }
 }
 
 // ============================================================================
@@ -284,15 +371,18 @@ window.addEventListener('listasAtualizadas', function(event) {
 });
 
 function validarAluno(aluno) {
+    if (!aluno) return { valido: false, erro: 'Aluno é obrigatório' };
     if (!aluno.nome || aluno.nome.trim() === '') return { valido: false, erro: 'Nome é obrigatório' };
     if (!aluno.dataNascimento) return { valido: false, erro: 'Data de nascimento é obrigatória' };
     if (!aluno.rg || aluno.rg.trim() === '') return { valido: false, erro: 'RG é obrigatório' };
     if (!aluno.modalidade) return { valido: false, erro: 'Modalidade é obrigatória' };
     if (!aluno.turma) return { valido: false, erro: 'Turma/Horário é obrigatório' };
+    if (!aluno.data_entrada) return { valido: false, erro: 'Data de entrada é obrigatória' };
     return { valido: true };
 }
 
 function obterHorariosPorModalidade(modalidade) {
+    if (!modalidade) return [];
     const horarios = {
         'judo': ['Manhã - 8h às 9h', 'Manhã - 9h às 10h', 'Manhã - 10h às 11h', 'Tarde - 14h às 15h', 'Tarde - 15h às 16h', 'Tarde - 16h às 17h'],
         'canoagem-velocidade': ['Manhã - 9h às 10:30h', 'Tarde - 14h às 15:30h', 'Tarde - 15:30h às 17h'],

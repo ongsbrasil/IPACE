@@ -84,26 +84,48 @@ const CRONOGRAMA_MODAL = {
 
 // Obter horários por modalidade (preferir dados do DataManager)
 async function obterHorariosPorModalidade(modalidade) {
+    console.log('🔍 obterHorariosPorModalidade chamada para:', modalidade);
+    
     // 1) Tentar via listas existentes
     try {
         const listas = await DataManager.getListas();
-        const turmasListas = [...new Set(listas.filter(l => l.modalidade === modalidade).map(l => l.turma))];
-        if (turmasListas.length > 0) return turmasListas.sort();
-    } catch (e) { console.warn('Falha ao ler listas', e); }
+        console.log('Listas obtidas:', listas.length);
+        const turmasListas = [...new Set(listas.filter(l => l && l.modalidade === modalidade).map(l => l.turma))];
+        console.log('Turmas encontradas em listas:', turmasListas);
+        if (turmasListas.length > 0) {
+            const resultado = turmasListas.sort();
+            console.log('✓ Retornando turmas de listas:', resultado);
+            return resultado;
+        }
+    } catch (e) { 
+        console.warn('Falha ao ler listas', e); 
+    }
 
     // 2) Tentar via alunos cadastrados
     try {
         const alunos = await DataManager.getAlunos();
-        const turmasAlunos = [...new Set(alunos.filter(a => a.modalidade === modalidade).map(a => a.turma))];
-        if (turmasAlunos.length > 0) return turmasAlunos.sort();
-    } catch (e) { console.warn('Falha ao ler alunos', e); }
+        console.log('Alunos obtidos:', alunos.length);
+        const turmasAlunos = [...new Set(alunos.filter(a => a && a.modalidade === modalidade).map(a => a.turma))];
+        console.log('Turmas encontradas em alunos:', turmasAlunos);
+        if (turmasAlunos.length > 0) {
+            const resultado = turmasAlunos.sort();
+            console.log('✓ Retornando turmas de alunos:', resultado);
+            return resultado;
+        }
+    } catch (e) { 
+        console.warn('Falha ao ler alunos', e); 
+    }
 
     // 3) Fallback: retornar do cronograma apenas se banco estiver vazio
+    console.log('Nenhuma turma encontrada, usando cronograma fallback');
     for (const bloco of Object.values(CRONOGRAMA_MODAL)) {
         if (bloco.modalidades[modalidade]) {
-            return bloco.modalidades[modalidade].horarios;
+            const resultado = bloco.modalidades[modalidade].horarios;
+            console.log('✓ Retornando horários do cronograma:', resultado);
+            return resultado;
         }
     }
+    console.warn('❌ Nenhum horário encontrado para modalidade:', modalidade);
     return [];
 }
 
@@ -162,12 +184,20 @@ function updateDateTime() {
 const modalidadeSelecionada = localStorage.getItem('modalidadeSelecionada');
 if (!modalidadeSelecionada) {
     alert('Nenhuma modalidade selecionada!');
-    window.location.href = 'index.html';
+    window.location.href = '/colaborador/index.html';
 }
 
 // Carregar horários para o filtro
 async function carregarHorarios() {
+    console.log('📋 carregarHorarios iniciada para modalidade:', modalidadeSelecionada);
+    
+    if (!modalidadeSelecionada) {
+        console.error('Modalidade não selecionada em carregarHorarios');
+        return;
+    }
+    
     const horarios = await obterHorariosPorModalidade(modalidadeSelecionada) || [];
+    console.log('Horários obtidos em carregarHorarios:', horarios);
     
     // Ordenar horários: Manhã primeiro, depois Tarde, e dentro de cada um por hora numérica
     const horariosOrdenados = horarios.sort((a, b) => {
@@ -185,58 +215,91 @@ async function carregarHorarios() {
         return horaA - horaB;
     });
     
+    console.log('Horários ordenados:', horariosOrdenados);
+    
     let html = '<option value="">-- Selecione --</option>';
     horariosOrdenados.forEach(horario => {
         html += `<option value="${horario}">${horario}</option>`;
     });
-    document.getElementById('filtroTurma').innerHTML = html;
+    
+    const filtroTurmaEl = document.getElementById('filtroTurma');
+    if (filtroTurmaEl) {
+        console.log('✓ Populando dropdown com', horariosOrdenados.length, 'opções');
+        filtroTurmaEl.innerHTML = html;
+    } else {
+        console.error('❌ Elemento filtroTurma não encontrado no DOM');
+    }
 }
 
 // Carregar lista de presença
 async function carregarLista() {
-    const horarioSelecionado = document.getElementById('filtroTurma').value;
+    const filtroEl = document.getElementById('filtroTurma');
+    if (!filtroEl) {
+        console.error('Elemento filtroTurma não encontrado');
+        return;
+    }
+    const horarioSelecionado = filtroEl.value;
     
     if (!horarioSelecionado) {
-        document.getElementById('listasDisponiveis').innerHTML = '<p style="text-align: center; color: #999;">Selecione um horário</p>';
+        const listasEl = document.getElementById('listasDisponiveis');
+        if (listasEl) {
+            listasEl.innerHTML = '<p style="text-align: center; color: #999;">Selecione um horário</p>';
+        }
         return;
     }
 
-    const listas = await DataManager.getListas();
-    const listasModalidade = listas.filter(l => 
-        l.modalidade === modalidadeSelecionada && l.turma === horarioSelecionado
-    );
+    try {
+        const listas = await DataManager.getListas();
+        if (!Array.isArray(listas)) {
+            throw new Error('getListas retornou valor não-array');
+        }
+        const listasModalidade = listas.filter(l => 
+            l && l.modalidade === modalidadeSelecionada && l.turma === horarioSelecionado
+        );
 
-    let html = '';
-    if (listasModalidade.length === 0) {
-        html = '<p style="text-align: center; color: #999;">Nenhuma lista disponível para este horário</p>';
-    } else {
-        // Ordenar listas por mês (01, 02, 03... até 12)
-        listasModalidade.sort((a, b) => parseInt(a.mes) - parseInt(b.mes));
-        
-        html = '<table><thead><tr><th>Mês/Ano</th><th>Alunos</th><th>Status</th><th>Ação</th></tr></thead><tbody>';
-        listasModalidade.forEach(lista => {
-            const meses = {
-                '01': 'jan', '02': 'fev', '03': 'mar', '04': 'abr',
-                '05': 'mai', '06': 'jun', '07': 'jul', '08': 'ago',
-                '09': 'set', '10': 'out', '11': 'nov', '12': 'dez'
-            };
-            const mesNome = meses[lista.mes];
-            const statusTexto = lista.salva ? '✓ Salva' : 'Pendente';
-            const statusCor = lista.salva ? '#28a745' : '#ff9800';
-            html += `
-                <tr>
-                    <td>${mesNome}/${lista.ano}</td>
-                    <td>${lista.presencas.length} alunos</td>
-                    <td style="color: ${statusCor}; font-weight: bold;">${statusTexto}</td>
-                    <td>
-                        <button class="btn" onclick="abrirChamada(${lista.id})" style="padding: 5px 15px; font-size: 0.9rem;">Fazer Chamada</button>
-                    </td>
-                </tr>
-            `;
-        });
-        html += '</tbody></table>';
+        let html = '';
+        if (listasModalidade.length === 0) {
+            html = '<p style="text-align: center; color: #999;">Nenhuma lista disponível para este horário</p>';
+        } else {
+            // Ordenar listas por mês (01, 02, 03... até 12)
+            listasModalidade.sort((a, b) => parseInt(a.mes) - parseInt(b.mes));
+            
+            html = '<table><thead><tr><th>Mês/Ano</th><th>Alunos</th><th>Status</th><th>Ação</th></tr></thead><tbody>';
+            listasModalidade.forEach(lista => {
+                if (!lista) return;
+                const meses = {
+                    '01': 'jan', '02': 'fev', '03': 'mar', '04': 'abr',
+                    '05': 'mai', '06': 'jun', '07': 'jul', '08': 'ago',
+                    '09': 'set', '10': 'out', '11': 'nov', '12': 'dez'
+                };
+                const mesNome = meses[lista.mes];
+                const statusTexto = lista.salva ? '✓ Salva' : 'Pendente';
+                const statusCor = lista.salva ? '#28a745' : '#ff9800';
+                const presencasCount = lista.presencas ? lista.presencas.length : 0;
+                html += `
+                    <tr>
+                        <td>${mesNome}/${lista.ano}</td>
+                        <td>${presencasCount} alunos</td>
+                        <td style="color: ${statusCor}; font-weight: bold;">${statusTexto}</td>
+                        <td>
+                            <button class="btn" onclick="abrirChamada(${lista.id})" style="padding: 5px 15px; font-size: 0.9rem;">Fazer Chamada</button>
+                        </td>
+                    </tr>
+                `;
+            });
+            html += '</tbody></table>';
+        }
+        const listasEl = document.getElementById('listasDisponiveis');
+        if (listasEl) {
+            listasEl.innerHTML = html;
+        }
+    } catch (e) {
+        console.error('Erro em carregarLista:', e);
+        const listasEl = document.getElementById('listasDisponiveis');
+        if (listasEl) {
+            listasEl.innerHTML = '<p style="color: red; text-align: center;">Erro ao carregar listas</p>';
+        }
     }
-    document.getElementById('listasDisponiveis').innerHTML = html;
 }
 
 // Variável global para armazenar a lista atual
@@ -439,10 +502,26 @@ window.addEventListener('DOMContentLoaded', async function() {
     updateDateTime();
     setInterval(updateDateTime, 1000);
     
-    // Garantir que o DataManager está inicializado (Supabase ou LocalStorage)
+    // 1. Garantir que o DataManager está inicializado (Supabase ou LocalStorage)
     await DataManager.init();
+    console.log('DataManager inicializado');
 
-    // Nome da modalidade no título
+    // 2. Sincronizar listas PRIMEIRO (para garantir que turmas/horários estão disponíveis)
+    if (typeof gerarListasAutomaticamenteSincronizado === 'function') {
+        console.log('Iniciando sincronização de listas...');
+        try {
+            await gerarListasAutomaticamenteSincronizado();
+            console.log('Sincronização de listas concluída');
+        } catch (e) {
+            console.error('Erro na sincronização de listas:', e);
+        }
+    }
+
+    // 3. DEPOIS de sincronizar, carregar horários no dropdown
+    await carregarHorarios();
+    console.log('Horários carregados no dropdown');
+
+    // 4. Nome da modalidade no título
     const nomes = {
         'judo': 'Judô',
         'canoagem-velocidade': 'Canoagem Velocidade',
@@ -455,8 +534,6 @@ window.addEventListener('DOMContentLoaded', async function() {
     if (tituloEl) {
         tituloEl.textContent = nomes[modalidadeSelecionada] || modalidadeSelecionada;
     }
-    
-    carregarHorarios();
 });
 
 // Listener para sincronização
