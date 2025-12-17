@@ -91,53 +91,59 @@
               <div class="grid grid-cols-1 gap-4">
                 <div>
                   <label class="block text-sm font-bold text-ipace-title mb-2 uppercase tracking-widest">Nome completo do responsável *</label>
-                  <input type="text" name="responsavel_nome" required class="w-full px-4 py-2 border-2 border-gray-200 focus:border-ipace-green focus:outline-none rounded text-ipace-title font-bold" />
+                  <input type="text" name="responsavel_nome" required value="Maria Silva" class="w-full px-4 py-2 border-2 border-gray-200 focus:border-ipace-green focus:outline-none rounded text-ipace-title font-bold" />
                 </div>
                 <div>
+                  <label class="block text-sm font-bold text-ipace-title mb-2 uppercase tracking-widest">Nome Social (opcional)</label>
+                  <input type="text" name="responsavel_nome_social" placeholder="Se houver" value="Maria" class="w-full px-4 py-2 border-2 border-gray-200 focus:border-ipace-green focus:outline-none rounded text-ipace-title font-bold" />
+                </div>
+              </div>
+              <div class="grid grid-cols-1 gap-4 mt-4">
+                <div>
                   <label class="block text-sm font-bold text-ipace-title mb-2 uppercase tracking-widest">CPF do responsável *</label>
-                  <input type="text" name="responsavel_cpf" required placeholder="000.000.000-00" inputmode="numeric" pattern="^\d{3}\.\d{3}\.\d{3}-\d{2}$" title="Formato: 000.000.000-00" maxlength="14" class="w-full px-4 py-2 border-2 border-gray-200 focus:border-ipace-green focus:outline-none rounded text-ipace-title font-bold" />
+                  <input type="text" name="responsavel_cpf" required placeholder="000.000.000-00" inputmode="numeric" pattern="^\d{3}\.\d{3}\.\d{3}-\d{2}$" title="Formato: 000.000.000-00" maxlength="14" value="123.456.789-10" class="w-full px-4 py-2 border-2 border-gray-200 focus:border-ipace-green focus:outline-none rounded text-ipace-title font-bold" />
                 </div>
               </div>
               <div class="grid grid-cols-1 gap-4 mt-4">
                 <div>
                   <label class="block text-sm font-bold text-ipace-title mb-2 uppercase tracking-widest">RG do responsável *</label>
-                  <input type="text" name="responsavel_rg" required placeholder="00.000.000-0" inputmode="numeric" pattern="^\d{2}\.\d{3}\.\d{3}-\d{1}$" title="Formato: 00.000.000-0" maxlength="12" class="w-full px-4 py-2 border-2 border-gray-200 focus:border-ipace-green focus:outline-none rounded text-ipace-title font-bold" />
+                  <input type="text" name="responsavel_rg" required placeholder="00.000.000-0" inputmode="numeric" pattern="^\d{2}\.\d{3}\.\d{3}-\d{1}$" title="Formato: 00.000.000-0" maxlength="12" value="12.345.678-9" class="w-full px-4 py-2 border-2 border-gray-200 focus:border-ipace-green focus:outline-none rounded text-ipace-title font-bold" />
                 </div>
                 <div>
                   <label class="block text-sm font-bold text-ipace-title mb-2 uppercase tracking-widest">E-mail *</label>
-                  <input type="email" name="responsavel_email" required class="w-full px-4 py-2 border-2 border-gray-200 focus:border-ipace-green focus:outline-none rounded text-ipace-title font-bold" />
+                  <input type="email" name="responsavel_email" required value="maria@example.com" class="w-full px-4 py-2 border-2 border-gray-200 focus:border-ipace-green focus:outline-none rounded text-ipace-title font-bold" />
                 </div>
               </div>
               <div class="grid grid-cols-1 gap-4 mt-4">
                 <div>
                   <label class="block text-sm font-bold text-ipace-title mb-2 uppercase tracking-widest">Contato 1 (WhatsApp) *</label>
-                  <input type="tel" name="contato1" required placeholder="11999999999" inputmode="numeric" pattern="^\d{11}$" title="Digite 11 dígitos (DDD + 9 + número)" class="w-full px-4 py-2 border-2 border-gray-200 focus:border-ipace-green focus:outline-none rounded text-ipace-title font-bold" />
+                  <input type="tel" name="contato1" required placeholder="11999999999" inputmode="numeric" pattern="^\d{11}$" title="Digite 11 dígitos (DDD + 9 + número)" value="11987654321" class="w-full px-4 py-2 border-2 border-gray-200 focus:border-ipace-green focus:outline-none rounded text-ipace-title font-bold" />
                 </div>
                 <div>
                   <label class="block text-sm font-bold text-ipace-title mb-2 uppercase tracking-widest">Contato 2 (opcional)</label>
-                  <input type="tel" name="contato2" placeholder="11999999999" inputmode="numeric" pattern="^\d{11}$" title="Digite 11 dígitos (DDD + 9 + número)" class="w-full px-4 py-2 border-2 border-gray-200 focus:border-ipace-green focus:outline-none rounded text-ipace-title font-bold" />
+                  <input type="tel" name="contato2" placeholder="11999999999" inputmode="numeric" pattern="^\d{11}$" title="Digite 11 dígitos (DDD + 9 + número)" value="11987654322" class="w-full px-4 py-2 border-2 border-gray-200 focus:border-ipace-green focus:outline-none rounded text-ipace-title font-bold" />
                 </div>
                 <div>
                   <label class="block text-sm font-bold text-ipace-title mb-2 uppercase tracking-widest">Escola</label>
-                  <input type="text" name="escola" class="w-full px-4 py-2 border-2 border-gray-200 focus:border-ipace-green focus:outline-none rounded text-ipace-title font-bold" />
+                  <input type="text" name="escola" value="E.E Exemplo" class="w-full px-4 py-2 border-2 border-gray-200 focus:border-ipace-green focus:outline-none rounded text-ipace-title font-bold" />
                 </div>
               </div>
               <div class="grid grid-cols-1 gap-4 mt-4">
                 <div>
                   <label class="block text-sm font-bold text-ipace-title mb-2 uppercase tracking-widest">Endereço (Rua/Avenida) *</label>
-                  <input type="text" name="endereco" required class="w-full px-4 py-2 border-2 border-gray-200 focus:border-ipace-green focus:outline-none rounded text-ipace-title font-bold" />
+                  <input type="text" name="endereco" required value="Rua das Flores" class="w-full px-4 py-2 border-2 border-gray-200 focus:border-ipace-green focus:outline-none rounded text-ipace-title font-bold" />
                 </div>
                 <div>
                   <label class="block text-sm font-bold text-ipace-title mb-2 uppercase tracking-widest">Número *</label>
-                  <input type="text" name="numero" required class="w-full px-4 py-2 border-2 border-gray-200 focus:border-ipace-green focus:outline-none rounded text-ipace-title font-bold" />
+                  <input type="text" name="numero" required value="123" class="w-full px-4 py-2 border-2 border-gray-200 focus:border-ipace-green focus:outline-none rounded text-ipace-title font-bold" />
                 </div>
                 <div>
                   <label class="block text-sm font-bold text-ipace-title mb-2 uppercase tracking-widest">Bairro *</label>
-                  <input type="text" name="bairro" required class="w-full px-4 py-2 border-2 border-gray-200 focus:border-ipace-green focus:outline-none rounded text-ipace-title font-bold" />
+                  <input type="text" name="bairro" required value="Jardim da Paz" class="w-full px-4 py-2 border-2 border-gray-200 focus:border-ipace-green focus:outline-none rounded text-ipace-title font-bold" />
                 </div>
                 <div>
                   <label class="block text-sm font-bold text-ipace-title mb-2 uppercase tracking-widest">Cidade *</label>
-                  <input type="text" name="cidade" required class="w-full px-4 py-2 border-2 border-gray-200 focus:border-ipace-green focus:outline-none rounded text-ipace-title font-bold" />
+                  <input type="text" name="cidade" required value="São Paulo" class="w-full px-4 py-2 border-2 border-gray-200 focus:border-ipace-green focus:outline-none rounded text-ipace-title font-bold" />
                 </div>
               </div>
             </div>
@@ -148,25 +154,39 @@
               <div class="grid grid-cols-1 gap-4">
                 <div>
                   <label class="block text-sm font-bold text-ipace-title mb-2 uppercase tracking-widest">Nome completo do aluno *</label>
-                  <input type="text" name="aluno_nome" required class="w-full px-4 py-2 border-2 border-gray-200 focus:border-ipace-green focus:outline-none rounded text-ipace-title font-bold" />
+                  <input type="text" name="aluno_nome" required value="João Silva" class="w-full px-4 py-2 border-2 border-gray-200 focus:border-ipace-green focus:outline-none rounded text-ipace-title font-bold" />
                 </div>
                 <div>
                   <label class="block text-sm font-bold text-ipace-title mb-2 uppercase tracking-widest">Data de nascimento *</label>
-                  <input type="date" name="aluno_nascimento" required class="w-full px-4 py-2 border-2 border-gray-200 focus:border-ipace-green focus:outline-none rounded text-ipace-title font-bold" />
+                  <input type="date" name="aluno_nascimento" required value="2010-05-15" class="w-full px-4 py-2 border-2 border-gray-200 focus:border-ipace-green focus:outline-none rounded text-ipace-title font-bold" />
                 </div>
               </div>
               <div class="grid grid-cols-1 gap-4 mt-4">
                 <div>
                   <label class="block text-sm font-bold text-ipace-title mb-2 uppercase tracking-widest">Idade *</label>
-                  <input type="number" name="aluno_idade" min="1" required class="w-full px-4 py-2 border-2 border-gray-200 focus:border-ipace-green focus:outline-none rounded text-ipace-title font-bold" />
+                  <input type="number" name="aluno_idade" min="1" required value="14" class="w-full px-4 py-2 border-2 border-gray-200 focus:border-ipace-green focus:outline-none rounded text-ipace-title font-bold" />
                 </div>
                 <div>
                   <label class="block text-sm font-bold text-ipace-title mb-2 uppercase tracking-widest">CPF *</label>
-                  <input type="text" name="aluno_cpf" required placeholder="000.000.000-00" inputmode="numeric" pattern="^\d{3}\.\d{3}\.\d{3}-\d{2}$" title="Formato: 000.000.000-00" maxlength="14" class="w-full px-4 py-2 border-2 border-gray-200 focus:border-ipace-green focus:outline-none rounded text-ipace-title font-bold" />
+                  <input type="text" name="aluno_cpf" required placeholder="000.000.000-00" inputmode="numeric" pattern="^\d{3}\.\d{3}\.\d{3}-\d{2}$" title="Formato: 000.000.000-00" maxlength="14" value="111.222.333-44" class="w-full px-4 py-2 border-2 border-gray-200 focus:border-ipace-green focus:outline-none rounded text-ipace-title font-bold" />
                 </div>
                 <div>
                   <label class="block text-sm font-bold text-ipace-title mb-2 uppercase tracking-widest">RG *</label>
-                  <input type="text" name="aluno_rg" required placeholder="00.000.000-0" inputmode="numeric" pattern="^\d{2}\.\d{3}\.\d{3}-\d{1}$" title="Formato: 00.000.000-0" maxlength="12" class="w-full px-4 py-2 border-2 border-gray-200 focus:border-ipace-green focus:outline-none rounded text-ipace-title font-bold" />
+                  <input type="text" name="aluno_rg" required placeholder="00.000.000-0" inputmode="numeric" pattern="^\d{2}\.\d{3}\.\d{3}-\d{1}$" title="Formato: 00.000.000-0" maxlength="12" value="11.222.333-4" class="w-full px-4 py-2 border-2 border-gray-200 focus:border-ipace-green focus:outline-none rounded text-ipace-title font-bold" />
+                </div>
+              </div>
+              <div class="grid grid-cols-1 gap-4 mt-4">
+                <div>
+                  <label class="block text-sm font-bold text-ipace-title mb-2 uppercase tracking-widest">Nome Social (opcional)</label>
+                  <input type="text" name="aluno_nome_social" placeholder="Se houver" value="João" class="w-full px-4 py-2 border-2 border-gray-200 focus:border-ipace-green focus:outline-none rounded text-ipace-title font-bold" />
+                </div>
+                <div>
+                  <label class="block text-sm font-bold text-ipace-title mb-2 uppercase tracking-widest">Sexo *</label>
+                  <div class="grid grid-cols-3 gap-3">
+                    <label class="inline-flex items-center gap-2"><input type="radio" name="aluno_sexo" value="Masculino" required checked /> <span>Masculino</span></label>
+                    <label class="inline-flex items-center gap-2"><input type="radio" name="aluno_sexo" value="Feminino" /> <span>Feminino</span></label>
+                    <label class="inline-flex items-center gap-2"><input type="radio" name="aluno_sexo" value="Outro" /> <span>Outro</span></label>
+                  </div>
                 </div>
               </div>
             </div>
@@ -216,11 +236,11 @@
             <!-- Checkboxes -->
             <div class="space-y-3">
               <div class="flex items-start gap-3">
-                <input id="informativo-ok" type="checkbox" />
+                <input id="informativo-ok" name="informativo_ok" type="checkbox" />
                 <label for="informativo-ok" class="text-sm text-ipace-text">Confirmo que li e entendi o informativo e que o responsável assinará no primeiro dia de aula o termo de autorização e de uso de imagem.</label>
               </div>
               <div class="flex items-start gap-3">
-                <input id="autorizacao-ok" type="checkbox" />
+                <input id="autorizacao-ok" name="autorizacao_ok" type="checkbox" />
                 <label for="autorizacao-ok" class="text-sm text-ipace-text">Confirmo que o responsável assinará no primeiro dia de aula o termo de autorização e de uso de imagem.</label>
               </div>
             </div>
@@ -250,18 +270,14 @@
   </footer>
 
   <script>
-    const GOOGLE_SHEETS_URL = 'https://script.google.com/macros/s/AKfycbxATe1IZSe-sBT1kOO88UCme7uMKSVoO0N9l1dri78-T809RtkceZVImtukEhtk7gVg_g/exec';
+    const GOOGLE_SHEETS_URL = 'https://script.google.com/macros/s/AKfycbxdRw-oyT6koHO0wNZ8XKzwSrf1rNo8BVY7OsTSa_wLwjagHHfMfV2AYOak4ZBvFNNLlg/exec';
 
     document.getElementById('inscricao-form')?.addEventListener('submit', function (e) {
       e.preventDefault();
       const form = e.target;
       const data = new FormData(form);
       const submitBtn = form.querySelector('button[type="submit"]');
-      if (submitBtn) {
-        submitBtn.disabled = true;
-        submitBtn.classList.add('opacity-50','cursor-not-allowed');
-        submitBtn.innerHTML = '<span class="inline-flex items-center gap-2"><svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path></svg>Enviando...</span>';
-      }
+
 
       // Validações adicionais (CPF, RG, WhatsApp)
       const email = data.get('responsavel_email')?.toString() || '';
@@ -302,9 +318,17 @@
         return;
       }
 
+      // Só desabilita o botão após passar nas validações
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.classList.add('opacity-50','cursor-not-allowed');
+        submitBtn.innerHTML = '<span class="inline-flex items-center gap-2"><svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path></svg>Enviando...</span>';
+      }
+
       // Prepara os dados para enviar ao Google Sheets
       const sheetsData = new FormData();
       sheetsData.append('responsavel_nome', data.get('responsavel_nome') || '');
+      sheetsData.append('responsavel_nome_social', data.get('responsavel_nome_social') || '');
       sheetsData.append('responsavel_cpf', data.get('responsavel_cpf') || '');
       sheetsData.append('responsavel_rg', data.get('responsavel_rg') || '');
       sheetsData.append('responsavel_email', data.get('responsavel_email') || '');
@@ -316,6 +340,8 @@
       sheetsData.append('cidade', data.get('cidade') || '');
       sheetsData.append('escola', data.get('escola') || '');
       sheetsData.append('aluno_nome', data.get('aluno_nome') || '');
+      sheetsData.append('aluno_nome_social', data.get('aluno_nome_social') || '');
+      sheetsData.append('aluno_sexo', data.get('aluno_sexo') || '');
       sheetsData.append('aluno_nascimento', data.get('aluno_nascimento') || '');
       sheetsData.append('aluno_idade', data.get('aluno_idade') || '');
       sheetsData.append('aluno_cpf', data.get('aluno_cpf') || '');
@@ -325,25 +351,22 @@
       sheetsData.append('cid', data.get('cid') || '');
       sheetsData.append('embarque', data.get('embarque') || '');
       sheetsData.append('rematricula', data.get('rematricula') || '');
+      sheetsData.append('informativo_ok', form.querySelector('#informativo-ok').checked ? 'Sim' : 'Não');
+      sheetsData.append('autorizacao_ok', form.querySelector('#autorizacao-ok').checked ? 'Sim' : 'Não');
 
       // Envia ao Google Sheets
       fetch(GOOGLE_SHEETS_URL, {
         method: 'POST',
         body: sheetsData
       })
-      .then(response => response.json())
+      .then(response => {
+        console.log('Response status:', response.status);
+        return response.text();
+      })
       .then(result => {
-        if (result.status === 'success') {
-          // Redireciona para página de sucesso após envio bem-sucedido
-          window.location.href = './sucesso.html';
-        } else {
-          alert('Erro ao enviar inscrição. Tente novamente.');
-          if (submitBtn) {
-            submitBtn.disabled = false;
-            submitBtn.classList.remove('opacity-50','cursor-not-allowed');
-            submitBtn.textContent = 'Enviar Inscrição';
-          }
-        }
+        console.log('Result:', result);
+        // Redireciona para página de sucesso após envio bem-sucedido
+        window.location.href = './sucesso.html';
       })
       .catch(error => {
         console.error('Erro ao enviar para Sheets:', error);
