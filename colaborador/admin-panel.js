@@ -7,6 +7,23 @@ let usuarioEmEdicao = null;
 let chamadaEmEdicao = null;
 let intervaloRecarregaUsuarios = null;
 let ordenacaoMesAscChamadas = true; // Default: Jan → Dez
+let dataManagerAdminInicializado = false;
+
+// Inicializar DataManager
+async function inicializarDataManagerAdmin() {
+    if (dataManagerAdminInicializado) return true;
+    
+    try {
+        console.log('🔄 Admin-Panel: Inicializando DataManager...');
+        await DataManager.init();
+        dataManagerAdminInicializado = true;
+        console.log('✅ Admin-Panel: DataManager inicializado com sucesso');
+        return true;
+    } catch (e) {
+        console.error('❌ Admin-Panel ERRO: Falha ao inicializar DataManager:', e.message);
+        return false;
+    }
+}
 
 // Verificar autenticacao de admin
 function verificarAutenticacaoAdmin() {
@@ -26,6 +43,14 @@ function fazerLogoutAdmin() {
 // ============================================================
 
 async function inicializarAdmin() {
+    // Garantir que DataManager está inicializado
+    const dmOk = await inicializarDataManagerAdmin();
+    if (!dmOk) {
+        console.error('❌ Admin-Panel: Não foi possível inicializar DataManager');
+        document.body.innerHTML = '<h1>Erro: Sistema indisponível. Recarregue a página.</h1>';
+        return;
+    }
+    
     usuariosAdmin = await DataManager.getUsuarios();
     
     // Se vazio, criar admin padrão se não existir (opcional, mas bom para evitar bloqueio)

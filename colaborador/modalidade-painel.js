@@ -572,12 +572,35 @@ async function salvarChamada() {
 }
 
 // Inicializar
+let dataManagerModalidadeInicializado = false;
+
+async function inicializarDataManagerModalidade() {
+    if (dataManagerModalidadeInicializado) return true;
+    
+    try {
+        console.log('🔄 Modalidade-Painel: Inicializando DataManager...');
+        await DataManager.init();
+        dataManagerModalidadeInicializado = true;
+        console.log('✅ Modalidade-Painel: DataManager inicializado com sucesso');
+        return true;
+    } catch (e) {
+        console.error('❌ Modalidade-Painel ERRO: Falha ao inicializar DataManager:', e.message);
+        return false;
+    }
+}
+
 window.addEventListener('DOMContentLoaded', async function() {
     updateDateTime();
     setInterval(updateDateTime, 1000);
     
-    // 1. Garantir que o DataManager está inicializado (Supabase ou LocalStorage)
-    await DataManager.init();
+    // 1. Garantir que o DataManager está inicializado
+    const dmOk = await inicializarDataManagerModalidade();
+    if (!dmOk) {
+        alert('Erro ao inicializar sistema. Recarregue a página.');
+        window.location.href = '/colaborador/index.html';
+        return;
+    }
+    
     console.log('DataManager inicializado');
 
     // 2. Sincronizar listas PRIMEIRO (para garantir que turmas/horários estão disponíveis)

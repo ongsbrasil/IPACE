@@ -11,31 +11,66 @@ const DataManager = {
     useSupabase: true, // APENAS SUPABASE
 
     init: async function() {
-        // Aguardar Supabase inicializar
+        console.log('🔄 DataManager: Iniciando...');
+        
+        // Aguardar Supabase inicializar com mais tempo
         let tentativas = 0;
-        while (!window.supabaseClient && tentativas < 10) {
-            console.log('⏳ Aguardando Supabase... tentativa', tentativas + 1);
+        const maxTentativas = 50; // 5 segundos com delay de 100ms
+        
+        console.log('⏳ DataManager: Aguardando Supabase inicializar...');
+        
+        while (!window.supabaseClient && tentativas < maxTentativas) {
             await new Promise(resolve => setTimeout(resolve, 100));
             tentativas++;
+            if (tentativas % 10 === 0) {
+                console.log(`  Tentativa ${tentativas}/${maxTentativas}`);
+            }
         }
         
+        // Se ainda não inicializou, tentar chamar initSupabase diretamente
         if (!window.supabaseClient) {
-            console.error('❌ ERRO CRÍTICO: Supabase não foi inicializado!');
-            throw new Error('Supabase não disponível');
+            console.log('🔄 DataManager: Tentando chamar initSupabase() manualmente...');
+            
+            if (typeof initSupabase === 'function') {
+                const result = initSupabase();
+                if (result) {
+                    window.supabaseClient = result;
+                    console.log('✓ DataManager: initSupabase() bem-sucedido');
+                }
+            }
         }
         
-        console.log('✅ DataManager: Supabase Inicializado');
+        // Última verificação
+        if (!window.supabaseClient) {
+            console.error('❌ DataManager ERRO CRÍTICO: Supabase não foi inicializado após 5 segundos!');
+            console.error('   Verificar se:');
+            console.error('   1. supabase-js CDN foi carregado (window.supabase)');
+            console.error('   2. supabase-config.js foi carregado (window.SUPABASE_CONFIG)');
+            console.error('   3. supabase-client.js foi carregado e executado');
+            console.error('   Variáveis globais:');
+            console.error('   - window.supabase:', typeof window.supabase);
+            console.error('   - window.SUPABASE_CONFIG:', typeof window.SUPABASE_CONFIG);
+            console.error('   - window._supabaseClientInitialized:', window._supabaseClientInitialized);
+            throw new Error('Supabase não disponível após 5 segundos');
+        }
+        
+        console.log('✅ DataManager: Supabase Inicializado com Sucesso');
         
         // Testar conexão
         try {
-            const { error } = await window.supabaseClient.from('alunos').select('count', { count: 'exact' }).limit(1);
+            console.log('🔌 DataManager: Testando conexão Supabase...');
+            const { error, count } = await window.supabaseClient
+                .from('alunos')
+                .select('count', { count: 'exact' })
+                .limit(1);
+                
             if (error) {
-                console.error('❌ ERRO: Supabase retornou erro na conexão:', error.message);
+                console.error('❌ DataManager ERRO: Supabase retornou erro na conexão:', error.message);
                 throw error;
             }
-            console.log('✅ Conexão Supabase OK');
+            console.log('✅ DataManager: Conexão Supabase OK');
         } catch (e) {
-            console.error('❌ ERRO CRÍTICO na conexão Supabase:', e.message);
+            console.error('❌ DataManager ERRO CRÍTICO na conexão Supabase:', e.message);
             throw e;
         }
     },

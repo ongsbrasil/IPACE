@@ -4,6 +4,23 @@ const ADMIN_CREDENTIALS = {
     senha: 'cdcbpu2026+'
 };
 
+let dataManagerAdminLoginInicializado = false;
+
+async function inicializarDataManagerAdminLogin() {
+    if (dataManagerAdminLoginInicializado) return true;
+    
+    try {
+        console.log('🔄 Admin-Login: Inicializando DataManager...');
+        await DataManager.init();
+        dataManagerAdminLoginInicializado = true;
+        console.log('✅ Admin-Login: DataManager inicializado com sucesso');
+        return true;
+    } catch (e) {
+        console.error('⚠️ Admin-Login: DataManager não inicializado, usando apenas credenciais hardcoded');
+        return false;
+    }
+}
+
 async function fazerLoginAdmin(event) {
     event.preventDefault();
     
@@ -17,11 +34,15 @@ async function fazerLoginAdmin(event) {
         return;
     }
 
-    // 2. Verificar no DataManager (Supabase/LocalStorage)
+    // 2. Verificar no DataManager (Supabase)
     try {
         // Garantir que DataManager está inicializado
-        if (typeof DataManager.init === 'function' && !DataManager.initialized) {
-            await DataManager.init();
+        if (!dataManagerAdminLoginInicializado) {
+            const dmOk = await inicializarDataManagerAdminLogin();
+            if (!dmOk) {
+                mostrarAlerta('Sistema indisponível. Usando credenciais padrão.', 'warning');
+                return;
+            }
         }
 
         const usuarios = await DataManager.getUsuarios();

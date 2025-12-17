@@ -1,8 +1,28 @@
 // Banco de dados de usuários - Carregado via DataManager
 let usuarios = {};
+let dataManagerInicializado = false;
 
 // Mostrar mensagem de inicialização
 console.log('%c=== IPACE - SISTEMA DE LOGIN ===', 'color: #1084d0; font-weight: bold; font-size: 14px;');
+
+// ============================================================================
+// INICIALIZAR DATA MANAGER
+// ============================================================================
+
+async function inicializarDataManager() {
+    if (dataManagerInicializado) return true;
+    
+    try {
+        console.log('🔄 Login: Inicializando DataManager...');
+        await DataManager.init();
+        dataManagerInicializado = true;
+        console.log('✅ Login: DataManager inicializado com sucesso');
+        return true;
+    } catch (e) {
+        console.error('❌ Login ERRO: Falha ao inicializar DataManager:', e.message);
+        return false;
+    }
+}
 
 // ============================================================================
 // CARREGAR USUARIOS
@@ -10,6 +30,13 @@ console.log('%c=== IPACE - SISTEMA DE LOGIN ===', 'color: #1084d0; font-weight: 
 
 async function carregarUsuarios() {
     try {
+        if (!dataManagerInicializado) {
+            const inicOk = await inicializarDataManager();
+            if (!inicOk) {
+                throw new Error('DataManager não inicializado');
+            }
+        }
+        
         usuarios = await DataManager.getUsuarios();
         console.log('✓ Usuarios carregados:', Object.keys(usuarios));
         return true;
@@ -23,6 +50,7 @@ async function carregarUsuarios() {
 // Carregar usuarios ao inicializar a pagina
 document.addEventListener('DOMContentLoaded', async function() {
     console.log('=== INICIANDO LOGIN ===');
+    await inicializarDataManager();
     await carregarUsuarios();
 });
 
@@ -39,6 +67,15 @@ async function fazerLogin(event) {
     const errorDiv = document.getElementById('errorMessage');
     
     // Garantir dados atualizados
+    if (!dataManagerInicializado) {
+        const inicOk = await inicializarDataManager();
+        if (!inicOk) {
+            errorDiv.textContent = 'Erro ao inicializar sistema. Recarregue a página.';
+            errorDiv.style.display = 'block';
+            return;
+        }
+    }
+    
     await carregarUsuarios();
     
     console.log('🔐 Tentando login com usuario:', usuario);
