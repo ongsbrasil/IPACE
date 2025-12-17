@@ -141,7 +141,16 @@ const diasPorModalidade = {
 // Função para gerar datas das aulas do mês
 function gerarDatasAulas(mes, ano, modalidade) {
     const diasDaSemana = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
-    const diasDaModalidade = diasPorModalidade[modalidade] || ['Terça', 'Sexta'];
+    
+    // ⚠️ VALIDAÇÃO INTELIGENTE: se modalidade não existe, logar erro e usar default com warning
+    const diasDaModalidade = diasPorModalidade[modalidade];
+    if (!diasDaModalidade) {
+        console.error(`❌ ERRO CRÍTICO: Modalidade "${modalidade}" não encontrada em diasPorModalidade!`);
+        console.error(`   Modalidades válidas: ${Object.keys(diasPorModalidade).join(', ')}`);
+        console.error(`   Usando FALLBACK ["Terça", "Sexta"] - ISSO PODE ESTAR ERRADO!`);
+        return []; // Retornar array vazio ao invés de silenciosamente retornar valor errado
+    }
+    
     const datasAulas = [];
     
     const ultimoDiaDoMes = new Date(ano, mes, 0).getDate();
@@ -159,7 +168,21 @@ function gerarDatasAulas(mes, ano, modalidade) {
         }
     }
     
+    console.log(`📅 gerarDatasAulas: ${modalidade} ${mes}/${ano} → ${datasAulas.length} dias`);
     return datasAulas;
+}
+
+// Função para verificar se TODOS os dias de uma lista foram preenchidos
+function todosOsDiasForamPreenchidos(lista) {
+    if (!lista || !lista.chamadas) return false;
+    
+    // Obter todos os dias possíveis da lista
+    const diasAulas = gerarDatasAulas(parseInt(lista.mes), lista.ano, lista.modalidade);
+    
+    // Verificar se TODOS os dias estão em chamadas
+    const todosDiasSalvos = diasAulas.every(dia => lista.chamadas[dia.value]);
+    
+    return todosDiasSalvos && diasAulas.length > 0;
 }
 
 // Atualizar data e hora
@@ -239,6 +262,9 @@ async function carregarLista() {
         return;
     }
     const horarioSelecionado = filtroEl.value;
+    console.log('🔴 carregarLista iniciada');
+    console.log('   modalidadeSelecionada:', modalidadeSelecionada);
+    console.log('   horarioSelecionado:', horarioSelecionado);
     
     if (!horarioSelecionado) {
         const listasEl = document.getElementById('listasDisponiveis');
@@ -253,9 +279,29 @@ async function carregarLista() {
         if (!Array.isArray(listas)) {
             throw new Error('getListas retornou valor não-array');
         }
+        console.log('📋 Todas as listas carregadas:', listas.length);
+        
         const listasModalidade = listas.filter(l => 
             l && l.modalidade === modalidadeSelecionada && l.turma === horarioSelecionado
         );
+        
+        console.log('🔍 Listas filtradas para', modalidadeSelecionada, '-', horarioSelecionado, ':', listasModalidade.length);
+        
+        // Debug: mostrar todas as combinações modalidade/turma disponíveis
+        if (listasModalidade.length === 0) {
+            console.log('⚠️ Nenhuma lista encontrada! Combinações disponíveis:');
+            const combinacoes = {};
+            listas.forEach(l => {
+                if (l && l.modalidade && l.turma) {
+                    const chave = `${l.modalidade} | ${l.turma}`;
+                    if (!combinacoes[chave]) combinacoes[chave] = 0;
+                    combinacoes[chave]++;
+                }
+            });
+            Object.entries(combinacoes).forEach(([chave, count]) => {
+                console.log(`  - ${chave}: ${count} listas`);
+            });
+        }
 
         let html = '';
         if (listasModalidade.length === 0) {
@@ -273,9 +319,11 @@ async function carregarLista() {
                     '09': 'set', '10': 'out', '11': 'nov', '12': 'dez'
                 };
                 const mesNome = meses[lista.mes];
-                const statusTexto = lista.salva ? '✓ Salva' : 'Pendente';
-                const statusCor = lista.salva ? '#28a745' : '#ff9800';
+                const todosDiasPreenchidos = todosOsDiasForamPreenchidos(lista);
+                const statusTexto = todosDiasPreenchidos ? '✓ Salva' : 'Pendente';
+                const statusCor = todosDiasPreenchidos ? '#28a745' : '#ff9800';
                 const presencasCount = lista.presencas ? lista.presencas.length : 0;
+                console.log('  📌 Lista:', mesNome + '/' + lista.ano, '- ID:', lista.id, '- Alunos:', presencasCount, '- Status:', statusTexto);
                 html += `
                     <tr>
                         <td>${mesNome}/${lista.ano}</td>
@@ -307,9 +355,15 @@ let listaAtual = null;
 
 // Atualizar tabela ao mudar o dia selecionado
 async function atualizarTabelaAoMudarDia() {
-    if (!listaAtual) return;
+    if (!listaAtual) {
+        console.error('❌ listaAtual é null/undefined');
+        return;
+    }
     
     try {
+        console.log('📊 atualizarTabelaAoMudarDia iniciada');
+        console.log('   listaAtual.presencas:', listaAtual.presencas?.length || 0);
+        
         const diaSelecionadoEl = document.getElementById('diaSelecionado');
         if (!diaSelecionadoEl) {
             console.error('❌ Elemento diaSelecionado não encontrado');
@@ -317,6 +371,7 @@ async function atualizarTabelaAoMudarDia() {
         }
         
         const diaSelecionado = diaSelecionadoEl.value;
+        console.log('   diaSelecionado:', diaSelecionado);
         
         // Inicializar estrutura de chamadas se não existir
         if (!listaAtual.chamadas) {
@@ -347,6 +402,7 @@ async function atualizarTabelaAoMudarDia() {
     // Recriar tabela com estados atualizados
     let html = '';
     const alunos = await DataManager.getAlunos();
+    console.log('   alunos carregados:', alunos.length);
     
     listaAtual.presencas.forEach((presenca, index) => {
         const statusPresente = presenca.status === 'presente' ? 'btn-present' : '';
@@ -384,18 +440,27 @@ async function atualizarTabelaAoMudarDia() {
     const corpoTabelaEl = document.getElementById('corpoTabelaChamada');
     if (corpoTabelaEl) {
         corpoTabelaEl.innerHTML = html;
+        console.log('✅ Tabela atualizada com', listaAtual.presencas.length, 'alunos');
+    } else {
+        console.error('❌ Elemento corpoTabelaChamada não encontrado');
     }
     atualizarResumo();
     } catch (e) {
         console.error('❌ Erro em atualizarTabelaAoMudarDia:', e.message);
+        console.error('📍 Stack:', e.stack);
     }
 }
 
 // Abrir modal de chamada
 async function abrirChamada(listaId) {
     try {
+        console.log('🔵 abrirChamada chamada com listaId:', listaId);
+        
         const listas = await DataManager.getListas();
+        console.log('📋 Listas obtidas:', listas.length);
+        
         listaAtual = listas.find(l => l.id === listaId);
+        console.log('🔍 listaAtual encontrada:', listaAtual);
         
         if (!listaAtual) {
             console.error('❌ Lista não encontrada com ID:', listaId);
@@ -403,17 +468,17 @@ async function abrirChamada(listaId) {
         }
         
         // Verificar se elementos existem antes de usar
-        const tituloChamadaEl = document.getElementById('tituloChamada');
         const nomeLista = document.getElementById('nomeLista');
         const dataLista = document.getElementById('dataLista');
         
-        if (!tituloChamadaEl) {
-            console.error('❌ Elemento tituloChamada não encontrado');
+        if (!nomeLista || !dataLista) {
+            console.error('❌ Elementos do painel de chamada não encontrados');
+            console.error('   nomeLista:', nomeLista);
+            console.error('   dataLista:', dataLista);
             return;
         }
         
-        tituloChamadaEl.textContent = `Chamada - ${listaAtual.nome}`;
-        if (nomeLista) nomeLista.textContent = listaAtual.nome;
+        nomeLista.textContent = listaAtual.nome;
         
         const meses = {
             '01': 'jan', '02': 'fev', '03': 'mar', '04': 'abr',
@@ -421,10 +486,21 @@ async function abrirChamada(listaId) {
             '09': 'set', '10': 'out', '11': 'nov', '12': 'dez'
         };
         
-        if (dataLista) dataLista.textContent = `${meses[listaAtual.mes]}/${listaAtual.ano}`;
+        dataLista.textContent = `${meses[listaAtual.mes]}/${listaAtual.ano}`;
         
         // Gerar opções de dias
         const datasAulas = gerarDatasAulas(parseInt(listaAtual.mes), listaAtual.ano, listaAtual.modalidade);
+        
+        // 🔴 FILTRAR: REMOVER DIAS JÁ SALVOS
+        const diasDisponiveis = datasAulas.filter(dia => {
+            const jaSalvo = listaAtual.chamadas && listaAtual.chamadas[dia.value];
+            return !jaSalvo; // Só incluir dias que NÃO foram salvos
+        });
+        
+        console.log('📅 Dias totais disponíveis:', datasAulas.length);
+        console.log('📅 Dias já salvos:', datasAulas.length - diasDisponiveis.length);
+        console.log('📅 Dias ainda para preencher:', diasDisponiveis.length);
+        
         let options = '<option value="">Selecione o dia...</option>';
     
         // Verificar qual é o dia de hoje para selecionar automaticamente
@@ -433,43 +509,63 @@ async function abrirChamada(listaId) {
         
         let diaHojeEncontrado = false;
         
-        datasAulas.forEach(data => {
+        diasDisponiveis.forEach(data => {
             const isHoje = data.value === hojeFormatado;
             if (isHoje) diaHojeEncontrado = true;
             options += `<option value="${data.value}" ${isHoje ? 'selected' : ''}>${data.label}</option>`;
         });
         
         const selectDia = document.getElementById('diaSelecionado');
-        const modalChamada = document.getElementById('modalChamada');
+        const chamadaContainer = document.getElementById('chamadaContainer');
         
         if (!selectDia) {
             console.error('❌ Elemento diaSelecionado não encontrado');
             return;
         }
-        if (!modalChamada) {
-            console.error('❌ Elemento modalChamada não encontrado');
+        if (!chamadaContainer) {
+            console.error('❌ Elemento chamadaContainer não encontrado');
             return;
         }
         
         selectDia.innerHTML = options;
         
-        // Mostrar modal
-        modalChamada.style.display = 'block';
+        // ESCONDER TUDO E MOSTRAR APENAS CHAMADA
+        const filtroTurmaEl = document.getElementById('filtroTurma');
+        const listasDisponiveisEl = document.getElementById('listasDisponiveis');
+        
+        if (filtroTurmaEl) filtroTurmaEl.parentElement.style.display = 'none';
+        if (listasDisponiveisEl) listasDisponiveisEl.style.display = 'none';
+        
+        // Mostrar container de chamada
+        chamadaContainer.style.display = 'block';
+        console.log('✅ Tela de chamada exibida');
+        console.log('   Computed display:', window.getComputedStyle(chamadaContainer).display);
+        console.log('   Element visible:', chamadaContainer.offsetHeight > 0);
         
         // Carregar tabela (se hoje for dia de aula, já carrega)
         await atualizarTabelaAoMudarDia();
     } catch (e) {
         console.error('❌ Erro em abrirChamada:', e.message);
+        console.error('📍 Stack:', e.stack);
     }
 }
 
-// Fechar modal
+// Fechar modal e voltar
 function fecharChamada() {
-    const modalChamada = document.getElementById('modalChamada');
-    if (modalChamada) {
-        modalChamada.style.display = 'none';
+    const chamadaContainer = document.getElementById('chamadaContainer');
+    const filtroTurmaEl = document.getElementById('filtroTurma');
+    const listasDisponiveisEl = document.getElementById('listasDisponiveis');
+    
+    if (chamadaContainer) {
+        chamadaContainer.style.display = 'none';
     }
+    
+    // Mostrar tudo de novo
+    if (filtroTurmaEl) filtroTurmaEl.parentElement.style.display = 'block';
+    if (listasDisponiveisEl) listasDisponiveisEl.style.display = 'block';
+    
     listaAtual = null;
+    console.log('✅ Voltado para tela de listas');
 }
 
 // Marcar presença
@@ -520,7 +616,7 @@ function atualizarResumo() {
     const presentes = listaAtual.presencas.filter(p => p.status === 'presente').length;
     const faltas = listaAtual.presencas.filter(p => p.status === 'falta').length;
     
-    const resumoEl = document.getElementById('resumoChamada');
+    const resumoEl = document.getElementById('resumoPresenca');
     if (resumoEl) {
         resumoEl.textContent = `Total: ${total} | Presentes: ${presentes} | Faltas: ${faltas}`;
     }
@@ -553,15 +649,34 @@ async function salvarChamada() {
         })).filter(p => p.status !== null); // Salvar apenas quem tem status definido
         
         listaAtual.chamadas[diaSelecionado] = estadoAtual;
-        listaAtual.salva = true;
         
         // Salvar no DataManager
         const salvo = await DataManager.saveLista(listaAtual);
         
         if (salvo) {
-            alert('Chamada salva com sucesso!');
-            fecharChamada();
-            carregarLista(); // Atualizar lista principal
+            console.log('✅ Dia salvo:', diaSelecionado);
+            
+            // 1️⃣ REMOVER DIA SALVO DO DROPDOWN
+            const optionElement = Array.from(diaSelecionadoEl.options).find(opt => opt.value === diaSelecionado);
+            if (optionElement) {
+                optionElement.remove();
+                console.log('🗑️ Dia removido do dropdown');
+            }
+            
+            // 2️⃣ CARREGAR PRÓXIMO DIA AUTOMATICAMENTE
+            if (diaSelecionadoEl.options.length > 1) {
+                // Há mais dias disponíveis
+                diaSelecionadoEl.selectedIndex = 1; // Selecionar o primeiro dia disponível (pulando a opção "Selecione")
+                await atualizarTabelaAoMudarDia();
+                alert('Chamada salva! Carregando próximo dia...');
+                console.log('➡️ Próximo dia carregado automaticamente');
+            } else {
+                // Não há mais dias - a lista está completa!
+                alert('✅ Todos os dias da lista foram preenchidos!');
+                fecharChamada();
+                carregarLista(); // Atualizar lista principal para mostrar "Salva"
+                console.log('✅ Todos os dias preenchidos');
+            }
         } else {
             alert('Erro ao salvar chamada. Tente novamente.');
         }
@@ -637,3 +752,18 @@ window.addEventListener('DOMContentLoaded', async function() {
 window.addEventListener('listasAtualizadas', function() {
     carregarLista();
 });
+
+// ============================================================================
+// ALIASES - Compatibilidade com HTML
+// ============================================================================
+
+// Alias para salvarChamada
+function salvarPresencas() {
+    salvarChamada();
+}
+
+// Alias para fecharChamada e recarregar listas
+function voltarParaListas() {
+    fecharChamada();
+    carregarLista();
+}

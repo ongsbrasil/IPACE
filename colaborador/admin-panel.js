@@ -9,6 +9,62 @@ let intervaloRecarregaUsuarios = null;
 let ordenacaoMesAscChamadas = true; // Default: Jan → Dez
 let dataManagerAdminInicializado = false;
 
+// Dias de aula por modalidade
+const diasPorModalidade = {
+    'judo': ['Terça', 'Quinta'],
+    'canoagem-velocidade': ['Terça', 'Quinta'],
+    'futebol': ['Quarta', 'Sexta'],
+    'canoagem-turismo': ['Quarta', 'Sexta'],
+    'vela': ['Quarta', 'Sexta']
+};
+
+// Função para gerar datas das aulas do mês
+function gerarDatasAulas(mes, ano, modalidade) {
+    const diasDaSemana = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
+    
+    // ⚠️ VALIDAÇÃO INTELIGENTE: se modalidade não existe, logar erro
+    const diasDaModalidade = diasPorModalidade[modalidade];
+    if (!diasDaModalidade) {
+        console.error(`❌ ERRO CRÍTICO: Modalidade "${modalidade}" não encontrada em diasPorModalidade!`);
+        console.error(`   Modalidades válidas: ${Object.keys(diasPorModalidade).join(', ')}`);
+        console.error(`   Usando FALLBACK ["Terça", "Sexta"] - ISSO PODE ESTAR ERRADO!`);
+        return []; // Retornar array vazio ao invés de silenciosamente retornar valor errado
+    }
+    
+    const datasAulas = [];
+    
+    const ultimoDiaDoMes = new Date(ano, mes, 0).getDate();
+    
+    for (let dia = 1; dia <= ultimoDiaDoMes; dia++) {
+        const data = new Date(ano, mes - 1, dia);
+        const diaSemana = diasDaSemana[data.getDay()];
+        
+        if (diasDaModalidade.includes(diaSemana)) {
+            const dataFormatada = `${String(dia).padStart(2, '0')}/${String(mes).padStart(2, '0')}/${ano}`;
+            datasAulas.push({
+                label: `${diaSemana} ${dataFormatada}`,
+                value: dataFormatada
+            });
+        }
+    }
+    
+    console.log(`📅 gerarDatasAulas: ${modalidade} ${mes}/${ano} → ${datasAulas.length} dias`);
+    return datasAulas;
+}
+
+// Função para verificar se TODOS os dias de uma lista foram preenchidos
+function todosOsDiasForamPreenchidos(lista) {
+    if (!lista || !lista.chamadas) return false;
+    
+    // Obter todos os dias possíveis da lista
+    const diasAulas = gerarDatasAulas(parseInt(lista.mes), lista.ano, lista.modalidade);
+    
+    // Verificar se TODOS os dias estão em chamadas
+    const todosDiasSalvos = diasAulas.every(dia => lista.chamadas[dia.value]);
+    
+    return todosDiasSalvos && diasAulas.length > 0;
+}
+
 // Inicializar DataManager
 async function inicializarDataManagerAdmin() {
     if (dataManagerAdminInicializado) return true;
@@ -79,6 +135,8 @@ async function inicializarAdmin() {
 
 // Recarregar lista de usuários
 async function recarregarUsuarios() {
+    console.time('⏱️ recarregarUsuarios');
+    
     usuariosAdmin = await DataManager.getUsuarios();
     const tbody = document.getElementById('tabelaUsuarios');
     
@@ -87,44 +145,43 @@ async function recarregarUsuarios() {
         return;
     }
     
-    console.log('Recarregando usuarios... Total:', Object.keys(usuariosAdmin).length);
+    console.log('📥 Recarregando usuarios... Total:', Object.keys(usuariosAdmin).length);
     
-    // Limpar tabela completamente
-    while (tbody.firstChild) {
-        tbody.removeChild(tbody.firstChild);
-    }
+    // Usar innerHTML para ser mais rápido (em vez de createElement)
+    let html = '';
     
     if (Object.keys(usuariosAdmin).length === 0) {
-        const tr = document.createElement('tr');
-        tr.innerHTML = '<td colspan="6" style="text-align: center; color: #999;">Nenhum usuario cadastrado</td>';
-        tbody.appendChild(tr);
+        html = '<tr><td colspan="6" style="text-align: center; color: #999;">Nenhum usuario cadastrado</td></tr>';
     } else {
-        // Reconstruir tabela com dados atualizados
+        // Reconstruir tabela rapidamente
         Object.entries(usuariosAdmin).forEach(([usuario, dados]) => {
             const modalidade = dados.modalidade ? `<span class="badge professor">${dados.modalidade}</span>` : '-';
             const tipo = dados.tipo === 'professor' ? 'Professor' : 'Secretaria';
             const ativo = dados.ativo !== false ? '<span class="badge active">Ativo</span>' : '<span class="badge inactive">Inativo</span>';
             
-            const tr = document.createElement('tr');
-            tr.innerHTML = `
-                <td><strong>${usuario}</strong></td>
-                <td>${tipo}</td>
-                <td>${dados.nome || '-'}</td>
-                <td>${modalidade}</td>
-                <td>${ativo}</td>
-                <td>
-                    <button onclick="editarUsuario('${usuario}')" style="background: #ffc107; margin-right: 5px;">Editar</button>
-                    <button class="danger" onclick="deletarUsuario('${usuario}')">Deletar</button>
-                </td>
+            html += `
+                <tr>
+                    <td><strong>${usuario}</strong></td>
+                    <td>${tipo}</td>
+                    <td>${dados.nome || '-'}</td>
+                    <td>${modalidade}</td>
+                    <td>${ativo}</td>
+                    <td>
+                        <button onclick="editarUsuario('${usuario}')" style="background: #ffc107; margin-right: 5px;">Editar</button>
+                        <button class="danger" onclick="deletarUsuario('${usuario}')">Deletar</button>
+                    </td>
+                </tr>
             `;
-            tbody.appendChild(tr);
         });
     }
     
-    // SEMPRE atualizar estatisticas
+    tbody.innerHTML = html;
+    
+    // Atualizar estatísticas
     atualizarEstatisticas();
     
-    console.log('Usuarios recarregados com sucesso!');
+    console.timeEnd('⏱️ recarregarUsuarios');
+    console.log('✅ Usuarios recarregados com sucesso!');
 }
 
 function atualizarEstatisticas() {
@@ -191,69 +248,72 @@ function atualizarCamposModalidadeModal() {
 async function salvarUsuario(event) {
     event.preventDefault();
     
-    const usuario = document.getElementById('inputUsuario').value.trim().toLowerCase();
-    const senha = document.getElementById('inputSenha').value;
-    const tipo = document.getElementById('inputTipo').value;
-    const nome = document.getElementById('inputNome').value;
-    const ativo = document.getElementById('inputAtivo').checked;
-    const modalidade = tipo === 'professor' ? document.getElementById('inputModalidade').value : null;
-    
-    if (!usuario || !senha || !nome) {
-        mostrarAlerta('Por favor, preencha todos os campos obrigatorios', 'danger');
-        return;
+    // MOSTRAR LOADING
+    const btnSalvar = document.querySelector('button[type="submit"]');
+    if (btnSalvar) {
+        btnSalvar.disabled = true;
+        btnSalvar.textContent = 'Salvando...';
     }
     
-    // Verificar se novo usuario ja existe (exceto se for o mesmo user em edicao)
-    if (usuariosAdmin[usuario] && (!usuarioEmEdicao || usuarioEmEdicao !== usuario)) {
-        mostrarAlerta('Usuario ja existe! Escolha outro login', 'danger');
-        return;
-    }
-    
-    // Se editando e mudou o login, remover o antigo
-    if (usuarioEmEdicao && usuarioEmEdicao !== usuario) {
-        await DataManager.deleteUsuario(usuarioEmEdicao);
-    }
-    
-    const novoUsuario = {
-        username: usuario,
-        senha: senha,
-        tipo: tipo,
-        nome: nome,
-        ativo: ativo,
-        modalidade: modalidade
-    };
-    
-    await DataManager.saveUsuario(novoUsuario);
-    
-    // Fechar modal ANTES de recarregar para melhor UX
-    fecharModal('modalUsuario');
-    
-    // FORCAR aba usuarios ficar visivel e ativa
-    document.querySelectorAll('.tab').forEach(el => el.classList.remove('active'));
-    document.querySelectorAll('.sidebar-item').forEach(el => el.classList.remove('active'));
-    
-    const tabUsuarios = document.getElementById('tab-usuarios');
-    if (tabUsuarios) {
-        tabUsuarios.classList.add('active');
-    }
-    
-    // Ativar item sidebar
-    document.querySelectorAll('.sidebar-item').forEach(item => {
-        if (item.textContent.includes('Usuarios')) {
-            item.classList.add('active');
+    try {
+        const usuario = document.getElementById('inputUsuario').value.trim().toLowerCase();
+        const senha = document.getElementById('inputSenha').value;
+        const tipo = document.getElementById('inputTipo').value;
+        const nome = document.getElementById('inputNome').value;
+        const ativo = document.getElementById('inputAtivo').checked;
+        const modalidade = tipo === 'professor' ? document.getElementById('inputModalidade').value : null;
+        
+        if (!usuario || !senha || !nome) {
+            mostrarAlerta('Por favor, preencha todos os campos obrigatorios', 'danger');
+            return;
         }
-    });
-    
-    // Recarregar e atualizar com delay minimo
-    setTimeout(async () => {
+        
+        // Verificar se novo usuario ja existe (exceto se for o mesmo user em edicao)
+        if (usuariosAdmin[usuario] && (!usuarioEmEdicao || usuarioEmEdicao !== usuario)) {
+            mostrarAlerta('Usuario ja existe! Escolha outro login', 'danger');
+            return;
+        }
+        
+        // Se editando e mudou o login, remover o antigo
+        if (usuarioEmEdicao && usuarioEmEdicao !== usuario) {
+            await DataManager.deleteUsuario(usuarioEmEdicao);
+        }
+        
+        const novoUsuario = {
+            username: usuario,
+            senha: senha,
+            tipo: tipo,
+            nome: nome,
+            ativo: ativo,
+            modalidade: modalidade
+        };
+        
+        await DataManager.saveUsuario(novoUsuario);
+        
+        // 🔴 LIMPAR CACHE PARA PEGAR DADOS NOVOS
+        DataManager._clearCache('usuarios');
+        
+        // Fechar modal IMEDIATAMENTE
+        fecharModal('modalUsuario');
+        
+        // Recarregar lista
         await recarregarUsuarios();
-        atualizarEstatisticas();
-    }, 10);
-    
-    // Sincronizar usuarios com todas as abas abertas
-    sincronizarUsuariosGlobalmente();
-    
-    mostrarAlerta(usuarioEmEdicao ? 'Usuario atualizado!' : 'Usuario criado!', 'success');
+        
+        // Sincronizar usuarios com todas as abas
+        sincronizarUsuariosGlobalmente();
+        
+        mostrarAlerta(usuarioEmEdicao ? 'Usuario atualizado!' : 'Usuario criado!', 'success');
+        
+    } catch (e) {
+        console.error('Erro ao salvar:', e);
+        mostrarAlerta('Erro ao salvar: ' + e.message, 'danger');
+    } finally {
+        // REMOVER LOADING
+        if (btnSalvar) {
+            btnSalvar.disabled = false;
+            btnSalvar.textContent = '✓ Salvar';
+        }
+    }
 }
 
 // Funcao para sincronizar usuarios em tempo real com todas as abas
@@ -272,38 +332,41 @@ async function sincronizarUsuariosGlobalmente() {
 
 async function deletarUsuario(usuario) {
     if (confirm(`Deletar "${usuario}"?`)) {
-        console.log('Deletando usuario:', usuario);
-        
-        await DataManager.deleteUsuario(usuario);
-        
-        // FORCAR aba usuarios ficar visivel e ativa
-        document.querySelectorAll('.tab').forEach(el => el.classList.remove('active'));
-        document.querySelectorAll('.sidebar-item').forEach(el => el.classList.remove('active'));
-        
-        const tabUsuarios = document.getElementById('tab-usuarios');
-        if (tabUsuarios) {
-            tabUsuarios.classList.add('active');
-            console.log('Aba usuarios ativada');
-        }
-        
-        // Ativar item sidebar
-        document.querySelectorAll('.sidebar-item').forEach(item => {
-            if (item.textContent.includes('Usuarios')) {
-                item.classList.add('active');
+        try {
+            console.log('Deletando usuario:', usuario);
+            
+            // MOSTRAR LOADING (feedback visual) - encontrar o botão correto
+            const botoes = document.querySelectorAll('button.danger');
+            let btnDelete = null;
+            for (let btn of botoes) {
+                if (btn.onclick && btn.onclick.toString().includes(usuario)) {
+                    btnDelete = btn;
+                    break;
+                }
             }
-        });
-        
-        // Recarregar tabela com delay minimo para garantir render
-        setTimeout(async () => {
+            
+            if (btnDelete) {
+                btnDelete.disabled = true;
+                btnDelete.textContent = 'Deletando...';
+            }
+            
+            await DataManager.deleteUsuario(usuario);
+            
+            // 🔴 LIMPAR CACHE PARA PEGAR DADOS NOVOS
+            DataManager._clearCache('usuarios');
+            
+            // Recarregar lista IMEDIATAMENTE
             await recarregarUsuarios();
-            atualizarEstatisticas();
-            console.log('Usuarios recarregados apos delete');
-        }, 10);
-        
-        // Sincronizar usuarios com todas as abas abertas
-        sincronizarUsuariosGlobalmente();
-        
-        mostrarAlerta('Usuario deletado!', 'success');
+            
+            mostrarAlerta('Usuario deletado com sucesso!', 'success');
+            
+            // Sincronizar usuarios com todas as abas
+            sincronizarUsuariosGlobalmente();
+            
+        } catch (e) {
+            console.error('Erro ao deletar:', e);
+            mostrarAlerta('Erro ao deletar: ' + e.message, 'danger');
+        }
     }
 }
 
@@ -519,8 +582,9 @@ async function recarregarChamadas() {
         });
         
         const totalPresencas = lista.presencas ? lista.presencas.length : 0;
-        const statusTexto = lista.salva ? 'Salva' : 'Pendente';
-        const statusCor = lista.salva ? '#28a745' : '#ff9800';
+        const todosDiasPreenchidos = todosOsDiasForamPreenchidos(lista);
+        const statusTexto = todosDiasPreenchidos ? 'Salva' : 'Pendente';
+        const statusCor = todosDiasPreenchidos ? '#28a745' : '#ff9800';
         
         const tr = document.createElement('tr');
         tr.innerHTML = `
@@ -723,6 +787,8 @@ function atualizarDiasSalvosLista(lista) {
 }
 
 async function editarChamada(listaId) {
+    console.time('⏱️ editarChamada');
+    
     const listas = await DataManager.getListas();
     const lista = listas.find(l => l.id === listaId);
     
@@ -741,6 +807,11 @@ async function editarChamada(listaId) {
         mostrarAlerta('Nenhum dia de aula encontrado para este mês!', 'warning');
         return;
     }
+    
+    // ⚡ Fazer UMA ÚNICA requisição de alunos
+    const alunos = lista.presencas && lista.presencas.length > 0 ? await DataManager.getAlunos() : [];
+    const alunosPorId = {};
+    alunos.forEach(a => { alunosPorId[a.id] = a; });
     
     // Criar cabeçalho da tabela
     let html = `<h3 style="margin-top: 0;">${lista.nome}</h3>
@@ -765,11 +836,9 @@ async function editarChamada(listaId) {
     
     // Adicionar linhas de alunos
     if (lista.presencas && lista.presencas.length > 0) {
-        const alunos = await DataManager.getAlunos();
-        
         lista.presencas.forEach((presenca, index) => {
-            // Buscar RG e Data de Nascimento do aluno
-            const alunoData = alunos.find(a => a.id === presenca.alunoId);
+            // ⚡ Buscar aluno do dicionário em O(1) em vez de array.find()
+            const alunoData = alunosPorId[presenca.alunoId];
             const rgAluno = alunoData ? (alunoData.rg || '-') : '-';
             const sexoAluno = alunoData ? (alunoData.sexo || '-') : '-';
             const dataNascAluno = alunoData ? (alunoData.dataNascimento || presenca.dataNascimento || '-') : (presenca.dataNascimento || '-');
@@ -830,6 +899,8 @@ async function editarChamada(listaId) {
     
     document.getElementById('conteudoChamada').innerHTML = html;
     document.getElementById('modalEditarChamada').classList.add('show');
+    
+    console.timeEnd('⏱️ editarChamada');
 }
 
 // Atualizar presença de aluno em um dia específico
@@ -902,6 +973,13 @@ function atualizarHorariosModal() {
     selectTurma.innerHTML = '<option value="">-- Selecione o Horário --</option>';
     
     if (!modalidade) return;
+    
+    // Validar que modalidade existe
+    if (!diasPorModalidade[modalidade]) {
+        console.error(`❌ ERRO: Modalidade "${modalidade}" não encontrada!`);
+        selectTurma.innerHTML = '<option value="">❌ Modalidade inválida</option>';
+        return;
+    }
     
     // Coletar todos os horários e ordenar
     const horariosSet = new Set();

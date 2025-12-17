@@ -162,7 +162,8 @@ async function gerarListasAutomaticamenteSincronizado() {
     const anosParaProcessar = [ano];
     if (hoje.getMonth() === 11) anosParaProcessar.push(ano + 1);
 
-    console.log('📋 gerarListasAutomaticamenteSincronizado - APENAS SUPABASE');
+    console.log('📋 gerarListasAutomaticamenteSincronizado - APENAS SUPABASE (OTIMIZADO)');
+    const tempoInicio = performance.now();
     
     try {
         // 1. Buscar todos os alunos
@@ -183,7 +184,21 @@ async function gerarListasAutomaticamenteSincronizado() {
 
         console.log('📊 Grupos encontrados:', Object.keys(grupos).length);
 
-        // 3. Para cada ano e mês
+        // 3. Buscar TODAS as listas de uma vez (não 12*N queries)
+        const { data: todasAsListas } = await window.supabaseClient
+            .from('listas')
+            .select('id, mes, ano, modalidade, turma');
+        
+        const mapListasExistentes = {};
+        (todasAsListas || []).forEach(l => {
+            mapListasExistentes[`${l.mes}||${l.ano}||${l.modalidade}||${l.turma}`] = l.id;
+        });
+
+        console.log('📦 Listas existentes no banco:', todasAsListas?.length || 0);
+
+        // 4. Preparar todas as operações em batch
+        const operacoes = [];
+
         for (const anoIter of anosParaProcessar) {
             for (let mes = 1; mes <= 12; mes++) {
                 const mesStr = String(mes).padStart(2, '0');
@@ -205,52 +220,75 @@ async function gerarListasAutomaticamenteSincronizado() {
 
                     if (alunosAtivos.length === 0) continue;
 
-                    // Verificar se a lista já existe
-                    const { data: listasExistentes, error: errLista } = await window.supabaseClient
-                        .from('listas')
-                        .select('id')
-                        .eq('mes', mesStr)
-                        .eq('ano', anoIter)
-                        .eq('modalidade', modalidade)
-                        .eq('turma', turma);
+                    // Verificar se a lista já existe (do mapa)
+                    const chaveMapaLista = `${mesStr}||${anoIter}||${modalidade}||${turma}`;
+                    const listaId = mapListasExistentes[chaveMapaLista];
 
-                    let listaId;
+                    // Preparar operação
+                    operacoes.push({
+                        tipo: listaId ? 'atualizar' : 'criar',
+                        listaId,
+                        nome: `${nomeMes} ${anoIter}`,
+                        mes: mesStr,
+                        ano: anoIter,
+                        modalidade,
+                        turma,
+                        alunosAtivos,
+                        chaveMapaLista
+                    });
+                }
+            }
+        }
 
-                    if (listasExistentes && listasExistentes.length > 0) {
-                        listaId = listasExistentes[0].id;
-                    } else {
-                        // Criar nova lista
+        console.log(`📦 Operações a processar: ${operacoes.length}`);
+
+        // 5. PROCESSAR EM LOTES (paralelo, não sequencial)
+        const tamanhoLote = 10; // 10 operações paralelas por vez
+        
+        for (let i = 0; i < operacoes.length; i += tamanhoLote) {
+            const lote = operacoes.slice(i, i + tamanhoLote);
+            
+            await Promise.all(lote.map(async (op) => {
+                try {
+                    let listaId = op.listaId;
+
+                    // Se não existe, criar
+                    if (!listaId) {
                         const { data: novaLista, error: errCreate } = await window.supabaseClient
                             .from('listas')
                             .insert({
-                                nome: `${nomeMes} ${anoIter}`,
-                                mes: mesStr,
-                                ano: anoIter,
-                                modalidade: modalidade,
-                                turma: turma,
+                                nome: op.nome,
+                                mes: op.mes,
+                                ano: op.ano,
+                                modalidade: op.modalidade,
+                                turma: op.turma,
                                 salva: false
                             })
                             .select();
                         
                         if (errCreate || !novaLista) {
-                            console.error('❌ Erro ao criar lista:', errCreate);
-                            continue;
+                            console.error('❌ Erro ao criar lista:', op.chaveMapaLista, errCreate);
+                            return;
                         }
                         listaId = novaLista[0].id;
                     }
 
-                    // Sincronizar alunos na lista (lista_alunos)
                     // Buscar alunos já na lista
-                    const { data: alunosNaLista } = await window.supabaseClient
+                    const { data: alunosNaLista, error: errSelect } = await window.supabaseClient
                         .from('lista_alunos')
                         .select('aluno_id')
                         .eq('lista_id', listaId);
                     
+                    if (errSelect) {
+                        console.error('❌ Erro ao buscar alunos na lista:', listaId, errSelect);
+                        return;
+                    }
+                    
                     const idsNaLista = new Set((alunosNaLista || []).map(a => a.aluno_id));
-                    const idsAtivos = new Set(alunosAtivos.map(a => a.id));
+                    const idsAtivos = new Set(op.alunosAtivos.map(a => a.id));
 
-                    // Adicionar novos
-                    const novosParaAdicionar = alunosAtivos
+                    // Adicionar novos alunos
+                    const novosParaAdicionar = op.alunosAtivos
                         .filter(a => !idsNaLista.has(a.id))
                         .map(a => ({
                             lista_id: listaId,
@@ -260,23 +298,40 @@ async function gerarListasAutomaticamenteSincronizado() {
                         }));
                     
                     if (novosParaAdicionar.length > 0) {
-                        await window.supabaseClient.from('lista_alunos').insert(novosParaAdicionar);
+                        const { error: errInsert } = await window.supabaseClient
+                            .from('lista_alunos')
+                            .insert(novosParaAdicionar);
+                        if (errInsert) {
+                            console.warn('⚠️ Erro ao adicionar alunos na lista:', listaId, errInsert);
+                        }
                     }
 
-                    // Remover inativos
+                    // Remover alunos inativos
                     const idsParaRemover = [...idsNaLista].filter(id => !idsAtivos.has(id));
                     
                     if (idsParaRemover.length > 0) {
-                        await window.supabaseClient
+                        const { error: errDelete } = await window.supabaseClient
                             .from('lista_alunos')
                             .delete()
                             .eq('lista_id', listaId)
                             .in('aluno_id', idsParaRemover);
+                        if (errDelete) {
+                            console.warn('⚠️ Erro ao remover alunos da lista:', listaId, errDelete);
+                        }
                     }
+
+                } catch (e) {
+                    console.error('❌ Erro ao processar operação:', e.message);
                 }
-            }
+            }));
+            
+            console.log(`📊 Progresso: ${Math.min(i + tamanhoLote, operacoes.length)}/${operacoes.length}`);
         }
-        console.log('✅ Sincronização Supabase concluída');
+
+        const tempoFinal = performance.now();
+        const tempoDecorrido = ((tempoFinal - tempoInicio) / 1000).toFixed(2);
+        
+        console.log(`✅ Sincronização Supabase concluída em ${tempoDecorrido}s`);
         return true;
 
     } catch (e) {

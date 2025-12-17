@@ -9,6 +9,47 @@
 
 const DataManager = {
     useSupabase: true, // APENAS SUPABASE
+    
+    // 🚀 CACHE - Para evitar queries repetidas
+    _cache: {
+        alunos: null,
+        usuarios: null,
+        listas: null,
+        listaAlunos: null,
+        chamadas: null
+    },
+    _cacheTime: {
+        alunos: 0,
+        usuarios: 0,
+        listas: 0,
+        listaAlunos: 0,
+        chamadas: 0
+    },
+    _cacheDuration: 5 * 60 * 1000, // 5 MINUTOS de cache (reduzir latência)
+    
+    _getCachedData: function(key) {
+        const now = Date.now();
+        if (this._cache[key] && (now - this._cacheTime[key]) < this._cacheDuration) {
+            console.log(`⚡ Cache hit: ${key} (${((now - this._cacheTime[key]) / 1000).toFixed(1)}s)`);
+            return this._cache[key];
+        }
+        return null;
+    },
+    
+    _setCachedData: function(key, data) {
+        this._cache[key] = data;
+        this._cacheTime[key] = Date.now();
+    },
+    
+    _clearCache: function(key) {
+        if (key) {
+            this._cache[key] = null;
+            this._cacheTime[key] = 0;
+        } else {
+            this._cache = { alunos: null, usuarios: null, listas: null, listaAlunos: null, chamadas: null };
+            this._cacheTime = { alunos: 0, usuarios: 0, listas: 0, listaAlunos: 0, chamadas: 0 };
+        }
+    },
 
     init: async function() {
         console.log('🔄 DataManager: Iniciando...');
@@ -85,6 +126,11 @@ const DataManager = {
                 throw new Error('Supabase não inicializado');
             }
             
+            // 🚀 Verificar cache
+            const cached = this._getCachedData('alunos');
+            if (cached) return cached;
+            
+            console.log('📥 Buscando alunos do banco...');
             const { data, error } = await window.supabaseClient
                 .from('alunos')
                 .select('*')
@@ -95,8 +141,13 @@ const DataManager = {
                 throw error;
             }
             
-            console.log('✅ Alunos obtidos:', data ? data.length : 0);
-            return data || [];
+            const resultado = data || [];
+            console.log('✅ Alunos obtidos:', resultado.length);
+            
+            // 🚀 Cachear resultado
+            this._setCachedData('alunos', resultado);
+            
+            return resultado;
         } catch (e) {
             console.error('❌ getAlunos falhou:', e.message);
             throw e;
@@ -132,6 +183,10 @@ const DataManager = {
             }
             
             console.log('✅ Aluno salvo com sucesso');
+            
+            // 🚀 Limpar cache após salvar
+            this._clearCache('alunos');
+            
             return data && data.length > 0 ? data[0] : null;
         } catch (e) {
             console.error('❌ saveAluno falhou:', e.message);
@@ -156,6 +211,10 @@ const DataManager = {
             }
             
             console.log('✅ Aluno deletado');
+            
+            // 🚀 Limpar cache após deletar
+            this._clearCache('alunos');
+            
             return true;
         } catch (e) {
             console.error('❌ deleteAluno falhou:', e.message);
@@ -173,10 +232,15 @@ const DataManager = {
                 throw new Error('Supabase não inicializado');
             }
 
+            // 🚀 Verificar cache
+            const cached = this._getCachedData('usuarios');
+            if (cached) return cached;
+            
+            console.log('📥 Buscando usuários do banco...');
+
             const { data, error } = await window.supabaseClient
                 .from('usuarios')
                 .select('*');
-            
             if (error) {
                 console.error('❌ Erro ao buscar usuarios:', error.message);
                 throw error;
@@ -192,6 +256,10 @@ const DataManager = {
                 });
             }
             console.log('✅ Usuários obtidos:', Object.keys(usuariosObj).length);
+            
+            // 🚀 Cachear resultado
+            this._setCachedData('usuarios', usuariosObj);
+            
             return usuariosObj;
         } catch (e) {
             console.error('❌ getUsuarios falhou:', e.message);
@@ -266,11 +334,16 @@ const DataManager = {
                 throw new Error('Supabase não inicializado');
             }
             
+            // 🚀 Verificar cache
+            const cached = this._getCachedData('listas');
+            if (cached) return cached;
+            
+            console.log('📥 Buscando listas do banco...');
+            
             // 1. Buscar Listas
             const { data: listas, error: errListas } = await window.supabaseClient
                 .from('listas')
                 .select('*');
-        
             if (errListas) {
                 console.error('❌ Erro ao buscar listas:', errListas.message);
                 throw errListas;
@@ -282,15 +355,17 @@ const DataManager = {
                 return [];
             }
 
-            // 2. Buscar Alunos das Listas
-            const { data: listaAlunos } = await window.supabaseClient
-                .from('lista_alunos')
-                .select('*');
-            
-            // 3. Buscar Chamadas
-            const { data: chamadas } = await window.supabaseClient
-                .from('chamadas')
-                .select('*');
+            // 2. Buscar Alunos das Listas e Chamadas EM PARALELO
+            const [listaAlunos, chamadasData] = await Promise.all([
+                window.supabaseClient
+                    .from('lista_alunos')
+                    .select('*')
+                    .then(r => r.data),
+                window.supabaseClient
+                    .from('chamadas')
+                    .select('*')
+                    .then(r => r.data)
+            ]);
 
             // Reconstruir estrutura complexa
             const resultado = listas.map(lista => {
@@ -304,8 +379,8 @@ const DataManager = {
                     status: la.status
                 }));
 
-                const chamadasDestaLista = chamadas
-                    ? chamadas.filter(c => c.lista_id === lista.id)
+                const chamadasDestaLista = chamadasData
+                    ? chamadasData.filter(c => c.lista_id === lista.id)
                     : [];
                 
                 const chamadasMap = {};
@@ -330,6 +405,10 @@ const DataManager = {
             });
             
             console.log('✅ Listas obtidas:', resultado.length);
+            
+            // 🚀 Cachear resultado
+            this._setCachedData('listas', resultado);
+            
             return resultado;
         } catch (e) {
             console.error('❌ getListas falhou:', e.message);
@@ -403,6 +482,9 @@ const DataManager = {
                         await window.supabaseClient.from('chamadas').insert(chamadasParaSalvar);
                     }
                 }
+
+                // 🚀 Limpar cache após salvar
+                this._clearCache('listas');
 
                 return listaSalva;
             } catch (e) {
