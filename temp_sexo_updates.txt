@@ -1,0 +1,11 @@
+Atualizações necessárias para adicionar campo Sexo:
+
+1. cadastro-aluno.html - Adicionar select de Sexo após RG
+2. cadastro-aluno.js - Capturar sexo do formulário
+3. sync.js - Validar e salvar sexo
+4. admin-panel.js - Exibir sexo na planilha
+5. modalidade-painel.js - Exibir sexo nas listas do professor
+6. secretaria.js - Exibir sexo na busca
+7. lista-alunos.js - Exibir sexo na lista
+8. listas-presenca.js - Exibir sexo nas listas de presença
+9. judo.html e outras modalidades - Adicionar coluna sexo
