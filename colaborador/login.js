@@ -100,7 +100,12 @@ async function fazerLogin(event) {
 }
 
 // Adicionar listener ao formulário
-document.getElementById('loginForm').addEventListener('submit', fazerLogin);
+const loginForm = document.getElementById('loginForm');
+if (loginForm) {
+    loginForm.addEventListener('submit', fazerLogin);
+} else {
+    console.warn('⚠️ Elemento loginForm não encontrado no DOM');
+}
 
 // Listener para sincronização (caso mude em outra aba/admin)
 window.addEventListener('usuariosAtualizados', async function() {

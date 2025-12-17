@@ -309,25 +309,32 @@ let listaAtual = null;
 async function atualizarTabelaAoMudarDia() {
     if (!listaAtual) return;
     
-    const diaSelecionado = document.getElementById('diaSelecionado').value;
-    
-    // Inicializar estrutura de chamadas se não existir
-    if (!listaAtual.chamadas) {
-        listaAtual.chamadas = {};
-    }
-    
-    // Se desmarcou o dia, zerar tudo
-    if (!diaSelecionado) {
-        // Limpar todos os estados
-        listaAtual.presencas.forEach(p => p.status = null);
-    } else {
-        // Se mudou para um dia diferente, fazer reset automático
-        // Carregar dados daquela data se existir, senão zera tudo
-        const estadosDaquelaDia = listaAtual.chamadas[diaSelecionado];
+    try {
+        const diaSelecionadoEl = document.getElementById('diaSelecionado');
+        if (!diaSelecionadoEl) {
+            console.error('❌ Elemento diaSelecionado não encontrado');
+            return;
+        }
         
-        if (estadosDaquelaDia) {
-            // Restaurar estados salvos daquela data
-            listaAtual.presencas.forEach(presenca => {
+        const diaSelecionado = diaSelecionadoEl.value;
+        
+        // Inicializar estrutura de chamadas se não existir
+        if (!listaAtual.chamadas) {
+            listaAtual.chamadas = {};
+        }
+        
+        // Se desmarcou o dia, zerar tudo
+        if (!diaSelecionado) {
+            // Limpar todos os estados
+            listaAtual.presencas.forEach(p => p.status = null);
+        } else {
+            // Se mudou para um dia diferente, fazer reset automático
+            // Carregar dados daquela data se existir, senão zera tudo
+            const estadosDaquelaDia = listaAtual.chamadas[diaSelecionado];
+            
+            if (estadosDaquelaDia) {
+                // Restaurar estados salvos daquela data
+                listaAtual.presencas.forEach(presenca => {
                 const estadoSalvo = estadosDaquelaDia.find(e => e.alunoId === presenca.alunoId);
                 presenca.status = estadoSalvo ? estadoSalvo.status : null;
             });
@@ -374,48 +381,94 @@ async function atualizarTabelaAoMudarDia() {
         `;
     });
 
-    document.getElementById('corpoTabelaChamada').innerHTML = html;
+    const corpoTabelaEl = document.getElementById('corpoTabelaChamada');
+    if (corpoTabelaEl) {
+        corpoTabelaEl.innerHTML = html;
+    }
     atualizarResumo();
+    } catch (e) {
+        console.error('❌ Erro em atualizarTabelaAoMudarDia:', e.message);
+    }
 }
 
 // Abrir modal de chamada
 async function abrirChamada(listaId) {
-    const listas = await DataManager.getListas();
-    listaAtual = listas.find(l => l.id === listaId);
+    try {
+        const listas = await DataManager.getListas();
+        listaAtual = listas.find(l => l.id === listaId);
+        
+        if (!listaAtual) {
+            console.error('❌ Lista não encontrada com ID:', listaId);
+            return;
+        }
+        
+        // Verificar se elementos existem antes de usar
+        const tituloChamadaEl = document.getElementById('tituloChamada');
+        const nomeLista = document.getElementById('nomeLista');
+        const dataLista = document.getElementById('dataLista');
+        
+        if (!tituloChamadaEl) {
+            console.error('❌ Elemento tituloChamada não encontrado');
+            return;
+        }
+        
+        tituloChamadaEl.textContent = `Chamada - ${listaAtual.nome}`;
+        if (nomeLista) nomeLista.textContent = listaAtual.nome;
+        
+        const meses = {
+            '01': 'jan', '02': 'fev', '03': 'mar', '04': 'abr',
+            '05': 'mai', '06': 'jun', '07': 'jul', '08': 'ago',
+            '09': 'set', '10': 'out', '11': 'nov', '12': 'dez'
+        };
+        
+        if (dataLista) dataLista.textContent = `${meses[listaAtual.mes]}/${listaAtual.ano}`;
+        
+        // Gerar opções de dias
+        const datasAulas = gerarDatasAulas(parseInt(listaAtual.mes), listaAtual.ano, listaAtual.modalidade);
+        let options = '<option value="">Selecione o dia...</option>';
     
-    if (!listaAtual) return;
-    
-    document.getElementById('tituloChamada').textContent = `Chamada - ${listaAtual.nome}`;
-    
-    // Gerar opções de dias
-    const datasAulas = gerarDatasAulas(parseInt(listaAtual.mes), listaAtual.ano, listaAtual.modalidade);
-    let options = '<option value="">Selecione o dia...</option>';
-    
-    // Verificar qual é o dia de hoje para selecionar automaticamente
-    const hoje = new Date();
-    const hojeFormatado = `${String(hoje.getDate()).padStart(2, '0')}/${String(hoje.getMonth() + 1).padStart(2, '0')}/${hoje.getFullYear()}`;
-    
-    let diaHojeEncontrado = false;
-    
-    datasAulas.forEach(data => {
-        const isHoje = data.value === hojeFormatado;
-        if (isHoje) diaHojeEncontrado = true;
-        options += `<option value="${data.value}" ${isHoje ? 'selected' : ''}>${data.label}</option>`;
-    });
-    
-    const selectDia = document.getElementById('diaSelecionado');
-    selectDia.innerHTML = options;
-    
-    // Mostrar modal
-    document.getElementById('modalChamada').style.display = 'block';
-    
-    // Carregar tabela (se hoje for dia de aula, já carrega)
-    await atualizarTabelaAoMudarDia();
+        // Verificar qual é o dia de hoje para selecionar automaticamente
+        const hoje = new Date();
+        const hojeFormatado = `${String(hoje.getDate()).padStart(2, '0')}/${String(hoje.getMonth() + 1).padStart(2, '0')}/${hoje.getFullYear()}`;
+        
+        let diaHojeEncontrado = false;
+        
+        datasAulas.forEach(data => {
+            const isHoje = data.value === hojeFormatado;
+            if (isHoje) diaHojeEncontrado = true;
+            options += `<option value="${data.value}" ${isHoje ? 'selected' : ''}>${data.label}</option>`;
+        });
+        
+        const selectDia = document.getElementById('diaSelecionado');
+        const modalChamada = document.getElementById('modalChamada');
+        
+        if (!selectDia) {
+            console.error('❌ Elemento diaSelecionado não encontrado');
+            return;
+        }
+        if (!modalChamada) {
+            console.error('❌ Elemento modalChamada não encontrado');
+            return;
+        }
+        
+        selectDia.innerHTML = options;
+        
+        // Mostrar modal
+        modalChamada.style.display = 'block';
+        
+        // Carregar tabela (se hoje for dia de aula, já carrega)
+        await atualizarTabelaAoMudarDia();
+    } catch (e) {
+        console.error('❌ Erro em abrirChamada:', e.message);
+    }
 }
 
 // Fechar modal
 function fecharChamada() {
-    document.getElementById('modalChamada').style.display = 'none';
+    const modalChamada = document.getElementById('modalChamada');
+    if (modalChamada) {
+        modalChamada.style.display = 'none';
+    }
     listaAtual = null;
 }
 
@@ -423,7 +476,13 @@ function fecharChamada() {
 function marcarPresenca(index, status) {
     if (!listaAtual) return;
     
-    const diaSelecionado = document.getElementById('diaSelecionado').value;
+    const diaSelecionadoEl = document.getElementById('diaSelecionado');
+    if (!diaSelecionadoEl) {
+        console.error('❌ Elemento diaSelecionado não encontrado');
+        return;
+    }
+    
+    const diaSelecionado = diaSelecionadoEl.value;
     if (!diaSelecionado) {
         alert('Selecione o dia da aula primeiro!');
         return;
@@ -442,11 +501,13 @@ function marcarPresenca(index, status) {
     const btnP = document.getElementById(`btn-presente-${index}`);
     const btnF = document.getElementById(`btn-falta-${index}`);
     
-    btnP.className = 'attendance-btn';
-    btnF.className = 'attendance-btn';
-    
-    if (presenca.status === 'presente') btnP.classList.add('btn-present');
-    if (presenca.status === 'falta') btnF.classList.add('btn-absent');
+    if (btnP && btnF) {
+        btnP.className = 'attendance-btn';
+        btnF.className = 'attendance-btn';
+        
+        if (presenca.status === 'presente') btnP.classList.add('btn-present');
+        if (presenca.status === 'falta') btnF.classList.add('btn-absent');
+    }
     
     atualizarResumo();
 }
@@ -459,41 +520,54 @@ function atualizarResumo() {
     const presentes = listaAtual.presencas.filter(p => p.status === 'presente').length;
     const faltas = listaAtual.presencas.filter(p => p.status === 'falta').length;
     
-    document.getElementById('resumoChamada').textContent = 
-        `Total: ${total} | Presentes: ${presentes} | Faltas: ${faltas}`;
+    const resumoEl = document.getElementById('resumoChamada');
+    if (resumoEl) {
+        resumoEl.textContent = `Total: ${total} | Presentes: ${presentes} | Faltas: ${faltas}`;
+    }
 }
 
 // Salvar chamada
 async function salvarChamada() {
     if (!listaAtual) return;
     
-    const diaSelecionado = document.getElementById('diaSelecionado').value;
+    const diaSelecionadoEl = document.getElementById('diaSelecionado');
+    if (!diaSelecionadoEl) {
+        console.error('❌ Elemento diaSelecionado não encontrado');
+        return;
+    }
+    
+    const diaSelecionado = diaSelecionadoEl.value;
     if (!diaSelecionado) {
         alert('Selecione o dia da aula!');
         return;
     }
     
-    // Salvar o estado atual na estrutura de chamadas da lista
-    if (!listaAtual.chamadas) listaAtual.chamadas = {};
-    
-    // Mapear apenas o necessário: alunoId e status
-    const estadoAtual = listaAtual.presencas.map(p => ({
-        alunoId: p.alunoId,
-        status: p.status
-    })).filter(p => p.status !== null); // Salvar apenas quem tem status definido
-    
-    listaAtual.chamadas[diaSelecionado] = estadoAtual;
-    listaAtual.salva = true;
-    
-    // Salvar no DataManager
-    const salvo = await DataManager.saveLista(listaAtual);
-    
-    if (salvo) {
-        alert('Chamada salva com sucesso!');
-        fecharChamada();
-        carregarLista(); // Atualizar lista principal
-    } else {
-        alert('Erro ao salvar chamada. Tente novamente.');
+    try {
+        // Salvar o estado atual na estrutura de chamadas da lista
+        if (!listaAtual.chamadas) listaAtual.chamadas = {};
+        
+        // Mapear apenas o necessário: alunoId e status
+        const estadoAtual = listaAtual.presencas.map(p => ({
+            alunoId: p.alunoId,
+            status: p.status
+        })).filter(p => p.status !== null); // Salvar apenas quem tem status definido
+        
+        listaAtual.chamadas[diaSelecionado] = estadoAtual;
+        listaAtual.salva = true;
+        
+        // Salvar no DataManager
+        const salvo = await DataManager.saveLista(listaAtual);
+        
+        if (salvo) {
+            alert('Chamada salva com sucesso!');
+            fecharChamada();
+            carregarLista(); // Atualizar lista principal
+        } else {
+            alert('Erro ao salvar chamada. Tente novamente.');
+        }
+    } catch (e) {
+        console.error('❌ Erro ao salvar chamada:', e.message);
+        alert('Erro ao salvar: ' + e.message);
     }
 }
 
