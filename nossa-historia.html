@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nossa História - IPACE</title>
+    <link rel="apple-touch-icon" sizes="180x180" href="favicon_ico/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon_ico/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="favicon_ico/favicon-16x16.png">
+    <link rel="icon" href="favicon_ico/favicon.ico">
+    <link rel="manifest" href="favicon_ico/site.webmanifest">
+    <meta name="theme-color" content="#2cc3f3">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700;900&display=swap" rel="stylesheet">
+    <script>
+        window.tailwind = window.tailwind || {};
+        window.tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        ipace: {
+                            blue: '#2cc3f3',
+                            pink: '#ee3a7b',
+                            orange: '#faa82e',
+                            green: '#9ccc51',
+                            white: '#ffffff',
+                            text: '#4b5563',
+                            title: '#374151',
+                        },
+                    },
+                },
+            },
+        };
+    </script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="antialiased bg-gray-50">
+    <nav class="fixed w-full z-50 bg-white/95 backdrop-blur-sm border-b border-ipace-blue/20 transition-all duration-300" id="navbar">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <div class="flex-shrink-0 flex items-center">
+                    <a href="index.html" class="inline-flex items-center" aria-label="IPACE">
+                        <img src="logos/logotipo_horizontal_ong_ipace.png" alt="IPACE" class="h-10 w-auto">
+                    </a>
+                </div>
+                <div class="hidden md:flex space-x-8 items-center">
+                    <a href="index.html#sobre" class="text-sm uppercase tracking-widest font-bold text-ipace-title hover:text-ipace-pink transition-colors">Quem Somos</a>
+                    <a href="index.html#projetos" class="text-sm uppercase tracking-widest font-bold text-ipace-title hover:text-ipace-pink transition-colors">Projetos</a>
+                    <a href="index.html#midia" class="text-sm uppercase tracking-widest font-bold text-ipace-title hover:text-ipace-pink transition-colors">Galeria</a>
+                    <a href="/blog/" class="bg-ipace-pink text-white px-6 py-3 text-sm font-bold uppercase tracking-widest hover:bg-ipace-blue transition-colors">
+                        Blog
+                    </a>
+                </div>
+                <div class="md:hidden flex items-center">
+                    <button id="mobile-menu-btn" class="text-ipace-blue hover:text-ipace-pink focus:outline-none">
+                        <i data-lucide="menu" class="w-8 h-8"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div id="mobile-menu" class="fixed inset-0 bg-white z-40 transform translate-x-full transition-transform duration-300 md:hidden flex flex-col justify-center items-center space-y-8 top-0 left-0 w-full h-screen">
+            <button id="close-menu-btn" class="absolute top-6 right-6 text-ipace-pink focus:outline-none">
+                <i data-lucide="x" class="w-8 h-8"></i>
+            </button>
+            <a href="index.html#sobre" class="mobile-link text-2xl font-black uppercase tracking-tight text-ipace-title hover:text-ipace-blue">Quem Somos</a>
+            <a href="index.html#projetos" class="mobile-link text-2xl font-black uppercase tracking-tight text-ipace-title hover:text-ipace-blue">Projetos</a>
+            <a href="index.html#midia" class="mobile-link text-2xl font-black uppercase tracking-tight text-ipace-title hover:text-ipace-blue">Galeria</a>
+            <a href="/blog/" class="mobile-link text-2xl font-black text-ipace-pink uppercase tracking-tight">Blog</a>
+        </div>
+    </nav>
+
+    <div class="pt-32 pb-20 bg-white">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <span class="text-ipace-pink font-bold uppercase tracking-widest mb-4 block">Nossa História</span>
+                <h1 class="text-4xl md:text-5xl font-black text-ipace-title mb-6">Uma Trajetória de Transformação</h1>
+                <div class="w-24 h-1 bg-ipace-blue mx-auto"></div>
+            </div>
+
+            <div class="prose prose-lg mx-auto text-ipace-text">
+                <p class="lead text-xl md:text-2xl font-medium text-gray-600 mb-10 text-center">
+                    Desde 2005, o IPACE tem sido um farol de esperança e desenvolvimento para comunidades em São Paulo.
+                </p>
+
+                <div class="space-y-12">
+                    <div class="flex flex-col md:flex-row gap-8 items-center">
+                        <div class="w-full md:w-1/2">
+                            <img src="imagens/capa_ipace_img.png" alt="Início do IPACE" class="rounded-lg shadow-xl w-full h-auto object-cover">
+                        </div>
+                        <div class="w-full md:w-1/2">
+                            <h3 class="text-2xl font-bold text-ipace-blue mb-4">O Início (2005)</h3>
+                            <p>
+                                Inaugurada em 28 de Maio de 2005 e visando o atendimento das carências, o IPACE (Instituto Pan-Americano de Cultura e Esporte - originalmente) ampliou muito as áreas de atuação, associando-se a grandes projetos em parceria com as administrações Públicas de várias Cidades, Estados e Governo Federal.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col md:flex-row-reverse gap-8 items-center">
+                        <div class="w-full md:w-1/2">
+                            <h3 class="text-2xl font-bold text-ipace-green mb-4">Certificações e Parcerias</h3>
+                            <ul class="list-disc pl-5 space-y-2 text-sm md:text-base">
+                                <li>Certificada como Entidade Cadastrada e <strong>APROVADA - GOVERNO DO ESTADO DE SÃO PAULO</strong>;</li>
+                                <li>Cadastrada como Entidade de Terceiro Setor na <strong>PREFEITURA DE SÃO PAULO</strong>;</li>
+                                <li>Entidade Gestora do CDC-PUC em parceria com a SEME - São Paulo;</li>
+                                <li>Entidade Conselheira do CONFIA São Paulo – Banco de micro crédito da Prefeitura de São Paulo;</li>
+                                <li>Entidade Presidente da Associação dos Clubes da Comunidade da Cidade de São Paulo;</li>
+                                <li>Entidade Membro do Conselho Gestor do Parque Villa Lobos;</li>
+                                <li>Entidade Membro do Conselho Gestor do Parque Candido Portinari.</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="bg-gray-50 p-8 rounded-2xl border border-gray-200">
+                         <h3 class="text-2xl font-bold text-ipace-blue mb-4 text-center">Gestão em São Caetano do Sul</h3>
+                         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-4">
+                            <div class="flex items-center gap-3 bg-white p-4 rounded-lg shadow-sm">
+                                <i data-lucide="check-circle" class="text-ipace-green w-6 h-6 flex-shrink-0"></i>
+                                <span>Gestora da Escola Municipal de Patinação</span>
+                            </div>
+                            <div class="flex items-center gap-3 bg-white p-4 rounded-lg shadow-sm">
+                                <i data-lucide="check-circle" class="text-ipace-green w-6 h-6 flex-shrink-0"></i>
+                                <span>Gestora da Escola Municipal de Hóquei</span>
+                            </div>
+                            <div class="flex items-center gap-3 bg-white p-4 rounded-lg shadow-sm">
+                                <i data-lucide="check-circle" class="text-ipace-green w-6 h-6 flex-shrink-0"></i>
+                                <span>Gestora da Escola Municipal de Skate</span>
+                            </div>
+                            <div class="flex items-center gap-3 bg-white p-4 rounded-lg shadow-sm">
+                                <i data-lucide="check-circle" class="text-ipace-green w-6 h-6 flex-shrink-0"></i>
+                                <span>Gestora da Escola Municipal de Zumba</span>
+                            </div>
+                            <div class="flex items-center gap-3 bg-white p-4 rounded-lg shadow-sm">
+                                <i data-lucide="check-circle" class="text-ipace-green w-6 h-6 flex-shrink-0"></i>
+                                <span>Gestora da Escola Municipal de Badminton</span>
+                            </div>
+                         </div>
+                    </div>
+
+                    <div class="bg-ipace-blue text-white p-8 rounded-2xl my-8 text-center">
+                        <h3 class="text-2xl font-bold mb-8">Impacto em Números</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                            <div class="p-4 bg-white/10 rounded-lg">
+                                <span class="block text-4xl font-black mb-2">20</span>
+                                <span class="text-sm font-medium uppercase">Projetos com Ministério do Esporte</span>
+                            </div>
+                            <div class="p-4 bg-white/10 rounded-lg">
+                                <span class="block text-4xl font-black mb-2">14</span>
+                                <span class="text-sm font-medium uppercase">Projetos com Ministério da Cultura</span>
+                            </div>
+                            <div class="p-4 bg-white/10 rounded-lg">
+                                <span class="block text-4xl font-black mb-2">10</span>
+                                <span class="text-sm font-medium uppercase">Projetos com Sec. Esporte do Estado de SP</span>
+                            </div>
+                            <div class="p-4 bg-white/10 rounded-lg">
+                                <span class="block text-4xl font-black mb-2">+3K</span>
+                                <span class="text-sm font-medium uppercase">Atendimentos em Qualificação</span>
+                            </div>
+                        </div>
+                         <p class="mt-6 text-sm opacity-90">
+                            Participação ativa em grandes programas como: SESC Verão, Virada Esportiva, Virada Cultural, Clube Escola, Criança Esperança, Jogos Regionais do Idoso, entre outros.
+                        </p>
+                    </div>
+
+                    <!-- Linha do Tempo -->
+                    <div class="relative py-8">
+                        <div class="absolute left-1/2 transform -translate-x-1/2 h-full w-1 bg-gray-200"></div>
+                        
+                        <h3 class="text-3xl font-bold text-center text-ipace-title mb-12 relative z-10 bg-white inline-block px-4 mx-auto block">Linha do Tempo de Realizações</h3>
+
+                        <!-- 2019 -->
+                        <div class="mb-12 relative z-10">
+                            <div class="bg-white p-6 rounded-lg shadow-md border-l-4 border-ipace-orange ml-auto mr-auto max-w-3xl relative">
+                                <span class="bg-ipace-orange text-white px-3 py-1 rounded-full text-sm font-bold absolute -top-3 -left-3">2019</span>
+                                <h4 class="text-xl font-bold text-ipace-title mb-4 pl-4">Grande Expansão e Eventos</h4>
+                                <ul class="space-y-3 text-sm">
+                                    <li class="flex justify-between items-start border-b border-gray-100 pb-2">
+                                        <span>SEME - Projeto “Ruas da Gente”</span>
+                                        <span class="font-bold text-ipace-orange">22.873 atendimentos</span>
+                                    </li>
+                                    <li class="flex justify-between items-start border-b border-gray-100 pb-2">
+                                        <span>SMC - Som de Periferia (5 clínicas)</span>
+                                        <span class="font-bold text-ipace-orange">4.500 participantes</span>
+                                    </li>
+                                    <li class="flex justify-between items-start border-b border-gray-100 pb-2">
+                                        <span>SMC - Patinação Artística com Turma do Arrepio (Recreio nas Férias)</span>
+                                        <span class="font-bold text-ipace-orange">3.000 espectadores</span>
+                                    </li>
+                                    <li class="flex justify-between items-start border-b border-gray-100 pb-2">
+                                        <span>SELJ/SCS - Zumba Master Class (Virada Esportiva)</span>
+                                        <span class="font-bold text-ipace-orange">1.500 participantes</span>
+                                    </li>
+                                     <li class="flex justify-between items-start border-b border-gray-100 pb-2">
+                                        <span>SEME - Virada Esportiva (SUP e Caiaques)</span>
+                                        <span class="font-bold text-ipace-orange">900 participantes</span>
+                                    </li>
+                                     <li class="flex justify-between items-start border-b border-gray-100 pb-2">
+                                        <span>SEME - Projeto Remada na Quebrada</span>
+                                        <span class="font-bold text-ipace-orange">800 participantes</span>
+                                    </li>
+                                </ul>
+                                <p class="mt-4 text-xs text-gray-500">
+                                    Outros destaques: Torneio de Judô SA (450), Virada com Skate (300), Badminton (450), 1º Torneio de Skate SCS (500), 1º Festival Patinação SCS (1.750), VII OPEN FESTIVAL IPACE (2.200), Espetáculo "Noite do Oscar" (4.800).
+                                </p>
+                            </div>
+                        </div>
+
+                         <!-- 2020 -->
+                        <div class="mb-12 relative z-10">
+                            <div class="bg-white p-6 rounded-lg shadow-md border-l-4 border-ipace-blue ml-auto mr-auto max-w-3xl relative">
+                                <span class="bg-ipace-blue text-white px-3 py-1 rounded-full text-sm font-bold absolute -top-3 -left-3">2020 (Pandemia)</span>
+                                <h4 class="text-xl font-bold text-ipace-title mb-4 pl-4">Adaptação e Resiliência</h4>
+                                <ul class="space-y-3 text-sm">
+                                    <li class="flex flex-col gap-1 border-b border-gray-100 pb-2">
+                                        <span class="font-bold text-ipace-blue">Atividades Virtuais (SELJ/SCS)</span>
+                                        <span class="text-gray-600">Patinação, Skate, Hóquei, Ed. Física e Teatro (Contínuo durante a quarentena para 300 participantes)</span>
+                                    </li>
+                                    <li class="flex flex-col gap-1 border-b border-gray-100 pb-2">
+                                        <span class="font-bold text-ipace-blue">Festivais Quarentena</span>
+                                        <span class="text-gray-600">Iº Festival de Patinação Artística (100 participantes)</span>
+                                    </li>
+                                    <li class="flex flex-col gap-1 border-b border-gray-100 pb-2">
+                                        <span class="font-bold text-ipace-blue">Projetos Culturais</span>
+                                        <span class="text-gray-600">"A Caixa do Tempo" (SMC/PROMAC e SEC/PROAC)</span>
+                                    </li>
+                                </ul>
+                                <p class="mt-4 text-xs text-gray-500">
+                                    Continuidade do Projeto "Ruas da Gente" e manutenção das Escolas de Patinação, Judô e Karatê no CDC/PUC.
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- 2021 -->
+                        <div class="mb-12 relative z-10">
+                            <div class="bg-white p-6 rounded-lg shadow-md border-l-4 border-ipace-green ml-auto mr-auto max-w-3xl relative">
+                                <span class="bg-ipace-green text-white px-3 py-1 rounded-full text-sm font-bold absolute -top-3 -left-3">2021</span>
+                                <h4 class="text-xl font-bold text-ipace-title mb-4 pl-4">Retomada Segura</h4>
+                                <ul class="space-y-3 text-sm">
+                                    <li class="flex justify-between items-start border-b border-gray-100 pb-2">
+                                        <span>SEME - Virada Esportiva (Patinação)</span>
+                                        <span class="font-bold text-ipace-green">1.400 participantes</span>
+                                    </li>
+                                    <li class="flex justify-between items-start border-b border-gray-100 pb-2">
+                                        <span>SEME - Festival Paralímpico</span>
+                                        <span class="font-bold text-ipace-green">655 participantes</span>
+                                    </li>
+                                    <li class="flex justify-between items-start border-b border-gray-100 pb-2">
+                                        <span>SEME - Virada Esportiva (Caiaque, SUP)</span>
+                                        <span class="font-bold text-ipace-green">600 participantes</span>
+                                    </li>
+                                     <li class="flex justify-between items-start border-b border-gray-100 pb-2">
+                                        <span>SEME - Virada Esportiva (Ritmos)</span>
+                                        <span class="font-bold text-ipace-green">400 participantes</span>
+                                    </li>
+                                </ul>
+                                <p class="mt-4 text-xs text-gray-500">
+                                    Manutenção das Escolas Municipais em SCS e projetos CDC/PUC.
+                                </p>
+                            </div>
+                        </div>
+
+                         <!-- 2022 - 2025 -->
+                        <div class="mb-12 relative z-10">
+                            <div class="bg-white p-6 rounded-lg shadow-md border-l-4 border-ipace-pink ml-auto mr-auto max-w-3xl relative">
+                                <span class="bg-ipace-pink text-white px-3 py-1 rounded-full text-sm font-bold absolute -top-3 -left-3">2022 - 2025</span>
+                                <h4 class="text-xl font-bold text-ipace-title mb-4 pl-4">Consolidação e Futuro</h4>
+                                <div class="space-y-4">
+                                    <div>
+                                        <h5 class="font-bold text-ipace-pink text-sm border-b border-gray-200 pb-1 mb-2">2022</h5>
+                                        <ul class="list-disc pl-5 text-sm text-gray-700 space-y-1">
+                                            <li><strong>A Caixa do Tempo II</strong> (Ministério do Turismo/PRONAC) - +4.000 espectadores em Santa Maria (RS).</li>
+                                            <li>SEME - Projeto "MEXA-SE SP".</li>
+                                            <li>SEME - Virada Esportiva e Baile "Vem Dançar".</li>
+                                        </ul>
+                                    </div>
+                                    <div>
+                                        <h5 class="font-bold text-ipace-pink text-sm border-b border-gray-200 pb-1 mb-2">2023 - 2025</h5>
+                                        <ul class="list-disc pl-5 text-sm text-gray-700 space-y-1">
+                                            <li><strong>Programa Esporte e Lazer Clube Náutico Guarapiranga</strong> (Renovado anualmente: 2023, 2024, 2025).</li>
+                                            <li><strong>Projeto "MEXA-SE SP"</strong> (Renovado anualmente: 2023, 2024).</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="bg-blue-50 p-8 rounded-2xl border-l-4 border-ipace-blue my-8">
+                        <h3 class="text-2xl font-bold text-ipace-title mb-4">Nossa Missão Hoje</h3>
+                        <p class="mb-0">
+                            Hoje, o Instituto Pangea de Ação Cultural e Esportiva é uma referência em projetos sociais. Através do esporte, da cultura e da educação, continuamos a escrever nossa história dia após dia, transformando vidas e construindo um futuro com mais oportunidades para todos.
+                        </p>
+                    </div>
+                </div>
+                
+                 <div class="mt-16 text-center">
+                    <a href="index.html#contato" class="inline-flex items-center justify-center bg-ipace-orange text-white px-8 py-4 font-bold uppercase tracking-widest hover:bg-ipace-title transition-colors shadow-lg rounded-full">
+                        Faça Parte Dessa História
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+     <section id="contato" class="bg-ipace-orange text-white py-20 relative overflow-hidden">
+        <div class="absolute top-0 right-0 w-64 h-64 border-l-4 border-b-4 border-white/20"></div>
+        <div class="max-w-4xl mx-auto px-4 text-center relative z-10">
+            <h2 class="text-4xl md:text-6xl font-black mb-6 uppercase tracking-tighter">Junte-se ao Movimento</h2>
+            <p class="text-xl mb-10 font-medium text-white/90">Cadastre-se para receber atualizações, relatórios de impacto e convites para eventos.</p>
+            <form class="flex flex-col md:flex-row gap-4 w-full max-w-lg mx-auto">
+                <input type="email" placeholder="Seu melhor e-mail" class="w-full px-6 py-4 bg-white text-ipace-title placeholder-gray-400 font-bold outline-none focus:ring-4 focus:ring-white/40">
+                <button type="submit" class="bg-ipace-blue text-white px-8 py-4 font-bold uppercase tracking-widest hover:bg-ipace-title transition-colors w-full md:w-auto whitespace-nowrap shadow-lg">
+                    Inscrever
+                </button>
+            </form>
+            <div class="mt-16 pt-16 border-t border-white/30 grid grid-cols-1 md:grid-cols-3 gap-8 text-left">
+                <div>
+                    <h4 class="font-black text-xl mb-4 uppercase">Contato</h4>
+                    <p class="flex items-center gap-2">
+                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-mail w-5 h-5"><rect width="20" height="16" x="2" y="4" rx="2"></rect><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path></svg>
+                        <span>contato@ipace.org.br</span>
+                    </p>
+                    <p class="flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-phone w-5 h-5"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+                        <a href="tel:+551123059751" class="hover:underline">(11) 2305-9751</a>
+                    </p>
+                    <p class="flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5">
+                            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.07 0C5.537 0 .181 5.703.181 12.718c0 2.502.66 4.908 1.89 6.998L0 25l5.441-1.427a11.91 11.91 0 005.626 1.679h.004c6.532 0 11.89-5.704 11.89-12.719 0-3.155-1.259-6.324-3.551-8.586"/>
+                        </svg>
+                        <a href="https://wa.me/551123059751" target="_blank" rel="noopener noreferrer" class="hover:underline">WhatsApp: (11) 2305-9751</a>
+                    </p>
+                </div>
+                <div>
+                    <h4 class="font-black text-xl mb-4 uppercase">Endereço</h4>
+                    <p>Doutor Ferreira Lopes, 58</p>
+                    <p>Vila Sofia, São Paulo - SP</p>
+                </div>
+                <div>
+                    <h4 class="font-black text-xl mb-4 uppercase">Social</h4>
+                    <div class="flex gap-4">
+                        <a href="https://www.instagram.com/ipaceoficial/" class="hover:text-ipace-title transition-colors" target="_blank" rel="noopener noreferrer"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-instagram w-5 h-5"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"></line></svg></a>
+                        <a href="https://www.facebook.com/ipace.org/" class="hover:text-ipace-title transition-colors" target="_blank" rel="noopener noreferrer"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-facebook w-5 h-5"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg></a>
+                        <a href="https://www.youtube.com/@ipaceinstituto" class="hover:text-ipace-title transition-colors" target="_blank" rel="noopener noreferrer"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-youtube w-5 h-5"><path d="M2.5 17a24.12 24.12 0 0 1 0-10 2 2 0 0 1 1.4-1.4 49.56 49.56 0 0 1 16.2 0A2 2 0 0 1 21.5 7a24.12 24.12 0 0 1 0 10 2 2 0 0 1-1.4 1.4 49.55 49.55 0 0 1-16.2 0A2 2 0 0 1 2.5 17"></path><path d="m10 15 5-3-5-3z"></path></svg></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="bg-white py-8 border-t border-gray-200">
+        <div class="max-w-7xl mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="flex items-center">
+                <a href="index.html" aria-label="IPACE">
+                    <img src="logos/logotipo_horizontal_ong_ipace.png" alt="IPACE" class="h-10 w-auto">
+                </a>
+            </div>
+            <p class="text-gray-400 text-sm font-medium text-center md:text-right">
+                © 2026 IPACE. Todos os direitos reservados.
+            </p>
+        </div>
+    </footer>
+    <script>
+        lucide.createIcons();
+        document.getElementById('mobile-menu-btn').addEventListener('click', function() {
+            document.getElementById('mobile-menu').classList.remove('translate-x-full');
+        });
+        document.getElementById('close-menu-btn').addEventListener('click', function() {
+            document.getElementById('mobile-menu').classList.add('translate-x-full');
+        });
+        document.querySelectorAll('.mobile-link').forEach(link => {
+            link.addEventListener('click', () => {
+                document.getElementById('mobile-menu').classList.add('translate-x-full');
+            });
+        });
+    </script>
+</body>
+</html>
