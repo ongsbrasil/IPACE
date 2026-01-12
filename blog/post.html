@@ -159,9 +159,11 @@
 
         async function render(){
             const slug = getParam('slug');
+            console.log('Carregando post com slug:', slug);
             const post = await fetchPostBySlug(slug);
+            console.log('Post encontrado:', post);
             if (!post) {
-                document.getElementById('article').innerHTML = '<div class="p-6">Artigo não encontrado.</div>';
+                document.getElementById('article').innerHTML = '<div class="p-6">Artigo não encontrado. Slug: ' + slug + '</div>';
                 return;
             }
             document.getElementById('post-title').textContent = post.title || '';
